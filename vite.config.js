@@ -5,5 +5,5 @@ export default defineConfig({
   plugins: [react()],
   // Set base to '/ai-payments-strategy/' if deploying to a subdirectory
   // or '/' if deploying to root / custom domain
-  base: '/',
+  base: '/ai-payments-portfolio/',
 })
