@@ -1,0 +1,64 @@
+/* ── RESET ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: #ffffff;
+  color: #1a1a1a;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── TOKENS ─────────────────────────────────────────────────────────────── */
+:root {
+  --white:      #ffffff;
+  --bg:         #fafaf8;
+  --ink:        #1a1a1a;
+  --ink-mid:    #444444;
+  --ink-dim:    #888888;
+  --ink-faint:  #bbbbbb;
+  --border:     #e4e4e0;
+  --border-mid: #ccccca;
+  --accent:     #1a1a1a;
+  --accent-dim: #555555;
+
+  --font-serif: 'EB Garamond', Georgia, serif;
+  --font-mono:  'DM Mono', 'Courier New', monospace;
+  --font-sans:  'DM Sans', system-ui, sans-serif;
+
+  --max-w: 760px;
+  --max-w-wide: 1080px;
+}
+
+/* ── TYPOGRAPHY ─────────────────────────────────────────────────────────── */
+h1, h2, h3 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--ink);
+}
+h1 { font-size: clamp(32px, 4vw, 48px); }
+h2 { font-size: clamp(22px, 3vw, 30px); }
+h3 { font-size: clamp(18px, 2.5vw, 22px); }
+
+p { color: var(--ink-mid); line-height: 1.75; }
+
+a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-mid);
+  transition: border-color 0.15s;
+}
+a:hover { border-color: var(--ink); }
+
+/* ── SCROLLBAR ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--white); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── UTILITIES ──────────────────────────────────────────────────────────── */
+.mono { font-family: var(--font-mono); }
+.serif { font-family: var(--font-serif); }
+.dim { color: var(--ink-dim); }
+.rule { height: 1px; background: var(--border); }
