@@ -4,6 +4,7 @@ import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ScatterChart, Scatter, ZAxis, CartesianGrid, LineChart, Line, Legend
 } from "recharts";
+import { ModelBackBar } from '../pages/FrameworkIndex';
 
 // ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
 const T = {
@@ -223,8 +224,9 @@ export default function RailSelectionOptimizer() {
 
   const tabs = ["optimizer", "queue", "rails", "savings"];
 
-  return (
+return (
     <div style={{ minHeight: "100vh", background: T.bg, fontFamily: "'IBM Plex Sans', sans-serif", color: T.ink }}>
+      <ModelBackBar />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }

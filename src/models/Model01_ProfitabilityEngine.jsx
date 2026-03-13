@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line, CartesianGrid, ScatterChart, Scatter, ZAxis, RadarChart, Radar, PolarGrid, PolarAngleAxis } from "recharts";
+import { ModelBackBar } from '../pages/FrameworkIndex'
 
 // ── SYNTHETIC DATA ──────────────────────────────────────────────────────────
 
@@ -180,8 +181,9 @@ export default function PaymentProfitabilityEngine() {
 
   const tabs = ["overview", "clients", "corridors", "rails", "trends"];
 
-  return (
+return (
     <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "'DM Sans', sans-serif", color: C.text }}>
+      <ModelBackBar />
       {/* Google Fonts */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap');

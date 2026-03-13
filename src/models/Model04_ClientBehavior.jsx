@@ -5,6 +5,7 @@ import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ComposedChart, Area
 } from "recharts";
+import { ModelBackBar } from '../pages/FrameworkIndex';
 
 // ─── DESIGN TOKENS ─────────────────────────────────────────────────────────
 // Aesthetic: Rich midnight blue with gold accents — cartographic, premium, global
@@ -303,8 +304,9 @@ export default function CorridorEconomicsAnalyzer() {
 
   const tabs = ["overview", "corridors", "deep-dive", "matrix"];
 
-  return (
+return (
     <div style={{ minHeight: "100vh", background: T.bg, fontFamily: "'DM Sans', sans-serif", color: T.text }}>
+      <ModelBackBar />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
