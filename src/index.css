@@ -1,5 +1,5 @@
 /* ── RESET ──────────────────────────────────────────────────────────────── */
-main { margin: 0; }
+main, .fi-wrap { margin-left: 0 !important; margin-right: 0 !important; }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; font-size: 16px; }
 body {
