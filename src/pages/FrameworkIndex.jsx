@@ -51,10 +51,10 @@ export default function FrameworkIndex() {
       <Nav />
 
       <div style={{ maxWidth:'760px', margin:'0 auto', padding:'72px 32px 56px' }}>
-        <div style={{ fontFamily:"'DM Mono',monospace", fontSize:11, color:'#C9A84C', letterSpacing:'0.08em', marginBottom:24 }}>AI Payments Strategy · Framework V1 · 2025</div>
-        <h1 style={{ fontFamily:"'EB Garamond',Georgia,serif", fontWeight:400, fontSize:'clamp(34px,4vw,50px)', lineHeight:1.15, color:'#1a1a1a', marginBottom:24 }}>AI-Powered Payments<br />Strategy Framework</h1>
+        <div style={{ fontFamily:"'DM Mono',monospace", fontSize:11, color:'#C9A84C', letterSpacing:'0.08em', marginBottom:24 }}>Payments Strategy Analytics · Framework V1 · 2025</div>
+        <h1 style={{ fontFamily:"'EB Garamond',Georgia,serif", fontWeight:400, fontSize:'clamp(34px,4vw,50px)', lineHeight:1.15, color:'#1a1a1a', marginBottom:24 }}>Payments Strategy<br />Analytics Framework</h1>
         <div style={{ height:1, background:'#e4e4e0', marginBottom:28 }} />
-        <p style={{ fontSize:17, color:'#444', lineHeight:1.8, marginBottom:16, fontWeight:300 }}>A five-model AI framework that transforms payment data into layered strategic intelligence — from transaction-level economics through behavioral signals to board-level portfolio decisions.</p>
+        <p style={{ fontSize:17, color:'#444', lineHeight:1.8, marginBottom:16, fontWeight:300 }}>A five-model analytical framework that transforms payment data into layered strategic intelligence — from transaction-level economics through behavioral signals to board-level portfolio decisions.</p>
         <p style={{ fontSize:17, color:'#444', lineHeight:1.8, marginBottom:0, fontWeight:300 }}>Built on 20 years of payments P&L ownership across Citi, Deutsche Bank, HSBC, and Mashreq. Each model reflects how decisions are actually made inside a commercial payments franchise — not how they are reported.</p>
       </div>
 
@@ -82,9 +82,9 @@ export default function FrameworkIndex() {
 
       <div style={{ borderTop:'1px solid #e4e4e0', background:'#fafaf8' }}>
         <div style={{ maxWidth:'760px', margin:'0 auto', padding:'64px 32px' }}>
-          <div style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:'#C9A84C', letterSpacing:'0.12em', textTransform:'uppercase', marginBottom:8 }}>The Models</div>
-          <h2 style={{ fontFamily:"'EB Garamond',Georgia,serif", fontWeight:400, fontSize:28, color:'#1a1a1a', marginBottom:8 }}>Five working prototypes</h2>
-          <p style={{ fontSize:14, color:'#888', marginBottom:48, lineHeight:1.7, fontWeight:300 }}>Each model is a fully interactive application built on synthetic data calibrated to realistic industry ranges. Click any model to open it.</p>
+          <div style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:'#C9A84C', letterSpacing:'0.12em', textTransform:'uppercase', marginBottom:8 }}>The Analytical Models</div>
+          <h2 style={{ fontFamily:"'EB Garamond',Georgia,serif", fontWeight:400, fontSize:28, color:'#1a1a1a', marginBottom:8 }}>Five working analytical models</h2>
+          <p style={{ fontSize:14, color:'#888', marginBottom:48, lineHeight:1.7, fontWeight:300 }}>Each model is a fully interactive analytical application built on synthetic data calibrated to realistic industry ranges. Click any model to open it.</p>
           <div style={{ display:'flex', flexDirection:'column', gap:2 }}>
             {MODELS.map((model,i)=><ModelRow key={i} model={model}/>)}
           </div>
@@ -95,7 +95,7 @@ export default function FrameworkIndex() {
         <div style={{ maxWidth:'760px', margin:'0 auto', padding:'64px 32px' }}>
           <div style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:'#C9A84C', letterSpacing:'0.12em', textTransform:'uppercase', marginBottom:20 }}>About This Work</div>
           <p style={{ fontSize:15, color:'#444', lineHeight:1.85, marginBottom:16, fontWeight:300 }}>This framework is not academic. It reflects how a senior payments executive thinks about portfolio performance — where margin is made and lost, how client behavior signals strategic risk, and how multi-rail infrastructure decisions translate into P&L outcomes.</p>
-          <p style={{ fontSize:15, color:'#444', lineHeight:1.85, marginBottom:0, fontWeight:300 }}>The Payments Portfolio Diagnostic tool — published separately — provides the qualitative entry point. These five models provide the quantitative and predictive layer on top of it. Together they form a complete strategic advisory arc.</p>
+          <p style={{ fontSize:15, color:'#444', lineHeight:1.85, marginBottom:0, fontWeight:300 }}>The models are built as practical analytical tools that could realistically be deployed by a bank, payment network, or fintech platform. The Payments Portfolio Diagnostic — published separately — provides the qualitative entry point. Together they form a complete strategic framework: one that diagnoses the franchise, the other that quantifies it.</p>
           <div style={{ marginTop:36, display:'flex', gap:28 }}>
             <a href="https://carlosurena.com" style={{ fontFamily:"'DM Mono',monospace", fontSize:11, color:'#1a1a1a', textDecoration:'none', borderBottom:'1px solid #e4e4e0' }}>← carlosurena.com</a>
             <a href="https://carlosurena.com/payments-portfolio-diagnostic/" style={{ fontFamily:"'DM Mono',monospace", fontSize:11, color:'#888', textDecoration:'none', borderBottom:'1px solid #e4e4e0' }}>Payments Portfolio Diagnostic ↗</a>
@@ -106,7 +106,7 @@ export default function FrameworkIndex() {
 
       <div style={{ background:'#0f1f3d', borderTop:'1px solid #e4e4e0' }}>
         <div style={{ maxWidth:'760px', margin:'0 auto', padding:'28px 32px', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:12 }}>
-          <span style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:'#C9A84C' }}>AI Payments Strategy Framework · V1 · Carlos Ureña · 2025</span>
+          <span style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:'#C9A84C' }}>Payments Strategy Analytics Framework · V1 · Carlos Ureña · 2025</span>
           <span style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:'rgba(255,255,255,0.3)' }}>Prototype — synthetic data calibrated to realistic industry ranges</span>
         </div>
       </div>
