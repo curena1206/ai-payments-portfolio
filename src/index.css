@@ -47,10 +47,8 @@ p { color: var(--ink-mid); line-height: 1.75; }
 a {
   color: var(--ink);
   text-decoration: none;
-  border-bottom: 1px solid var(--border-mid);
-  transition: border-color 0.15s;
+  transition: color 0.15s;
 }
-a:hover { border-color: var(--ink); }
 
 /* ── SCROLLBAR ──────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; }
