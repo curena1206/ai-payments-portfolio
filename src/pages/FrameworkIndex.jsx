@@ -29,7 +29,7 @@ const css = `
   .fi-nav-name {
     font-family: Georgia, serif;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 400;
     color: #fff !important;
     letter-spacing: 0.01em;
     text-decoration: none !important;
@@ -68,7 +68,7 @@ const css = `
   .fi-h1 {
     font-family: Georgia, serif;
     font-size: 38px;
-    font-weight: 600;
+    font-weight: 400;
     color: #0f1f3d;
     margin: 0 0 16px;
     letter-spacing: -0.01em;
@@ -104,7 +104,7 @@ const css = `
   .fi-h2 {
     font-family: Georgia, serif;
     font-size: 22px;
-    font-weight: 600;
+    font-weight: 400;
     color: #0f1f3d;
     margin: 0 0 14px;
   }
@@ -150,7 +150,7 @@ const css = `
   .fi-model-name {
     font-family: Georgia, serif;
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 400;
     color: #0f1f3d;
     margin-bottom: 8px;
   }
@@ -183,7 +183,7 @@ const css = `
   .fi-arch-num {
     font-family: Georgia, serif;
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 400;
     color: #b7882c;
     padding-top: 1px;
   }
