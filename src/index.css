@@ -1,5 +1,5 @@
 /* ── RESET ──────────────────────────────────────────────────────────────── */
-main, .fi-wrap { margin-left: 0 !important; margin-right: 0 !important; }
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; font-size: 16px; }
 body {
@@ -52,7 +52,7 @@ a {
 }
 
 /* ── SCROLLBAR ──────────────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-track { background: var(--white); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
