@@ -10,6 +10,10 @@ const css = `
     color: #1a2332;
     background: #ffffff;
   }
+  .fi-root *, .fi-root *::before, .fi-root *::after {
+    box-sizing: border-box;
+  }
+  .fi-root p { color: #4a5568; }
   .fi-nav {
     background: #0f1f3d;
     border-bottom: 2px solid #b7882c;
@@ -26,9 +30,9 @@ const css = `
     font-family: Georgia, serif;
     font-size: 14px;
     font-weight: normal;
-    color: #fff;
+    color: #fff !important;
     letter-spacing: 0.01em;
-    text-decoration: none;
+    text-decoration: none !important;
   }
   .fi-nav-links {
     display: flex;
@@ -36,12 +40,13 @@ const css = `
   }
   .fi-nav-links a {
     font-size: 13px;
-    color: rgba(255,255,255,0.75);
-    text-decoration: none;
+    color: rgba(255,255,255,0.75) !important;
+    text-decoration: none !important;
     letter-spacing: 0.02em;
     transition: color 0.15s;
   }
-  .fi-nav-links a:hover { color: #b7882c; }
+  .fi-nav-links a:hover { color: #b7882c !important; }
+  .fi-nav-links a.active { color: #b7882c !important; }
   .fi-wrap {
     max-width: 860px;
     margin: 0 auto;
@@ -120,7 +125,7 @@ const css = `
     background: #fff;
     cursor: pointer;
     transition: border-color 0.2s, box-shadow 0.2s;
-    text-decoration: none;
+    text-decoration: none !important;
     color: inherit;
     display: block;
   }
