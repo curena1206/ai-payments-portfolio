@@ -28,18 +28,16 @@ const MODELS = [
 
 function Nav() {
   return (
-    <nav style={{ background:'#0f1f3d', padding:'0 32px', position:'sticky', top:0, zIndex:100 }}>
-      <div style={{ maxWidth:'960px', margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', height:52 }}>
-        <a href="https://carlosurena.com" style={{ fontFamily:"'DM Mono',monospace", fontSize:13, color:'#C9A84C', letterSpacing:'0.06em', border:'none', textDecoration:'none' }}>Carlos Ureña</a>
-        <div style={{ display:'flex', gap:28, alignItems:'center' }}>
-          {[{l:'← Home',h:'https://carlosurena.com'},{l:'Diagnostic',h:'https://carlosurena.com/payments-portfolio-diagnostic/'},{l:'LinkedIn',h:'https://www.linkedin.com/in/carlosurena/',ext:true}].map(link=>(
-            <a key={link.l} href={link.h} target={link.ext?'_blank':undefined} rel={link.ext?'noreferrer':undefined}
-              style={{ fontFamily:"'DM Mono',monospace", fontSize:11, color:'rgba(255,255,255,0.65)', border:'none', textDecoration:'none', letterSpacing:'0.04em' }}
-              onMouseEnter={e=>e.currentTarget.style.color='#C9A84C'}
-              onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.65)'}
-            >{link.l}</a>
-          ))}
-        </div>
+    <nav style={{ background:'#0f1f3d', borderBottom:'2px solid #C9A84C', padding:'0 24px', position:'sticky', top:0, zIndex:100, display:'flex', alignItems:'center', justifyContent:'space-between', height:48 }}>
+      <a href="https://carlosurena.com" style={{ fontFamily:'Georgia, serif', fontSize:14, fontWeight:'normal', color:'#ffffff', letterSpacing:'0.01em', border:'none', textDecoration:'none' }}>Carlos Ure\u00F1a</a>
+      <div style={{ display:'flex', gap:24, alignItems:'center' }}>
+        {[{l:'Home',h:'https://carlosurena.com'},{l:'Diagnostic',h:'https://carlosurena.com/payments-portfolio-diagnostic/'},{l:'Analytics',h:'https://models.carlosurena.com'},{l:'LinkedIn',h:'https://www.linkedin.com/in/carlosurena/',ext:true}].map(link=>(
+          <a key={link.l} href={link.h} target={link.ext?'_blank':undefined} rel={link.ext?'noreferrer':undefined}
+            style={{ fontSize:13, color:'rgba(255,255,255,0.75)', border:'none', textDecoration:'none', letterSpacing:'0.02em', transition:'color 0.15s' }}
+            onMouseEnter={e=>e.currentTarget.style.color='#C9A84C'}
+            onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.75)'}
+          >{link.l}</a>
+        ))}
       </div>
     </nav>
   )
@@ -47,7 +45,7 @@ function Nav() {
 
 export default function FrameworkIndex() {
   return (
-    <div style={{ background:'#ffffff', minHeight:'100vh', fontFamily:"'DM Sans', system-ui, sans-serif" }}>
+    <div style={{ background:'#ffffff', minHeight:'100vh', fontFamily:'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif', fontSize:15, lineHeight:1.6 }}>
       <Nav />
 
       <div style={{ maxWidth:'760px', margin:'0 auto', padding:'72px 32px 56px' }}>
@@ -145,13 +143,13 @@ function ModelRow({ model }) {
 
 export function ModelBackBar() {
   return (
-    <div style={{ background:'#0f1f3d', padding:'0 28px', display:'flex', alignItems:'center', justifyContent:'space-between', height:44, position:'sticky', top:0, zIndex:200 }}>
-      <Link to="/" style={{ fontFamily:"'DM Mono',monospace", fontSize:11, color:'rgba(255,255,255,0.65)', textDecoration:'none', letterSpacing:'0.04em', border:'none', display:'flex', alignItems:'center', gap:6 }}
+    <div style={{ background:'#0f1f3d', borderBottom:'2px solid #C9A84C', padding:'0 24px', display:'flex', alignItems:'center', justifyContent:'space-between', height:48, position:'sticky', top:0, zIndex:200 }}>
+      <Link to="/" style={{ fontFamily:'Georgia, serif', fontSize:14, color:'rgba(255,255,255,0.75)', textDecoration:'none', letterSpacing:'0.01em', border:'none', display:'flex', alignItems:'center', gap:6 }}
         onMouseEnter={e=>e.currentTarget.style.color='#C9A84C'}
-        onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.65)'}>
+        onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.75)'}>
         ← All Models
       </Link>
-      <a href="https://carlosurena.com" style={{ fontFamily:"'DM Mono',monospace", fontSize:11, color:'rgba(255,255,255,0.35)', textDecoration:'none', border:'none', letterSpacing:'0.04em' }}>carlosurena.com</a>
+      <a href="https://carlosurena.com" style={{ fontFamily:'Georgia, serif', fontSize:14, color:'rgba(255,255,255,0.4)', textDecoration:'none', border:'none', letterSpacing:'0.01em' }}>carlosurena.com</a>
     </div>
   )
 }
