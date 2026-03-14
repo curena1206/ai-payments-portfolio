@@ -47,7 +47,7 @@ function Nav() {
 
 export default function FrameworkIndex() {
   return (
-    <div style={{ background:'#ffffff', minHeight:'100vh' }}>
+    <div style={{ background:'#ffffff', minHeight:'100vh', fontFamily:"'DM Sans', system-ui, sans-serif" }}>
       <Nav />
 
       <div style={{ maxWidth:'760px', margin:'0 auto', padding:'72px 32px 56px' }}>
