@@ -13,6 +13,7 @@ import Model02 from './models/Model02_RailOptimizer'
 import Model03 from './models/Model03_CorridorAnalyzer'
 import Model04 from './models/Model04_ClientBehavior'
 import Model05 from './models/Model05_PortfolioScorecard'
+import Model06 from './models/Model06_MoneyMovement'
 
 // Scroll to top on every route change
 function ScrollToTop() {
@@ -35,6 +36,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/models/03-corridor-analyzer"   element={<Model03 />} />
         <Route path="/models/04-client-behavior"     element={<Model04 />} />
         <Route path="/models/05-portfolio-scorecard" element={<Model05 />} />
+        <Route path="/models/06-money-movement" element={<Model06 />} />
 
         {/* Catch-all back to index */}
         <Route path="*" element={<FrameworkIndex />} />
