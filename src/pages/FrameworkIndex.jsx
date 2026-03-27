@@ -273,7 +273,7 @@ export default function FrameworkIndex() {
         <div className="fi-hero">
           <div className="fi-eyebrow">Payments Strategy Analytics · Framework V1 · 2025</div>
           <h1 className="fi-h1">Payments Strategy<br />Analytics Framework</h1>
-          <p className="fi-hero-sub">A six-model analytical framework that transforms payment data into layered strategic intelligence — from transaction-level economics through behavioral signals to board-level portfolio decisions and network-scale commercialization. Built on 20 years of payments P&amp;L ownership across Citi, Deutsche Bank, HSBC, and Mashreq.</p>
+          <p className="fi-hero-sub">A six-model analytical framework that transforms payment data into layered strategic intelligence — from transaction-level economics through behavioral signals to board-level portfolio decisions and network-scale commercialization. Built on 20 years in payments across Citi, Deutsche Bank, HSBC, and Mashreq, including direct P&amp;L leadership in wire and cross-border businesses.</p>
         </div>
 
         <div className="fi-section-block">
