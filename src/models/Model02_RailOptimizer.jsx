@@ -253,8 +253,8 @@ return (
               <span style={{ fontSize: 13, color: T.green }}>⇄</span>
             </div>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 600, fontFamily: "'IBM Plex Mono', monospace", color: "#FFFFFF", letterSpacing: "0.06em" }}>RAIL SELECTION OPTIMIZER</div>
-              <div style={{ fontSize: 10, color: "#888", fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.1em" }}>MODEL 02 — DECISION INTELLIGENCE</div>
+              <div style={{ fontSize: 14, fontWeight: 600, fontFamily: "'IBM Plex Mono', monospace", color: "#FFFFFF", letterSpacing: "0.06em" }}>RAIL ECONOMICS ANALYZER</div>
+              <div style={{ fontSize: 10, color: "#888", fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.1em" }}>MODEL 02 — INFRASTRUCTURE INTELLIGENCE · LAYER 2</div>
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
@@ -278,7 +278,7 @@ return (
           {tabs.map(t => (
             <button key={t} className="tab-btn" onClick={() => setActiveTab(t)}
               style={{ color: activeTab === t ? T.green : T.inkFaint, borderBottomColor: activeTab === t ? T.green : "transparent", fontWeight: activeTab === t ? 600 : 400 }}>
-              {t === "optimizer" ? "Payment Optimizer" : t === "queue" ? "Payment Queue" : t === "rails" ? "Rail Comparison" : "Savings Analysis"}
+              {t === "optimizer" ? "Rail Optimizer" : t === "queue" ? "Payment Queue" : t === "rails" ? "Rail Comparison" : "Savings Analysis"}
             </button>
           ))}
         </div>
@@ -612,7 +612,7 @@ return (
 
       {/* FOOTER */}
       <div style={{ borderTop: `1px solid ${T.border}`, padding: "14px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 20 }}>
-        <span style={{ fontSize: 10, color: T.inkFaint, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.1em" }}>RAIL SELECTION OPTIMIZER · MODEL 02 · CARLOS UREÑA PAYMENTS STRATEGY PORTFOLIO</span>
+        <span style={{ fontSize: 10, color: T.inkFaint, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.1em" }}>RAIL ECONOMICS ANALYZER · MODEL 02 · CARLOS UREÑA PAYMENTS STRATEGY PORTFOLIO</span>
         <span style={{ fontSize: 10, color: T.inkFaint, fontFamily: "'IBM Plex Mono', monospace" }}>PROTOTYPE · SYNTHETIC DATA · Q1 2025</span>
       </div>
     </div>
