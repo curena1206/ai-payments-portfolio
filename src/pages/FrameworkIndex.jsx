@@ -344,7 +344,7 @@ const MODELS = [
       { label: 'Portfolio optimization', desc: 'True net margin at the transaction level. Full cost attribution by corridor. Pricing leakage quantified as recoverable revenue.' },
     ],
     tells: 'Where revenue is made and lost. Where pricing exceptions are eroding margin silently. Which clients are under-monetized relative to internal peers on the same corridor. Which corridors are likely margin-negative even under conservative cost assumptions.',
-    connection: 'Economic anchor. Every upstream model draws on its cost and margin outputs.',
+    connection: 'The foundation layer. All downstream models draw on its cost and margin outputs.',
   },
   {
     num: '02',
@@ -366,7 +366,7 @@ const MODELS = [
     layer: 'Layer 3 — Network Intelligence',
     name: 'Cross-Border Corridor Analyzer',
     route: '/models/03-corridor-analyzer',
-    desc: 'Maps the economics of each active payment corridor — revenue versus estimated cost — and classifies corridors into four strategic categories: Grow, Defend, Optimize, or De-prioritize or exit.',
+    desc: 'Maps the economics of each active payment corridor — revenue versus estimated cost — and classifies corridors into four strategic categories: Grow, Defend, Optimize, or De-prioritize / exit.',
     minData: 'Volume and revenue by corridor. Average cost estimate per corridor — derived from correspondent fee schedules, GL entries, or SWIFT benchmarks where formal claims data is unavailable.',
     maturity: [
       { label: 'Immediate visibility', desc: 'Corridor classification by revenue and volume. Which corridors are building the franchise and which are diluting it directionally.' },
@@ -388,7 +388,7 @@ const MODELS = [
       { label: 'Economic precision', desc: 'Under-monetized clients identified by comparing revenue per payment against internal peer groups on the same corridor and rail — no external benchmarks required. Pricing inconsistencies across similar client profiles. Early indicators of pricing leakage at the client level.' },
       { label: 'Portfolio optimization', desc: 'Estimated revenue at risk combining volume decline, pricing compression, and concentration signals. Outputs structured for relationship manager action — identifying which clients require repricing, migration, or retention intervention, and the associated revenue impact.' },
     ],
-    tells: 'Where client relationships are deepening, where they are stable, and where volume is migrating. The model surfaces where to look and what the revenue implication is. That context comes from the relationship.',
+    tells: 'Where client relationships are deepening, where they are stable, and where volume is migrating. The model quantifies the signal. The relationship explains the cause.',
     connection: 'Weighted by client net margin from Model 01. Corridor risk from Model 03 elevates migration flags.',
   },
   {
@@ -441,7 +441,7 @@ export default function FrameworkIndex() {
       <main className="fi-wrap">
 
         <div className="fi-hero">
-          <div className="fi-eyebrow">Payments Economic Intelligence System · V1 · 2025</div>
+          <div className="fi-eyebrow">Payments Portfolio Management System · V1 · 2025</div>
           <h1 className="fi-h1">Payments Portfolio<br />Management System</h1>
           <p className="fi-hero-sub">A six-model system for managing payments portfolio economics — from transaction-level profitability through client behavior signals to executive decision support. Built on 20 years in payments across Citi, Deutsche Bank, HSBC, and Mashreq, including direct P&amp;L leadership in wire and cross-border businesses.</p>
           <div className="fi-system-statement">
@@ -472,8 +472,8 @@ export default function FrameworkIndex() {
           {[
             {n:'1', title:'Payment Data Foundation', desc:'Transaction-level data across rails, corridors, clients, pricing, and operational performance. The source layer for all models.'},
             {n:'2', title:'Economic Core', desc:'The profitability engine that calculates revenue and margin at the client, rail, and corridor level. The anchor for all downstream analysis.'},
-            {n:'3', title:'Network and Behavioral Intelligence', desc:'Models that map corridor economics, analyze client payment behavior, and surface migration risk and monetization gaps across the portfolio.'},
-            {n:'4', title:'Infrastructure Intelligence', desc:'Rail economics analysis — where the rail mix is suboptimal, what the margin impact is, and what product, pricing, or migration strategy would improve it.'},
+            {n:'3', title:'Infrastructure Intelligence', desc:'Rail economics analysis — where the rail mix is suboptimal, what the margin impact is, and what product, pricing, or migration strategy would improve it.'},
+            {n:'4', title:'Network and Behavioral Intelligence', desc:'Models that map corridor economics, analyze client payment behavior, and surface migration risk and monetization gaps across the portfolio.'},
             {n:'5', title:'Executive Decision Layer', desc:'Portfolio synthesis that translates all upstream outputs into ranked interventions with estimated revenue impact. Where analysis becomes action.'},
             {n:'6', title:'Strategic Positioning Layer', desc:'Network participation economics — evaluating whether each network the bank participates in justifies its infrastructure investment and classifying each by strategic role.'},
           ].map((l,i) => (
@@ -513,6 +513,7 @@ export default function FrameworkIndex() {
         <div className="fi-section-block">
           <div className="fi-section-label">Layer 1 — Data Foundation</div>
           <h2 className="fi-h2">What real deployment looks like</h2>
+          <p className="fi-p">This system is designed to run on existing bank infrastructure — not require new systems.</p>
           <p className="fi-p">All six models run on synthetic data in prototype form. A production deployment would require field-level data from the source systems below — with defined ingestion patterns, data quality standards, and governance ownership for each. Models 01–05 draw on bank-side source systems. Model 06 additionally requires network-side data: scheme transaction logs, corridor settlement records, and network participation cost data.</p>
           <div className="fi-source-grid">
             {[
@@ -546,7 +547,7 @@ export default function FrameworkIndex() {
         </div>
 
         <footer className="fi-footer">
-          <span>Payments Economic Intelligence System · V1 · Carlos Ure&#241;a · 2025</span>
+          <span>Payments Portfolio Management System · V1 · Carlos Ure&#241;a · 2025</span>
           <span>Synthetic data calibrated to realistic industry ranges</span>
         </footer>
 
