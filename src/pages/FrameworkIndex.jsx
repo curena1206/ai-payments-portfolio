@@ -336,7 +336,7 @@ const MODELS = [
     layer: 'Layer 1 — Economic Core',
     name: 'Payment Profitability Engine',
     route: '/models/01-profitability',
-    desc: 'Calculates revenue and margin at the client, rail, and corridor level. The economic anchor of the system — every upstream model draws on its cost and margin outputs.',
+    desc: 'Calculates revenue and margin at the client, rail, and corridor level. The economic anchor of the system — every downstream model draws on its cost and margin outputs.',
     minData: 'Transaction extract with client ID, rail, destination corridor, amount, and fee charged (partial completeness is sufficient). Standard pricing schedule by rail and corridor.',
     maturity: [
       { label: 'Immediate visibility', desc: 'Revenue ranking by client, corridor, and rail. Pricing exception concentration. Where the portfolio generates the most and least revenue.' },
@@ -344,14 +344,14 @@ const MODELS = [
       { label: 'Portfolio optimization', desc: 'True net margin at the transaction level. Full cost attribution by corridor. Pricing leakage quantified as recoverable revenue.' },
     ],
     tells: 'Where revenue is made and lost. Where pricing exceptions are eroding margin silently. Which clients are under-monetized relative to internal peers on the same corridor. Which corridors are likely margin-negative even under conservative cost assumptions.',
-    connection: 'The foundation layer. All downstream models draw on its cost and margin outputs.',
+    connection: '',
   },
   {
     num: '02',
     layer: 'Layer 2 — Infrastructure Intelligence',
     name: 'Rail Economics Analyzer',
     route: '/models/02-rail-optimizer',
-    desc: 'Evaluates the cost, revenue, and margin contribution of each payment rail across the portfolio. Identifies where the rail mix is suboptimal and what product, pricing, or migration strategy would improve economics.',
+    desc: 'Evaluates the cost, revenue, and margin contribution of each payment rail across the portfolio. Identifies where the rail mix is suboptimal and what product, pricing, or client migration strategies would improve economics.',
     minData: 'Volume and revenue by rail. Processing cost per rail — even a flat estimate. STP rate by rail where available.',
     maturity: [
       { label: 'Immediate visibility', desc: 'Revenue and volume by rail. Cost efficiency comparison across rails. Where portfolio concentration creates economic risk.' },
@@ -441,7 +441,7 @@ export default function FrameworkIndex() {
       <main className="fi-wrap">
 
         <div className="fi-hero">
-          <div className="fi-eyebrow">Payments Portfolio Management System · V1 · 2025</div>
+          <div className="fi-eyebrow">Payments Strategy Analytics · V1 · 2025</div>
           <h1 className="fi-h1">Payments Portfolio<br />Management System</h1>
           <p className="fi-hero-sub">A six-model system for managing payments portfolio economics — from transaction-level profitability through client behavior signals to executive decision support. Built on 20 years in payments across Citi, Deutsche Bank, HSBC, and Mashreq, including direct P&amp;L leadership in wire and cross-border businesses.</p>
           <div className="fi-system-statement">
@@ -513,7 +513,7 @@ export default function FrameworkIndex() {
         <div className="fi-section-block">
           <div className="fi-section-label">Layer 1 — Data Foundation</div>
           <h2 className="fi-h2">What real deployment looks like</h2>
-          <p className="fi-p">This system is designed to run on existing bank infrastructure — not require new systems.</p>
+          <p className="fi-p">This system is designed to run on existing bank infrastructure — not require new systems. Data requirements are incremental, not all-or-nothing.</p>
           <p className="fi-p">All six models run on synthetic data in prototype form. A production deployment would require field-level data from the source systems below — with defined ingestion patterns, data quality standards, and governance ownership for each. Models 01–05 draw on bank-side source systems. Model 06 additionally requires network-side data: scheme transaction logs, corridor settlement records, and network participation cost data.</p>
           <div className="fi-source-grid">
             {[
