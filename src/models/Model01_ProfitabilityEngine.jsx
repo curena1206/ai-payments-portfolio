@@ -208,7 +208,7 @@ return (
             </div>
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Syne', sans-serif", color: C.text, letterSpacing: "0.04em" }}>PAYMENT PROFITABILITY ENGINE</div>
-              <div style={{ fontSize: 10, color: C.muted, fontFamily: "'DM Mono', monospace", letterSpacing: "0.1em" }}>MODEL 01 — MARGIN INTELLIGENCE</div>
+              <div style={{ fontSize: 10, color: C.muted, fontFamily: "'DM Mono', monospace", letterSpacing: "0.1em" }}>MODEL 01 — ECONOMIC CORE · LAYER 1</div>
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -252,10 +252,10 @@ return (
                 <WaterfallBar label="Fee Revenue" value={portfolio.grossRevenue} isPositive total={waterfallTotal} />
                 <WaterfallBar label="+ FX Margin" value={portfolio.fxMargin} isPositive total={waterfallTotal} />
                 <div style={{ borderTop: `1px dashed ${C.border}`, margin: "10px 0" }} />
-                <WaterfallBar label="− Rail Costs" value={-portfolio.railCost} total={waterfallTotal} />
-                <WaterfallBar label="− Liquidity Drag" value={-portfolio.liquidityDrag} total={waterfallTotal} />
-                <WaterfallBar label="− Exception Costs" value={-portfolio.exceptions} total={waterfallTotal} />
-                <WaterfallBar label="− Support Overhead" value={-portfolio.supportCost} total={waterfallTotal} />
+                <WaterfallBar label="− Network & Scheme Fees" value={-portfolio.railCost} total={waterfallTotal} />
+                <WaterfallBar label="− Correspondent & Liquidity Cost" value={-portfolio.liquidityDrag} total={waterfallTotal} />
+                <WaterfallBar label="− Operational & Exception Cost" value={-portfolio.exceptions} total={waterfallTotal} />
+                <WaterfallBar label="− Other Cost Allocation" value={-portfolio.supportCost} total={waterfallTotal} />
                 <div style={{ borderTop: `1px solid ${C.accent}44`, margin: "10px 0" }} />
                 <WaterfallBar label="NET CONTRIBUTION" value={portfolio.net} isNet total={waterfallTotal} />
                 <div style={{ marginTop: 16, padding: "10px 14px", background: `${C.accent}0a`, borderRadius: 8, border: `1px solid ${C.accent}22` }}>
@@ -409,7 +409,7 @@ return (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 16, marginBottom: 24 }}>
               {corridorData.map((c) => {
                 const netPct = c.netPct;
-                const quadrant = netPct > 40 ? { label: "GROW", color: C.green } : netPct > 25 ? { label: "DEFEND", color: C.accent } : netPct > 10 ? { label: "OPTIMIZE", color: C.amber } : { label: "EXIT", color: C.red };
+                const quadrant = netPct > 40 ? { label: "GROW", color: C.green } : netPct > 25 ? { label: "DEFEND", color: C.accent } : netPct > 10 ? { label: "OPTIMIZE", color: C.amber } : { label: "DE-PRIORITIZE / EXIT", color: C.red };
                 const barFill = (c.net / corridorData[0].net) * 100;
                 return (
                   <div key={c.corridor} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: 18, borderLeft: `3px solid ${quadrant.color}` }}>
@@ -452,7 +452,7 @@ return (
                   { label: "GROW", color: C.green, items: corridorData.filter(c => c.netPct > 40).map(c => c.corridor), desc: "High margin, invest in volume growth" },
                   { label: "DEFEND", color: C.accent, items: corridorData.filter(c => c.netPct > 25 && c.netPct <= 40).map(c => c.corridor), desc: "Solid economics, protect pricing" },
                   { label: "OPTIMIZE", color: C.amber, items: corridorData.filter(c => c.netPct > 10 && c.netPct <= 25).map(c => c.corridor), desc: "Margin pressure — review costs" },
-                  { label: "EXIT", color: C.red, items: corridorData.filter(c => c.netPct <= 10).map(c => c.corridor), desc: "Below threshold — restructure or exit" },
+                  { label: "EXIT", color: C.red, items: corridorData.filter(c => c.netPct <= 10).map(c => c.corridor), desc: "Below threshold — de-prioritize or exit" },
                 ].map(q => (
                   <div key={q.label} style={{ background: C.surface, borderRadius: 8, padding: 16, border: `1px solid ${q.color}33` }}>
                     <Tag label={q.label} color={q.color} />
@@ -567,7 +567,7 @@ return (
 
       {/* Footer */}
       <div style={{ borderTop: `1px solid ${C.border}`, padding: "16px 32px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ fontSize: 10, color: C.muted, fontFamily: "'DM Mono', monospace", letterSpacing: "0.1em" }}>PAYMENT PROFITABILITY ENGINE · MODEL 01 · CARLOS UREÑA PAYMENTS STRATEGY PORTFOLIO</span>
+        <span style={{ fontSize: 10, color: C.muted, fontFamily: "'DM Mono', monospace", letterSpacing: "0.1em" }}>PAYMENT PROFITABILITY ENGINE · MODEL 01 · ECONOMIC CORE · CARLOS UREÑA PAYMENTS STRATEGY</span>
         <span style={{ fontSize: 10, color: C.muted, fontFamily: "'DM Mono', monospace" }}>PROTOTYPE · SYNTHETIC DATA · Q1 2025</span>
       </div>
     </div>
