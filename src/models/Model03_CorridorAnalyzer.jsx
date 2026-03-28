@@ -174,8 +174,8 @@ const withAnalytics = CORRIDORS.map(c => {
     classification = "OPTIMIZE"; classColor = T.amber;
     classDesc = "Adequate margin — operational efficiency opportunity";
   } else {
-    classification = "EXIT / RESTRUCTURE"; classColor = T.red;
-    classDesc = "Below threshold — renegotiate or exit";
+    classification = "DE-PRIORITIZE / EXIT"; classColor = T.red;
+    classDesc = "Below threshold — de-prioritize or exit";
   }
 
   return { ...c, totalCost, grossRevenue, net, netMarginPct, costRatioPct, revenuePerTxn, costPerTxn, netPerTxn, classification, classColor, classDesc };
@@ -192,7 +192,7 @@ const portfolio = withAnalytics.reduce((acc, c) => ({
 portfolio.netMarginPct = (portfolio.net / portfolio.grossRevenue) * 100;
 
 // Classification counts
-const classCounts = { GROW: 0, DEFEND: 0, OPTIMIZE: 0, "EXIT / RESTRUCTURE": 0 };
+const classCounts = { GROW: 0, DEFEND: 0, OPTIMIZE: 0, "DE-PRIORITIZE / EXIT": 0 };
 withAnalytics.forEach(c => classCounts[c.classification]++);
 
 // ─── HELPERS ────────────────────────────────────────────────────────────────
@@ -333,7 +333,7 @@ export default function CorridorEconomicsAnalyzer() {
             </div>
             <div>
               <div style={{ fontSize: 14, fontWeight: 600, fontFamily: "'Space Mono', monospace", color: T.gold, letterSpacing: "0.06em" }}>CORRIDOR ECONOMICS ANALYZER</div>
-              <div style={{ fontSize: 9, color: T.textFaint, fontFamily: "'Space Mono', monospace", letterSpacing: "0.12em" }}>MODEL 03 — NETWORK INTELLIGENCE</div>
+              <div style={{ fontSize: 9, color: T.textFaint, fontFamily: "'Space Mono', monospace", letterSpacing: "0.12em" }}>MODEL 03 — NETWORK INTELLIGENCE · LAYER 3</div>
             </div>
           </div>
           <div style={{ display: "flex", gap: 28 }}>
@@ -408,7 +408,7 @@ export default function CorridorEconomicsAnalyzer() {
                 </ResponsiveContainer>
                 {/* Quadrant labels */}
                 <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginTop: 8 }}>
-                  {[["GROW",T.green],["DEFEND",T.teal],["OPTIMIZE",T.amber],["EXIT / RESTRUCTURE",T.red]].map(([l,c]) => (
+                  {[["GROW",T.green],["DEFEND",T.teal],["OPTIMIZE",T.amber],["DE-PRIORITIZE / EXIT",T.red]].map(([l,c]) => (
                     <span key={l} style={{ fontSize: 9, color: c, fontFamily: "'Space Mono', monospace", display: "flex", alignItems: "center", gap: 4 }}>
                       <span style={{ width: 8, height: 8, borderRadius: "50%", background: c, display: "inline-block" }} />{l} ({classCounts[l]})
                     </span>
@@ -423,7 +423,7 @@ export default function CorridorEconomicsAnalyzer() {
                   { cls: "GROW", color: T.green, corridors: withAnalytics.filter(c=>c.classification==="GROW"), desc: "High margin + high growth — invest" },
                   { cls: "DEFEND", color: T.teal, corridors: withAnalytics.filter(c=>c.classification==="DEFEND"), desc: "Mature + profitable — protect" },
                   { cls: "OPTIMIZE", color: T.amber, corridors: withAnalytics.filter(c=>c.classification==="OPTIMIZE"), desc: "Margin pressure — restructure costs" },
-                  { cls: "EXIT / RESTRUCTURE", color: T.red, corridors: withAnalytics.filter(c=>c.classification==="EXIT / RESTRUCTURE"), desc: "Below threshold — act now" },
+                  { cls: "DE-PRIORITIZE / EXIT", color: T.red, corridors: withAnalytics.filter(c=>c.classification==="DE-PRIORITIZE / EXIT"), desc: "Below threshold — act now" },
                 ].map(q => (
                   <div key={q.cls} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: "14px 16px", borderLeft: `3px solid ${q.color}` }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
@@ -465,9 +465,9 @@ export default function CorridorEconomicsAnalyzer() {
               <SectionTitle>Corridor P&L Rankings</SectionTitle>
               <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                 <span style={{ fontSize: 9, color: T.textFaint, fontFamily: "'Space Mono', monospace" }}>FILTER:</span>
-                {["all","GROW","DEFEND","OPTIMIZE","EXIT / RESTRUCTURE"].map(f => (
+                {["all","GROW","DEFEND","OPTIMIZE","DE-PRIORITIZE / EXIT"].map(f => (
                   <button key={f} className={`filter-btn ${filterClass===f?"active":""}`} onClick={()=>setFilterClass(f)}>
-                    {f === "all" ? "ALL" : f === "EXIT / RESTRUCTURE" ? "EXIT" : f}
+                    {f === "all" ? "ALL" : f === "DE-PRIORITIZE / EXIT" ? "EXIT" : f}
                   </button>
                 ))}
                 <div style={{ width: 1, height: 16, background: T.border, margin: "0 4px" }} />
@@ -682,8 +682,8 @@ export default function CorridorEconomicsAnalyzer() {
                   metric: "Target: Lift net margin by 8–12pp in 12 months"
                 },
                 {
-                  cls:"EXIT / RESTRUCTURE", color:T.red, icon:"⚠",
-                  corridors: withAnalytics.filter(c=>c.classification==="EXIT / RESTRUCTURE"),
+                  cls:"DE-PRIORITIZE / EXIT", color:T.red, icon:"⚠",
+                  corridors: withAnalytics.filter(c=>c.classification==="DE-PRIORITIZE / EXIT"),
                   actions: ["Prepare restructuring case: repricing or volume minimum commitments","Engage clients on new pricing terms within 60 days","If restructuring fails, begin managed wind-down — no new volume acquisition","Reassign nostro and correspondent capacity to GROW corridors"],
                   metric: "Decision point: 90 days"
                 },
@@ -748,7 +748,7 @@ export default function CorridorEconomicsAnalyzer() {
 
       {/* FOOTER */}
       <div style={{ borderTop:`1px solid ${T.border}`, padding:"14px 32px", display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:20 }}>
-        <span style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace", letterSpacing:"0.1em" }}>CORRIDOR ECONOMICS ANALYZER · MODEL 03 · CARLOS UREÑA PAYMENTS STRATEGY PORTFOLIO</span>
+        <span style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace", letterSpacing:"0.1em" }}>CORRIDOR ECONOMICS ANALYZER · MODEL 03 · NETWORK INTELLIGENCE · CARLOS UREÑA PAYMENTS STRATEGY</span>
         <span style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>PROTOTYPE · SYNTHETIC DATA · 10 CORRIDORS · Q1 2025</span>
       </div>
     </div>
