@@ -208,15 +208,15 @@ export default function Model06() {
       <div style={{ borderBottom:`1px solid ${T.border}`, padding:'32px 32px 0', background:T.surface }}>
         <div style={{ maxWidth:1200, margin:'0 auto' }}>
           <div style={{ fontFamily:T.mono, fontSize:10, color:T.gold, letterSpacing:'0.12em', textTransform:'uppercase', marginBottom:10 }}>
-            Model 06 · Layer 4–5 · Decision & Strategic Intelligence
+            Model 06 · Layer 6 · Strategic Positioning Layer
           </div>
           <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginBottom:24 }}>
             <div>
               <h1 style={{ fontFamily:T.serif, fontSize:'clamp(24px,3vw,36px)', fontWeight:500, color:T.text, lineHeight:1.2, marginBottom:8 }}>
-                Money Movement<br />Commercialization Engine
+                Network Participation<br />Economics
               </h1>
               <p style={{ fontFamily:T.sans, fontSize:14, color:T.textMid, maxWidth:520, lineHeight:1.65 }}>
-                Network-scale commercialization intelligence across corridors, use cases, transaction economics, and GTM pipeline — built for Mastercard Move and Visa Direct operators.
+                Evaluates the bank's participation economics across push payment networks — assessing whether volume, pricing, and corridor coverage are generating an adequate return on infrastructure investment.
               </p>
             </div>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, minWidth:480 }}>
@@ -644,7 +644,7 @@ export default function Model06() {
       <div style={{ borderTop:`1px solid ${T.border}`, padding:'20px 32px', marginTop:20 }}>
         <div style={{ maxWidth:1200, margin:'0 auto', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
           <span style={{ fontFamily:T.mono, fontSize:10, color:T.textDim }}>
-            Payments Strategy Analytics Framework · Model 06 · Money Movement Commercialization Engine · V1
+            Network Participation Economics · Model 06 · Strategic Positioning Layer · Carlos Ureña Payments Strategy
           </span>
           <span style={{ fontFamily:T.mono, fontSize:10, color:T.textDim }}>
             Synthetic data calibrated to network-scale industry ranges · carlosurena.com
