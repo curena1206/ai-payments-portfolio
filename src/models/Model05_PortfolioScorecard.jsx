@@ -1,755 +1,893 @@
 import { useState, useMemo } from "react";
 import {
-  ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, BarChart, Bar, Cell, LineChart, Line, Legend,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-  ComposedChart, Area
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  Cell, LineChart, Line, Area, AreaChart, ComposedChart, ReferenceLine, Legend
 } from "recharts";
 import { ModelBackBar } from '../pages/FrameworkIndex';
 
-// ─── DESIGN TOKENS ─────────────────────────────────────────────────────────
-// Aesthetic: Rich midnight blue with gold accents — cartographic, premium, global
+// ── DESIGN TOKENS ──────────────────────────────────────────────────────────
 const T = {
-  bg:        "#0D1117",
-  surface:   "#161B22",
-  card:      "#1C2333",
-  border:    "#2D3748",
-  borderLt:  "#3D4F6B",
-  gold:      "#D4A843",
-  goldLt:    "#F5E6B8",
-  goldDim:   "#8A6C27",
-  teal:      "#2DD4BF",
-  tealDim:   "#0D9488",
-  red:       "#F87171",
-  redDim:    "#991B1B",
-  amber:     "#FBBF24",
-  green:     "#34D399",
-  greenDim:  "#065F46",
-  blue:      "#60A5FA",
-  blueDim:   "#1D4ED8",
-  text:      "#E2E8F0",
-  textMid:   "#94A3B8",
-  textFaint: "#4B5563",
-  grid:      "#1E2A3A",
+  bg:        '#08090f',
+  surface:   '#0d1117',
+  card:      '#111827',
+  cardHov:   '#161f2e',
+  border:    '#1e2d3d',
+  borderHi:  '#2a3f55',
+  gold:      '#c9a84c',
+  goldDim:   '#8a6f30',
+  goldSoft:  'rgba(201,168,76,0.10)',
+  goldGlow:  'rgba(201,168,76,0.04)',
+  teal:      '#2dd4bf',
+  tealSoft:  'rgba(45,212,191,0.08)',
+  red:       '#f87171',
+  redSoft:   'rgba(248,113,113,0.08)',
+  amber:     '#fbbf24',
+  amberSoft: 'rgba(251,191,36,0.08)',
+  green:     '#34d399',
+  greenSoft: 'rgba(52,211,153,0.08)',
+  blue:      '#60a5fa',
+  blueSoft:  'rgba(96,165,250,0.08)',
+  purple:    '#a78bfa',
+  text:      '#e2e8f0',
+  textMid:   '#94a3b8',
+  textDim:   '#4b5563',
+  mono:      "'IBM Plex Mono', 'Courier New', monospace",
+  sans:      "'Inter', system-ui, sans-serif",
+  serif:     "'Playfair Display', Georgia, serif",
 };
 
-// ─── CORRIDOR DATA ──────────────────────────────────────────────────────────
-// Full economics per corridor — built on Model 01 corridor P&L foundation
-const CORRIDORS = [
+// ── PORTFOLIO HEALTH INDEX ─────────────────────────────────────────────────
+// Six dimensions scored 0–100. Transparent methodology shown to user.
+const PHI_DIMENSIONS = [
   {
-    id: "US-EU", from: "United States", to: "Eurozone", flag_from: "🇺🇸", flag_to: "🇪🇺",
-    currency: "USD/EUR", fxPair: "EURUSD",
-    volume: 14200, avgTicket: 129577, grossFee: 1840000, fxMargin: 420000,
-    railCost: 198000, nostro: 145000, correspondent: 68000, compliance: 38000, exceptions: 42000,
-    fxVolatility: 7.2, competitorCount: 8, marketSharePct: 12.4,
-    growthRate: 14.2, regulatoryRisk: "Low", corridorMaturity: "Mature",
-    keyDrivers: ["EUR trade flows", "Intra-company transfers", "EU payroll"],
-    fxSpreadBps: 18, nostroTurnDays: 1.8, exceptionRatePct: 2.1,
-    trend: [380,410,395,428,442,460,448,471,490,512,498,420],
+    id: 'pricing',
+    label: 'Pricing Governance',
+    score: 58,
+    weight: 0.20,
+    color: T.amber,
+    description: 'Pricing exception rate, time since last review, tier consistency across segment peers',
+    issues: ['14% of payments processed at exception pricing', 'Average pricing review lag: 18 months', '3 clients below segment peer average by >20%'],
+    levers: ['Systematic exception review and approval workflow', 'Annual repricing cycle for all Standard tier clients', 'Peer benchmark alert at >15% gap'],
   },
   {
-    id: "US-UK", from: "United States", to: "United Kingdom", flag_from: "🇺🇸", flag_to: "🇬🇧",
-    currency: "USD/GBP", fxPair: "GBPUSD",
-    volume: 8900, avgTicket: 125843, grossFee: 1120000, fxMargin: 280000,
-    railCost: 148000, nostro: 98000, correspondent: 44000, compliance: 29000, exceptions: 28000,
-    fxVolatility: 8.8, competitorCount: 10, marketSharePct: 9.8,
-    growthRate: 8.4, regulatoryRisk: "Medium", corridorMaturity: "Mature",
-    keyDrivers: ["Post-Brexit trade", "Financial services", "Real estate"],
-    fxSpreadBps: 15, nostroTurnDays: 1.2, exceptionRatePct: 1.8,
-    trend: [210,224,218,235,242,251,238,261,270,284,268,253],
+    id: 'corridor',
+    label: 'Corridor Economics',
+    score: 71,
+    weight: 0.20,
+    color: T.teal,
+    description: 'Net margin by corridor, cost structure efficiency, Grow / Defend / Optimize / Exit classification',
+    issues: ['2 corridors below 10% net margin (DE-PRIORITIZE / EXIT)', 'US→BR and US→NG exception rates 3x portfolio average', 'Nostro funding cost elevated on 3 emerging market corridors'],
+    levers: ['Restructure pricing on loss-making corridors within 90 days', 'Exception root cause analysis on US→BR and US→NG', 'Nostro optimization on NG, IN, BR corridors'],
   },
   {
-    id: "US-SG", from: "United States", to: "Singapore", flag_from: "🇺🇸", flag_to: "🇸🇬",
-    currency: "USD/SGD", fxPair: "USDSGD",
-    volume: 4100, avgTicket: 173170, grossFee: 710000, fxMargin: 195000,
-    railCost: 108000, nostro: 88000, correspondent: 52000, compliance: 42000, exceptions: 31000,
-    fxVolatility: 4.2, competitorCount: 6, marketSharePct: 14.2,
-    growthRate: 22.8, regulatoryRisk: "Low", corridorMaturity: "Growing",
-    keyDrivers: ["APAC treasury hubs", "Tech sector", "Private wealth"],
-    fxSpreadBps: 22, nostroTurnDays: 2.1, exceptionRatePct: 2.8,
-    trend: [98,105,112,118,128,136,142,151,162,174,180,195],
+    id: 'rail',
+    label: 'Rail Economics',
+    score: 64,
+    weight: 0.15,
+    color: T.blue,
+    description: 'Rail mix efficiency, STP rates, cost per transaction by rail, migration opportunity',
+    issues: ['$8.50 wire transactions for payments eligible for $0.06 instant rails', 'FedNow adoption at 14% of eligible volume', 'SWIFT MX STP rate 91.2% — below 95% target'],
+    levers: ['Instant rail migration program for sub-$500K domestic payments', 'SWIFT MX data quality initiative to lift STP above 95%', 'Client incentive structure for RTP/FedNow adoption'],
   },
   {
-    id: "US-IN", from: "United States", to: "India", flag_from: "🇺🇸", flag_to: "🇮🇳",
-    currency: "USD/INR", fxPair: "USDINR",
-    volume: 3800, avgTicket: 126315, grossFee: 480000, fxMargin: 92000,
-    railCost: 118000, nostro: 112000, correspondent: 78000, compliance: 58000, exceptions: 64000,
-    fxVolatility: 6.8, competitorCount: 14, marketSharePct: 4.2,
-    growthRate: 18.4, regulatoryRisk: "High", corridorMaturity: "Growing",
-    keyDrivers: ["IT services", "Remittance", "Shared service centers"],
-    fxSpreadBps: 28, nostroTurnDays: 3.4, exceptionRatePct: 7.8,
-    trend: [62,68,72,78,82,88,84,92,96,98,102,104],
+    id: 'client',
+    label: 'Client Retention',
+    score: 62,
+    weight: 0.20,
+    color: T.red,
+    description: 'Volume migration signals, concentration risk, monetization gaps relative to internal peers',
+    issues: ['3 clients showing consecutive volume decline >6 months', '$1.37M revenue at risk from migration and pricing gaps', 'Top 2 clients represent 38% of total portfolio revenue'],
+    levers: ['Urgent retention intervention for Meridian and Zenith', 'Pacific Trade Finance repricing — $462K annual opportunity', 'Client concentration risk: diversification target'],
   },
   {
-    id: "US-AE", from: "United States", to: "UAE", flag_from: "🇺🇸", flag_to: "🇦🇪",
-    currency: "USD/AED", fxPair: "USDAED",
-    volume: 2900, avgTicket: 213793, grossFee: 620000, fxMargin: 148000,
-    railCost: 98000, nostro: 95000, correspondent: 48000, compliance: 48000, exceptions: 38000,
-    fxVolatility: 0.8, competitorCount: 7, marketSharePct: 11.2,
-    growthRate: 28.4, regulatoryRisk: "Medium", corridorMaturity: "Growing",
-    keyDrivers: ["Energy sector", "Real estate", "Trade finance"],
-    fxSpreadBps: 12, nostroTurnDays: 1.4, exceptionRatePct: 3.8,
-    trend: [88,95,102,110,118,124,132,140,148,158,164,174],
+    id: 'revenue',
+    label: 'Revenue Concentration',
+    score: 55,
+    weight: 0.15,
+    color: T.purple,
+    description: 'Revenue distribution across clients, corridors, and rails — concentration and diversification risk',
+    issues: ['Top 3 clients = 44% of total revenue', 'US→EU corridor = 28% of corridor revenue', 'Single-rail clients represent 31% of volume'],
+    levers: ['New client acquisition target: 20% revenue from new logos in 18 months', 'Corridor diversification: grow APAC to 25% of revenue', 'Multi-rail product packaging to reduce single-rail concentration'],
   },
   {
-    id: "US-MX", from: "United States", to: "Mexico", flag_from: "🇺🇸", flag_to: "🇲🇽",
-    currency: "USD/MXN", fxPair: "USDMXN",
-    volume: 6200, avgTicket: 62903, grossFee: 390000, fxMargin: 58000,
-    railCost: 68000, nostro: 42000, correspondent: 28000, compliance: 28000, exceptions: 22000,
-    fxVolatility: 14.8, competitorCount: 18, marketSharePct: 5.8,
-    growthRate: 6.2, regulatoryRisk: "Medium", corridorMaturity: "Mature",
-    keyDrivers: ["USMCA trade", "Manufacturing payroll", "Nearshoring"],
-    fxSpreadBps: 35, nostroTurnDays: 1.1, exceptionRatePct: 2.2,
-    trend: [58,62,60,64,66,68,65,70,72,68,71,73],
-  },
-  {
-    id: "US-JP", from: "United States", to: "Japan", flag_from: "🇺🇸", flag_to: "🇯🇵",
-    currency: "USD/JPY", fxPair: "USDJPY",
-    volume: 2100, avgTicket: 276190, grossFee: 580000, fxMargin: 168000,
-    railCost: 88000, nostro: 78000, correspondent: 42000, compliance: 35000, exceptions: 18000,
-    fxVolatility: 11.2, competitorCount: 5, marketSharePct: 16.8,
-    growthRate: 4.8, regulatoryRisk: "Low", corridorMaturity: "Mature",
-    keyDrivers: ["Automotive supply chain", "Electronics", "Investment flows"],
-    fxSpreadBps: 14, nostroTurnDays: 1.6, exceptionRatePct: 1.2,
-    trend: [118,124,130,136,142,148,144,150,156,162,158,154],
-  },
-  {
-    id: "US-HK", from: "United States", to: "Hong Kong", flag_from: "🇺🇸", flag_to: "🇭🇰",
-    currency: "USD/HKD", fxPair: "USDHKD",
-    volume: 1800, avgTicket: 272222, grossFee: 490000, fxMargin: 145000,
-    railCost: 78000, nostro: 72000, correspondent: 38000, compliance: 38000, exceptions: 14000,
-    fxVolatility: 0.5, competitorCount: 6, marketSharePct: 18.4,
-    growthRate: 3.2, regulatoryRisk: "Medium", corridorMaturity: "Mature",
-    keyDrivers: ["Capital markets", "Private banking", "Trade finance"],
-    fxSpreadBps: 8, nostroTurnDays: 1.2, exceptionRatePct: 1.0,
-    trend: [108,112,116,120,124,128,122,128,132,135,132,130],
-  },
-  {
-    id: "US-BR", from: "United States", to: "Brazil", flag_from: "🇺🇸", flag_to: "🇧🇷",
-    currency: "USD/BRL", fxPair: "USDBRL",
-    volume: 2400, avgTicket: 129166, grossFee: 310000, fxMargin: 42000,
-    railCost: 88000, nostro: 95000, correspondent: 62000, compliance: 68000, exceptions: 72000,
-    fxVolatility: 18.4, competitorCount: 12, marketSharePct: 3.8,
-    growthRate: 9.8, regulatoryRisk: "High", corridorMaturity: "Developing",
-    keyDrivers: ["Commodities", "Consumer goods", "Agribusiness"],
-    fxSpreadBps: 48, nostroTurnDays: 4.2, exceptionRatePct: 9.4,
-    trend: [38,40,42,44,48,46,50,52,48,54,52,56],
-  },
-  {
-    id: "US-NG", from: "United States", to: "Nigeria", flag_from: "🇺🇸", flag_to: "🇳🇬",
-    currency: "USD/NGN", fxPair: "USDNGN",
-    volume: 820, avgTicket: 353658, grossFee: 290000, fxMargin: 48000,
-    railCost: 78000, nostro: 112000, correspondent: 88000, compliance: 88000, exceptions: 98000,
-    fxVolatility: 32.8, competitorCount: 4, marketSharePct: 8.2,
-    growthRate: 14.8, regulatoryRisk: "Very High", corridorMaturity: "Developing",
-    keyDrivers: ["Energy sector", "Trade finance", "Diaspora flows"],
-    fxSpreadBps: 68, nostroTurnDays: 6.8, exceptionRatePct: 14.2,
-    trend: [28,30,32,34,36,34,38,36,40,38,42,44],
+    id: 'operational',
+    label: 'Operational Drag',
+    score: 67,
+    weight: 0.10,
+    description: 'Exception rate, repair cost, STP performance — operational cost eroding margin silently',
+    color: T.gold,
+    issues: ['Exception costs represent 6.2% of gross revenue', 'Manual repair rate on SWIFT corridors: 8.8%', 'October exception spike pattern repeating — not resolved'],
+    levers: ['STP improvement program: target 97.5% across all SWIFT corridors', 'Exception root cause database — tag and track by corridor', 'Operational cost allocation by corridor to surface true drag'],
   },
 ];
 
-// ─── DERIVED ANALYTICS ──────────────────────────────────────────────────────
-const withAnalytics = CORRIDORS.map(c => {
-  const totalCost = c.railCost + c.nostro + c.correspondent + c.compliance + c.exceptions;
-  const grossRevenue = c.grossFee + c.fxMargin;
-  const net = grossRevenue - totalCost;
-  const netMarginPct = (net / grossRevenue) * 100;
-  const costRatioPct = (totalCost / grossRevenue) * 100;
-  const revenuePerTxn = grossRevenue / c.volume;
-  const costPerTxn = totalCost / c.volume;
-  const netPerTxn = net / c.volume;
+// Composite PHI score — weighted average
+const PHI_SCORE = Math.round(
+  PHI_DIMENSIONS.reduce((s, d) => s + d.score * d.weight, 0)
+);
 
-  // Strategic classification
-  let classification, classColor, classDesc;
-  if (netMarginPct > 40 && c.growthRate > 10) {
-    classification = "GROW"; classColor = T.green;
-    classDesc = "High margin + high growth — invest aggressively";
-  } else if (netMarginPct > 40 && c.growthRate <= 10) {
-    classification = "DEFEND"; classColor = T.teal;
-    classDesc = "High margin, mature — protect pricing and share";
-  } else if (netMarginPct > 20 && c.growthRate > 10) {
-    classification = "OPTIMIZE"; classColor = T.amber;
-    classDesc = "Growth corridor — improve cost structure to unlock margin";
-  } else if (netMarginPct > 20) {
-    classification = "OPTIMIZE"; classColor = T.amber;
-    classDesc = "Adequate margin — operational efficiency opportunity";
-  } else {
-    classification = "DE-PRIORITIZE / EXIT"; classColor = T.red;
-    classDesc = "Below threshold — renegotiate or exit";
-  }
+// ── SCENARIO MODELS ────────────────────────────────────────────────────────
+const SCENARIOS = {
+  base: {
+    label: 'Base Case',
+    description: 'No interventions. Current trajectory continues.',
+    color: T.textMid,
+    phiProjected: [PHI_SCORE, 61, 59, 57, 55, 53],
+    revenueProjected: [16.2, 16.0, 15.7, 15.3, 14.8, 14.2],
+    marginProjected: [31.2, 30.8, 30.1, 29.4, 28.5, 27.4],
+    keyRisk: 'Pricing exceptions compound. Migration clients lost. Corridor economics deteriorate without intervention.',
+  },
+  optimized: {
+    label: 'Priority Interventions',
+    description: 'Top 5 ranked interventions executed within 90 days.',
+    color: T.green,
+    phiProjected: [PHI_SCORE, 66, 71, 75, 78, 81],
+    revenueProjected: [16.2, 17.1, 18.4, 19.6, 20.8, 22.1],
+    marginProjected: [31.2, 33.4, 35.8, 37.2, 38.6, 40.1],
+    keyRisk: 'Execution risk on repricing conversations. Corridor restructuring requires internal alignment.',
+  },
+  stress: {
+    label: 'Stress Case',
+    description: 'Two major clients migrate. Key corridor margin compression.',
+    color: T.red,
+    phiProjected: [PHI_SCORE, 56, 50, 44, 40, 37],
+    revenueProjected: [16.2, 14.8, 13.1, 11.8, 10.9, 10.2],
+    marginProjected: [31.2, 28.4, 25.1, 22.8, 21.0, 19.6],
+    keyRisk: 'Meridian and Zenith volume fully migrates. US→BR corridor exits. Rail cost inflation continues.',
+  },
+};
 
-  return { ...c, totalCost, grossRevenue, net, netMarginPct, costRatioPct, revenuePerTxn, costPerTxn, netPerTxn, classification, classColor, classDesc };
-});
+const SCENARIO_MONTHS = ['Now', 'Q2', 'Q3', 'Q4', 'Q1+1', 'Q2+1'];
 
-// Portfolio totals
-const portfolio = withAnalytics.reduce((acc, c) => ({
-  grossRevenue: acc.grossRevenue + c.grossRevenue,
-  totalCost: acc.totalCost + c.totalCost,
-  net: acc.net + c.net,
-  volume: acc.volume + c.volume,
-  fxMargin: acc.fxMargin + c.fxMargin,
-}), { grossRevenue: 0, totalCost: 0, net: 0, volume: 0, fxMargin: 0 });
-portfolio.netMarginPct = (portfolio.net / portfolio.grossRevenue) * 100;
+// ── ACTION REGISTER ────────────────────────────────────────────────────────
+const ACTIONS = [
+  {
+    rank: 1,
+    category: 'Client',
+    action: 'Pacific Trade Finance repricing',
+    detail: 'Revenue per payment $116 below FI segment peer average. Introductory pricing never reviewed. Scheduled repricing conversation with RM Jennifer Park.',
+    revenueUplift: 462000,
+    timeToImpact: '30–60 days',
+    complexity: 'LOW',
+    dimension: 'client',
+    owner: 'Jennifer Park (RM)',
+    status: 'READY',
+  },
+  {
+    rank: 2,
+    category: 'Client',
+    action: 'Zenith Manufacturing retention intervention',
+    detail: 'Volume down 67% from peak over 18 months. Urgent senior RM call required. Competitive repricing offer and relationship review.',
+    revenueUplift: 208000,
+    timeToImpact: '14–30 days',
+    complexity: 'MEDIUM',
+    dimension: 'client',
+    owner: 'Amy Torres (RM)',
+    status: 'URGENT',
+  },
+  {
+    rank: 3,
+    category: 'Pricing',
+    action: 'Veritas Healthcare and Northgate Capital repricing',
+    detail: 'Both clients below segment peer average. Combined recovery $203K annually. Low relationship risk — stable volumes, no competitor signals.',
+    revenueUplift: 203000,
+    timeToImpact: '30–60 days',
+    complexity: 'LOW',
+    dimension: 'pricing',
+    owner: 'Product & RM Teams',
+    status: 'READY',
+  },
+  {
+    rank: 4,
+    category: 'Corridor',
+    action: 'US→BR and US→NG corridor restructuring',
+    detail: 'Both below 10% net margin after full cost allocation. Exception rates 3x portfolio average. Reprice or de-prioritize within 90 days.',
+    revenueUplift: 180000,
+    timeToImpact: '60–90 days',
+    complexity: 'HIGH',
+    dimension: 'corridor',
+    owner: 'Corridor Strategy + Finance',
+    status: 'IN PROGRESS',
+  },
+  {
+    rank: 5,
+    category: 'Rail',
+    action: 'Instant rail migration — domestic wire to RTP/FedNow',
+    detail: '$8.50 wire transactions for payments eligible for $0.06 instant rails. Migrating 20% of eligible volume reduces rail cost by $118K annually.',
+    revenueUplift: 118000,
+    timeToImpact: '90–120 days',
+    complexity: 'MEDIUM',
+    dimension: 'rail',
+    owner: 'Product + Technology',
+    status: 'PLANNING',
+  },
+  {
+    rank: 6,
+    category: 'Pricing',
+    action: 'Meridian Industries repricing and volume commitment',
+    detail: 'Volume declining 11 consecutive months. Peer benchmark shows $16/payment gap. Retention offer: enhanced FX rate in exchange for volume commitment.',
+    revenueUplift: 96000,
+    timeToImpact: '30–60 days',
+    complexity: 'MEDIUM',
+    dimension: 'client',
+    owner: 'Sarah Chen (RM)',
+    status: 'READY',
+  },
+  {
+    rank: 7,
+    category: 'Operational',
+    action: 'SWIFT MX STP improvement program',
+    detail: 'STP rate at 91.2% vs 95% target. Each percentage point improvement reduces operational cost by approximately $28K annually at current volumes.',
+    revenueUplift: 112000,
+    timeToImpact: '90–180 days',
+    complexity: 'HIGH',
+    dimension: 'operational',
+    owner: 'Operations + Technology',
+    status: 'PLANNING',
+  },
+  {
+    rank: 8,
+    category: 'Revenue',
+    action: 'Apex Global Trade — US→SG corridor expansion',
+    detail: 'Client has Singapore subsidiary. Not currently routing through the bank. Estimated incremental revenue $180K annually at current ticket size.',
+    revenueUplift: 180000,
+    timeToImpact: '45–90 days',
+    complexity: 'LOW',
+    dimension: 'revenue',
+    owner: 'Marcus Williams (RM)',
+    status: 'READY',
+  },
+];
 
-// Classification counts
-const classCounts = { GROW: 0, DEFEND: 0, OPTIMIZE: 0, "DE-PRIORITIZE / EXIT": 0 };
-withAnalytics.forEach(c => classCounts[c.classification]++);
+const totalUplift = ACTIONS.reduce((s, a) => s + a.revenueUplift, 0);
 
-// ─── HELPERS ────────────────────────────────────────────────────────────────
-const fmt = (n) => n >= 1000000 ? `$${(n/1000000).toFixed(1)}M` : n >= 1000 ? `$${(n/1000).toFixed(0)}K` : `$${n.toFixed(0)}`;
-const fmtPct = (n) => `${n.toFixed(1)}%`;
+// ── HELPERS ─────────────────────────────────────────────────────────────────
+const fmt = n => n >= 1000000 ? `$${(n/1000000).toFixed(1)}M` : n >= 1000 ? `$${(n/1000).toFixed(0)}K` : `$${n.toFixed(0)}`;
+const fmtM = n => `$${n.toFixed(1)}M`;
 
-// ─── SUBCOMPONENTS ───────────────────────────────────────────────────────────
-const SectionTitle = ({ children, sub }) => (
+const complexityColor = c => ({ LOW: T.green, MEDIUM: T.amber, HIGH: T.red }[c] || T.textDim);
+const statusColor = s => ({ READY: T.green, URGENT: T.red, 'IN PROGRESS': T.teal, PLANNING: T.amber }[s] || T.textDim);
+const dimensionColor = d => PHI_DIMENSIONS.find(p => p.id === d)?.color || T.gold;
+
+// ── SUBCOMPONENTS ───────────────────────────────────────────────────────────
+const Tag = ({ label, color, small }) => (
+  <span style={{
+    background: `${color}18`, border: `1px solid ${color}44`, color,
+    borderRadius: 3, padding: small ? '1px 6px' : '2px 8px',
+    fontFamily: T.mono, fontSize: small ? 9 : 10, fontWeight: 600, letterSpacing: '0.06em',
+    whiteSpace: 'nowrap',
+  }}>{label}</span>
+);
+
+const KPI = ({ label, value, sub, accent = T.gold }) => (
+  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px' }}>
+    <div style={{ fontFamily: T.mono, fontSize: 10, color: T.textDim, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6 }}>{label}</div>
+    <div style={{ fontFamily: T.mono, fontSize: 22, color: accent, fontWeight: 600, marginBottom: 4 }}>{value}</div>
+    {sub && <div style={{ fontFamily: T.sans, fontSize: 12, color: T.textMid }}>{sub}</div>}
+  </div>
+);
+
+const SectionHead = ({ title, sub }) => (
   <div style={{ marginBottom: 18 }}>
-    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
       <div style={{ width: 2, height: 16, background: T.gold }} />
-      <h2 style={{ margin: 0, fontSize: 10, fontWeight: 600, color: T.gold, fontFamily: "'Space Mono', monospace", letterSpacing: "0.16em", textTransform: "uppercase" }}>{children}</h2>
+      <h2 style={{ margin: 0, fontSize: 10, fontWeight: 600, color: T.gold, fontFamily: T.mono, letterSpacing: '0.14em', textTransform: 'uppercase' }}>{title}</h2>
     </div>
-    {sub && <div style={{ fontSize: 11, color: T.textFaint, fontFamily: "'Space Mono', monospace", paddingLeft: 12 }}>{sub}</div>}
+    {sub && <div style={{ fontSize: 11, color: T.textDim, fontFamily: T.mono, paddingLeft: 12 }}>{sub}</div>}
   </div>
 );
 
-const ClassBadge = ({ label, color }) => (
-  <span style={{ fontSize: 9, padding: "3px 8px", borderRadius: 2, background: `${color}18`, color, border: `1px solid ${color}44`, fontFamily: "'Space Mono', monospace", letterSpacing: "0.1em", fontWeight: 600 }}>{label}</span>
-);
-
-const KpiCard = ({ label, value, sub, accent, wide }) => (
-  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: "16px 20px", borderLeft: `3px solid ${accent || T.gold}`, gridColumn: wide ? "span 2" : "span 1" }}>
-    <div style={{ fontSize: 9, color: T.textFaint, letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: "'Space Mono', monospace", marginBottom: 6 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: T.text, fontFamily: "'Cormorant Garamond', serif", letterSpacing: "-0.01em" }}>{value}</div>
-    {sub && <div style={{ fontSize: 10, color: T.textFaint, fontFamily: "'Space Mono', monospace", marginTop: 4 }}>{sub}</div>}
-  </div>
-);
-
-const WaterfallRow = ({ label, value, isPositive, isNet, base }) => {
-  const pct = Math.min(Math.abs(value / base) * 100, 100);
-  const color = isNet ? T.gold : isPositive ? T.green : T.red;
+const CustomTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 7 }}>
-      <div style={{ width: 160, fontSize: 10, color: T.textFaint, textAlign: "right", fontFamily: "'Space Mono', monospace", flexShrink: 0 }}>{label}</div>
-      <div style={{ flex: 1, height: 22, background: T.surface, borderRadius: 3, overflow: "hidden", position: "relative" }}>
-        <div style={{ width: `${pct}%`, height: "100%", background: isNet ? `linear-gradient(90deg, ${T.goldDim}, ${T.gold})` : color, opacity: 0.85, borderRadius: 3, transition: "width 0.7s ease" }} />
-        <div style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", fontSize: 10, color: T.text, fontFamily: "'Space Mono', monospace", fontWeight: isNet ? 700 : 400 }}>
-          {isPositive ? "+" : ""}{fmt(value)}
+    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: '10px 14px' }}>
+      <div style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, marginBottom: 6 }}>{label}</div>
+      {payload.map((p, i) => (
+        <div key={i} style={{ fontFamily: T.mono, fontSize: 11, color: p.color || T.text }}>
+          {p.name}: {typeof p.value === 'number' ? p.value.toFixed(1) : p.value}
         </div>
+      ))}
+    </div>
+  );
+};
+
+// PHI Score gauge
+const PHIGauge = ({ score }) => {
+  const color = score >= 75 ? T.green : score >= 60 ? T.amber : T.red;
+  const label = score >= 75 ? 'HEALTHY' : score >= 60 ? 'NEEDS ATTENTION' : 'AT RISK';
+  const circumference = 2 * Math.PI * 54;
+  const offset = circumference * (1 - score / 100);
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+      <svg width={140} height={140} viewBox="0 0 140 140">
+        <circle cx={70} cy={70} r={54} fill="none" stroke={T.border} strokeWidth={10} />
+        <circle cx={70} cy={70} r={54} fill="none" stroke={color} strokeWidth={10}
+          strokeDasharray={circumference} strokeDashoffset={offset}
+          strokeLinecap="round" transform="rotate(-90 70 70)"
+          style={{ transition: 'stroke-dashoffset 1s ease' }} />
+        <text x={70} y={65} textAnchor="middle" fontFamily={T.mono} fontSize={32} fontWeight={600} fill={color}>{score}</text>
+        <text x={70} y={84} textAnchor="middle" fontFamily={T.mono} fontSize={9} fill={T.textDim} letterSpacing="0.1em">/100</text>
+      </svg>
+      <Tag label={label} color={color} />
+      <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, letterSpacing: '0.08em', textAlign: 'center' }}>
+        PORTFOLIO HEALTH INDEX
+      </div>
+      <div style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid, textAlign: 'center', maxWidth: 180 }}>
+        A composite view translating multiple KPIs into a single economic signal
       </div>
     </div>
   );
 };
 
-// Sparkline mini component
-const Sparkline = ({ data, color }) => {
-  const min = Math.min(...data);
-  const max = Math.max(...data);
-  const pts = data.map((v, i) => {
-    const x = (i / (data.length - 1)) * 80;
-    const y = 20 - ((v - min) / (max - min)) * 18;
-    return `${x},${y}`;
-  }).join(" ");
-  return (
-    <svg width="80" height="22" style={{ flexShrink: 0 }}>
-      <polyline points={pts} fill="none" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
-      <circle cx={pts.split(" ").pop().split(",")[0]} cy={pts.split(" ").pop().split(",")[1]} r="2.5" fill={color} />
-    </svg>
-  );
-};
+// ── TABS ────────────────────────────────────────────────────────────────────
+const TABS = [
+  { id: 'dashboard', label: 'Portfolio Health' },
+  { id: 'dimensions', label: 'Six Dimensions' },
+  { id: 'scenarios', label: 'Scenario Modeling' },
+  { id: 'actions', label: 'Action Register' },
+];
 
-// Custom scatter tooltip
-const CorridorTooltip = ({ active, payload }) => {
-  if (!active || !payload?.length) return null;
-  const d = payload[0]?.payload;
-  if (!d) return null;
-  return (
-    <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: "12px 16px", fontFamily: "'Space Mono', monospace" }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: T.gold, marginBottom: 6 }}>{d.flag_from} → {d.flag_to} {d.currency}</div>
-      <div style={{ fontSize: 10, color: T.textMid }}>Net Margin: <span style={{ color: d.classColor, fontWeight: 600 }}>{fmtPct(d.netMarginPct)}</span></div>
-      <div style={{ fontSize: 10, color: T.textMid }}>Growth Rate: <span style={{ color: T.teal }}>{fmtPct(d.growthRate)}</span></div>
-      <div style={{ fontSize: 10, color: T.textMid }}>Volume: <span style={{ color: T.text }}>{d.volume.toLocaleString()} txns</span></div>
-      <div style={{ marginTop: 6 }}><ClassBadge label={d.classification} color={d.classColor} /></div>
-    </div>
-  );
-};
+// ── MAIN COMPONENT ──────────────────────────────────────────────────────────
+export default function PaymentsPortfolioDecisionEngine() {
+  const [tab, setTab] = useState('dashboard');
+  const [selectedDimension, setSelectedDimension] = useState(PHI_DIMENSIONS[0]);
+  const [activeScenario, setActiveScenario] = useState('optimized');
+  const [filterCategory, setFilterCategory] = useState('all');
 
-// ─── MAIN ───────────────────────────────────────────────────────────────────
-export default function CorridorEconomicsAnalyzer() {
-  const [activeTab, setActiveTab] = useState("overview");
-  const [selectedCorridor, setSelectedCorridor] = useState(withAnalytics[0]);
-  const [sortBy, setSortBy] = useState("net");
-  const [filterClass, setFilterClass] = useState("all");
+  const radarData = PHI_DIMENSIONS.map(d => ({ dimension: d.label.split(' ')[0], score: d.score, target: 80 }));
 
-  const sorted = useMemo(() => {
-    let list = filterClass === "all" ? withAnalytics : withAnalytics.filter(c => c.classification === filterClass);
-    return [...list].sort((a, b) =>
-      sortBy === "net" ? b.net - a.net :
-      sortBy === "margin" ? b.netMarginPct - a.netMarginPct :
-      sortBy === "growth" ? b.growthRate - a.growthRate :
-      b.volume - a.volume
-    );
-  }, [sortBy, filterClass]);
-
-  // Cost breakdown chart data for selected corridor
-  const costBreakdown = selectedCorridor ? [
-    { name: "Rail Cost",     value: selectedCorridor.railCost,       color: T.red   },
-    { name: "Nostro Funding",value: selectedCorridor.nostro,         color: T.amber },
-    { name: "Correspondent", value: selectedCorridor.correspondent,  color: T.blue  },
-    { name: "Compliance",    value: selectedCorridor.compliance,     color: "#A78BFA"},
-    { name: "Exceptions",    value: selectedCorridor.exceptions,     color: T.red   },
-  ] : [];
-
-  // Scatter data: x=growthRate, y=netMarginPct, z=volume
-  const scatterData = withAnalytics.map(c => ({
-    ...c, x: c.growthRate, y: c.netMarginPct, z: c.volume / 200
+  const scenarioChartData = SCENARIO_MONTHS.map((m, i) => ({
+    month: m,
+    base: SCENARIOS.base.phiProjected[i],
+    optimized: SCENARIOS.optimized.phiProjected[i],
+    stress: SCENARIOS.stress.phiProjected[i],
   }));
 
-  const tabs = ["overview", "corridors", "deep-dive", "matrix"];
+  const revenueChartData = SCENARIO_MONTHS.map((m, i) => ({
+    month: m,
+    base: SCENARIOS.base.revenueProjected[i],
+    optimized: SCENARIOS.optimized.revenueProjected[i],
+    stress: SCENARIOS.stress.revenueProjected[i],
+  }));
 
-return (
-    <div style={{ minHeight: "100vh", background: T.bg, fontFamily: "'DM Sans', sans-serif", color: T.text }}>
-      <ModelBackBar />
+  const filteredActions = filterCategory === 'all'
+    ? ACTIONS
+    : ACTIONS.filter(a => a.category.toLowerCase() === filterCategory.toLowerCase());
+
+  return (
+    <div style={{ minHeight: '100vh', background: T.bg, fontFamily: T.sans, color: T.text }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 4px; height: 4px; } ::-webkit-scrollbar-track { background: ${T.bg}; } ::-webkit-scrollbar-thumb { background: ${T.border}; border-radius: 2px; }
-        .tab-btn { background: none; border: none; cursor: pointer; padding: 10px 20px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; transition: all 0.2s; border-bottom: 2px solid transparent; white-space: nowrap; }
-        .tab-btn:hover { color: ${T.gold} !important; }
-        .corr-row { cursor: pointer; transition: all 0.15s; }
-        .corr-row:hover { background: ${T.card} !important; }
-        .filter-btn { cursor: pointer; background: none; border: 1px solid ${T.border}; color: ${T.textFaint}; padding: 4px 12px; border-radius: 3px; font-size: 9px; font-family: 'Space Mono', monospace; letter-spacing: 0.1em; transition: all 0.15s; }
-        .filter-btn.active { border-color: ${T.gold}; color: ${T.gold}; background: ${T.gold}12; }
-        .filter-btn:hover { border-color: ${T.gold}66; color: ${T.textMid}; }
-        .sort-btn { cursor: pointer; background: none; border: 1px solid ${T.border}; color: ${T.textFaint}; padding: 3px 10px; border-radius: 3px; font-size: 9px; font-family: 'Space Mono', monospace; letter-spacing: 0.08em; transition: all 0.15s; }
-        .sort-btn.active { border-color: ${T.gold}; color: ${T.gold}; }
-        @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-        .fade-up { animation: fadeUp 0.4s ease forwards; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: ${T.bg}; }
+        ::-webkit-scrollbar-thumb { background: ${T.border}; border-radius: 2px; }
+        .p05-tab { cursor: pointer; transition: all 0.15s; background: none; border: none; }
+        .p05-tab:hover { color: ${T.gold} !important; }
+        .p05-dim:hover { border-color: ${T.gold} !important; cursor: pointer; }
+        .p05-action:hover { background: ${T.cardHov} !important; cursor: pointer; }
+        .p05-scenario:hover { border-color: ${T.gold} !important; cursor: pointer; }
+        .filter-btn { cursor: pointer; background: none; border: 1px solid ${T.border}; color: ${T.textDim}; padding: 3px 10px; border-radius: 3px; font-size: 9px; font-family: ${T.mono}; letter-spacing: 0.08em; transition: all 0.15s; }
+        .filter-btn.active { border-color: ${T.gold}; color: ${T.gold}; background: ${T.goldSoft}; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-up { animation: fadeUp 0.35s ease forwards; }
       `}</style>
 
-      {/* ── HEADER ──────────────────────────────────────────────────────── */}
-      <div style={{ background: `linear-gradient(135deg, #0D1117 0%, #161B2E 100%)`, borderBottom: `1px solid ${T.border}`, padding: "0 32px" }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <div style={{ width: 32, height: 32, background: `linear-gradient(135deg, ${T.goldDim}, ${T.gold})`, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <span style={{ fontSize: 14 }}>🌐</span>
-            </div>
+      <ModelBackBar />
+
+      {/* HEADER */}
+      <div style={{ borderBottom: `1px solid ${T.border}`, padding: '0 32px', background: T.surface }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '24px 0 0' }}>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 600, fontFamily: "'Space Mono', monospace", color: T.gold, letterSpacing: "0.06em" }}>PAYMENTS PORTFOLIO DECISION ENGINE</div>
-              <div style={{ fontSize: 9, color: T.textFaint, fontFamily: "'Space Mono', monospace", letterSpacing: "0.12em" }}>MODEL 05 — EXECUTIVE DECISION LAYER · LAYER 5</div>
+              <div style={{ fontFamily: T.mono, fontSize: 10, color: T.gold, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
+                Model 05 · Layer 5 · Executive Decision Layer
+              </div>
+              <h1 style={{ fontFamily: T.serif, fontSize: 'clamp(22px,2.5vw,32px)', fontWeight: 500, color: T.text, lineHeight: 1.2, marginBottom: 8 }}>
+                Payments Portfolio<br />Decision Engine
+              </h1>
+              <p style={{ fontFamily: T.sans, fontSize: 13, color: T.textMid, maxWidth: 480, lineHeight: 1.65 }}>
+                Synthesizes all upstream model outputs into a single portfolio health view and translates that view into ranked, sequenced interventions with estimated revenue impact. This is where analysis becomes action.
+              </p>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, minWidth: 480, paddingBottom: 24 }}>
+              <KPI label="Portfolio Health Index" value={PHI_SCORE} sub="Composite across 6 dimensions" accent={PHI_SCORE >= 75 ? T.green : PHI_SCORE >= 60 ? T.amber : T.red} />
+              <KPI label="Revenue Opportunity" value={fmt(totalUplift)} sub="8 ranked interventions" accent={T.green} />
+              <KPI label="Urgent Actions" value={ACTIONS.filter(a => a.status === 'URGENT').length} sub="Require immediate attention" accent={T.red} />
+              <KPI label="Ready to Execute" value={ACTIONS.filter(a => a.status === 'READY').length} sub="No blockers identified" accent={T.teal} />
             </div>
           </div>
-          <div style={{ display: "flex", gap: 28 }}>
-            {[
-              { l: "CORRIDORS", v: CORRIDORS.length },
-              { l: "TOTAL VOLUME", v: `${(portfolio.volume/1000).toFixed(0)}K txns` },
-              { l: "PORTFOLIO NET", v: fmt(portfolio.net) },
-              { l: "AVG NET MARGIN", v: fmtPct(portfolio.netMarginPct) },
-            ].map(m => (
-              <div key={m.l} style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: T.gold, fontFamily: "'Cormorant Garamond', serif" }}>{m.v}</div>
-                <div style={{ fontSize: 8, color: T.textFaint, fontFamily: "'Space Mono', monospace", letterSpacing: "0.12em" }}>{m.l}</div>
-              </div>
+
+          {/* TABS */}
+          <div style={{ display: 'flex', gap: 0, borderTop: `1px solid ${T.border}` }}>
+            {TABS.map(t => (
+              <button key={t.id} className="p05-tab"
+                onClick={() => setTab(t.id)}
+                style={{
+                  padding: '13px 24px', fontFamily: T.mono, fontSize: 11, letterSpacing: '0.06em',
+                  color: tab === t.id ? T.gold : T.textDim,
+                  borderBottom: tab === t.id ? `2px solid ${T.gold}` : '2px solid transparent',
+                  transition: 'all 0.15s',
+                }}>
+                {t.label}
+              </button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* ── TABS ────────────────────────────────────────────────────────── */}
-      <div style={{ background: T.surface, borderBottom: `1px solid ${T.border}`, padding: "0 32px" }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", display: "flex" }}>
-          {tabs.map(t => (
-            <button key={t} className="tab-btn" onClick={() => setActiveTab(t)}
-              style={{ color: activeTab === t ? T.gold : T.textFaint, borderBottomColor: activeTab === t ? T.gold : "transparent", fontWeight: activeTab === t ? 700 : 400 }}>
-              {t === "overview" ? "Portfolio Overview" : t === "corridors" ? "Corridor Rankings" : t === "deep-dive" ? "Corridor Deep Dive" : "Strategy Matrix"}
-            </button>
-          ))}
-        </div>
-      </div>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '28px 32px' }}>
 
-      {/* ── CONTENT ─────────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 1400, margin: "0 auto", padding: "28px 32px" }}>
-
-        {/* ══ OVERVIEW ═══════════════════════════════════════════════════ */}
-        {activeTab === "overview" && (
+        {/* ── TAB 1: PORTFOLIO HEALTH DASHBOARD ── */}
+        {tab === 'dashboard' && (
           <div className="fade-up">
-            {/* KPI strip */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, marginBottom: 24 }}>
-              <KpiCard label="Gross Revenue" value={fmt(portfolio.grossRevenue)} sub="Fees + FX margin" accent={T.gold} />
-              <KpiCard label="FX Margin" value={fmt(portfolio.fxMargin)} sub={fmtPct(portfolio.fxMargin/portfolio.grossRevenue*100) + " of gross revenue"} accent={T.teal} />
-              <KpiCard label="Total Cost Base" value={fmt(portfolio.totalCost)} sub="Rail + nostro + compliance + exceptions" accent={T.red} />
-              <KpiCard label="Net Contribution" value={fmt(portfolio.net)} sub={fmtPct(portfolio.netMarginPct) + " net margin"} accent={T.green} />
-              <KpiCard label="Total Volume" value={`${(portfolio.volume/1000).toFixed(1)}K`} sub="Transactions across all corridors" accent={T.blue} />
+            <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr 340px', gap: 20, marginBottom: 24 }}>
+
+              {/* PHI Gauge */}
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <PHIGauge score={PHI_SCORE} />
+              </div>
+
+              {/* Radar */}
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <SectionHead title="Six-Dimension Portfolio Radar" sub="Current score vs 80-point target across all dimensions" />
+                <ResponsiveContainer width="100%" height={260}>
+                  <RadarChart data={radarData} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
+                    <PolarGrid stroke={T.border} />
+                    <PolarAngleAxis dataKey="dimension"
+                      tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textMid }} />
+                    <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
+                    <Radar name="Target" dataKey="target" stroke={T.border} fill={T.border} fillOpacity={0.15} strokeDasharray="4 4" />
+                    <Radar name="Current" dataKey="score" stroke={T.gold} fill={T.gold} fillOpacity={0.15} strokeWidth={2}
+                      dot={{ fill: T.gold, r: 4 }} />
+                    <Tooltip content={<CustomTooltip />} />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Dimension scores */}
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <SectionHead title="Dimension Scores" sub="Click to drill down" />
+                {PHI_DIMENSIONS.map(d => (
+                  <div key={d.id} className="p05-dim"
+                    onClick={() => { setSelectedDimension(d); setTab('dimensions'); }}
+                    style={{ marginBottom: 14, padding: '10px 12px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.surface, transition: 'border-color 0.15s', cursor: 'pointer' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                      <span style={{ fontFamily: T.mono, fontSize: 11, color: T.text }}>{d.label}</span>
+                      <span style={{ fontFamily: T.mono, fontSize: 13, color: d.color, fontWeight: 600 }}>{d.score}</span>
+                    </div>
+                    <div style={{ height: 4, background: T.border, borderRadius: 2, overflow: 'hidden' }}>
+                      <div style={{ width: `${d.score}%`, height: '100%', background: d.color, borderRadius: 2, transition: 'width 0.8s ease' }} />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+                      <span style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim }}>Weight: {(d.weight * 100).toFixed(0)}%</span>
+                      <span style={{ fontFamily: T.mono, fontSize: 9, color: d.score < 65 ? T.red : d.score < 75 ? T.amber : T.green }}>
+                        {d.score < 65 ? '▼ Needs action' : d.score < 75 ? '◆ Watch' : '▲ On track'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Growth vs margin scatter + classification counts */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20, marginBottom: 20 }}>
-              <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 24 }}>
-                <SectionTitle sub="Bubble size = transaction volume">Growth Rate vs. Net Margin — Corridor Positioning</SectionTitle>
-                <ResponsiveContainer width="100%" height={320}>
-                  <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.grid} />
-                    <XAxis dataKey="x" name="Growth Rate" unit="%" type="number" domain={[0, 35]}
-                      tick={{ fill: T.textFaint, fontSize: 10, fontFamily: "'Space Mono', monospace" }}
-                      label={{ value: "Annual Growth Rate (%)", position: "insideBottom", offset: -10, style: { fill: T.textFaint, fontSize: 10, fontFamily: "'Space Mono', monospace" } }} />
-                    <YAxis dataKey="y" name="Net Margin" unit="%" type="number" domain={[0, 65]}
-                      tick={{ fill: T.textFaint, fontSize: 10, fontFamily: "'Space Mono', monospace" }}
-                      label={{ value: "Net Margin (%)", angle: -90, position: "insideLeft", style: { fill: T.textFaint, fontSize: 10, fontFamily: "'Space Mono', monospace" } }} />
-                    <ZAxis dataKey="z" range={[40, 400]} />
-                    <Tooltip content={<CorridorTooltip />} />
-                    {/* Quadrant lines */}
-                    <Scatter data={scatterData} shape={(props) => {
-                      const { cx, cy, payload } = props;
-                      return (
-                        <g>
-                          <circle cx={cx} cy={cy} r={Math.sqrt(payload.z) * 2.5} fill={payload.classColor} fillOpacity={0.2} stroke={payload.classColor} strokeWidth={1.5} />
-                          <text x={cx} y={cy + 4} textAnchor="middle" fontSize={9} fill={T.text} fontFamily="'Space Mono', monospace">{payload.flag_to}</text>
-                        </g>
-                      );
-                    }} />
-                  </ScatterChart>
-                </ResponsiveContainer>
-                {/* Quadrant labels */}
-                <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginTop: 8 }}>
-                  {[["GROW",T.green],["DEFEND",T.teal],["OPTIMIZE",T.amber],["DE-PRIORITIZE / EXIT",T.red]].map(([l,c]) => (
-                    <span key={l} style={{ fontSize: 9, color: c, fontFamily: "'Space Mono', monospace", display: "flex", alignItems: "center", gap: 4 }}>
-                      <span style={{ width: 8, height: 8, borderRadius: "50%", background: c, display: "inline-block" }} />{l} ({classCounts[l]})
-                    </span>
+            {/* PHI methodology note */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginBottom: 20 }}>
+              <SectionHead title="PHI Scoring Methodology" sub="Transparent and independently defensible" />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 12 }}>
+                {PHI_DIMENSIONS.map(d => (
+                  <div key={d.id} style={{ background: T.surface, borderRadius: 6, padding: '12px 14px', borderTop: `2px solid ${d.color}` }}>
+                    <div style={{ fontFamily: T.mono, fontSize: 10, color: d.color, fontWeight: 600, marginBottom: 4 }}>{d.label}</div>
+                    <div style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, marginBottom: 6 }}>{d.score}/100</div>
+                    <div style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid, lineHeight: 1.5 }}>{d.description}</div>
+                    <div style={{ marginTop: 6, fontFamily: T.mono, fontSize: 9, color: T.textDim }}>Weight: {(d.weight * 100).toFixed(0)}%</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 14, padding: '10px 14px', background: T.goldSoft, borderRadius: 6, border: `1px solid ${T.gold}22` }}>
+                <span style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, fontWeight: 600 }}>METHODOLOGY: </span>
+                <span style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid }}>
+                  Each dimension is scored independently on a 0–100 scale using observable portfolio metrics. The composite PHI is a weighted average. Weights reflect the relative impact of each dimension on portfolio economics — pricing and client retention carry the highest weight at 20% each because they are the most direct drivers of revenue outcome. The methodology is transparent: a score of 65 on Pricing Governance means 65% of the maximum possible pricing discipline has been achieved, measured against the specific indicators listed in each dimension.
+                </span>
+              </div>
+            </div>
+
+            {/* Top 3 priority actions preview */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <SectionHead title="Top Priority Actions" sub="Ranked by revenue impact — executives do not fund diagnostics, they fund interventions" />
+                <button onClick={() => setTab('actions')} style={{ cursor: 'pointer', background: T.goldSoft, border: `1px solid ${T.gold}44`, color: T.gold, padding: '6px 14px', borderRadius: 4, fontFamily: T.mono, fontSize: 10, letterSpacing: '0.06em' }}>
+                  VIEW ALL 8 →
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {ACTIONS.slice(0, 3).map((a, i) => (
+                  <div key={a.rank} style={{ display: 'grid', gridTemplateColumns: '32px 1fr 120px 140px 120px 120px', gap: 14, alignItems: 'center', padding: '12px 16px', background: T.surface, borderRadius: 6, border: `1px solid ${T.border}`, borderLeft: `3px solid ${dimensionColor(a.dimension)}` }}>
+                    <div style={{ fontFamily: T.mono, fontSize: 14, color: T.gold, fontWeight: 600 }}>#{a.rank}</div>
+                    <div>
+                      <div style={{ fontFamily: T.sans, fontSize: 13, color: T.text, fontWeight: 500, marginBottom: 3 }}>{a.action}</div>
+                      <div style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid }}>{a.detail.substring(0, 70)}...</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, marginBottom: 3 }}>UPLIFT</div>
+                      <div style={{ fontFamily: T.mono, fontSize: 14, color: T.green, fontWeight: 600 }}>{fmt(a.revenueUplift)}</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, marginBottom: 3 }}>TIME TO IMPACT</div>
+                      <div style={{ fontFamily: T.sans, fontSize: 11, color: T.text }}>{a.timeToImpact}</div>
+                    </div>
+                    <Tag label={a.complexity} color={complexityColor(a.complexity)} />
+                    <Tag label={a.status} color={statusColor(a.status)} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 2: SIX DIMENSIONS ── */}
+        {tab === 'dimensions' && (
+          <div className="fade-up">
+            <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: 20 }}>
+
+              {/* Dimension selector */}
+              <div>
+                <SectionHead title="Select Dimension" />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {PHI_DIMENSIONS.map(d => (
+                    <div key={d.id} className="p05-dim"
+                      onClick={() => setSelectedDimension(d)}
+                      style={{ padding: '12px 16px', background: selectedDimension.id === d.id ? T.goldSoft : T.card, border: `1px solid ${selectedDimension.id === d.id ? T.gold : T.border}`, borderRadius: 6, cursor: 'pointer', transition: 'all 0.15s' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                        <span style={{ fontFamily: T.sans, fontSize: 12, color: T.text, fontWeight: selectedDimension.id === d.id ? 600 : 400 }}>{d.label}</span>
+                        <span style={{ fontFamily: T.mono, fontSize: 14, color: d.color, fontWeight: 600 }}>{d.score}</span>
+                      </div>
+                      <div style={{ height: 3, background: T.border, borderRadius: 2, overflow: 'hidden' }}>
+                        <div style={{ width: `${d.score}%`, height: '100%', background: d.color, borderRadius: 2 }} />
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
 
-              {/* Classification summary */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <SectionTitle>Strategy Classification</SectionTitle>
-                {[
-                  { cls: "GROW", color: T.green, corridors: withAnalytics.filter(c=>c.classification==="GROW"), desc: "High margin + high growth — invest" },
-                  { cls: "DEFEND", color: T.teal, corridors: withAnalytics.filter(c=>c.classification==="DEFEND"), desc: "Mature + profitable — protect" },
-                  { cls: "OPTIMIZE", color: T.amber, corridors: withAnalytics.filter(c=>c.classification==="OPTIMIZE"), desc: "Margin pressure — restructure costs" },
-                  { cls: "DE-PRIORITIZE / EXIT", color: T.red, corridors: withAnalytics.filter(c=>c.classification==="DE-PRIORITIZE / EXIT"), desc: "Below threshold — act now" },
-                ].map(q => (
-                  <div key={q.cls} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: "14px 16px", borderLeft: `3px solid ${q.color}` }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                      <ClassBadge label={q.cls} color={q.color} />
-                      <span style={{ fontSize: 18, fontWeight: 700, color: q.color, fontFamily: "'Cormorant Garamond', serif" }}>{q.corridors.length}</span>
+              {/* Dimension detail */}
+              <div>
+                <div style={{ background: T.card, border: `1px solid ${selectedDimension.color}44`, borderRadius: 8, padding: 24, borderTop: `3px solid ${selectedDimension.color}`, marginBottom: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                    <div>
+                      <div style={{ fontFamily: T.mono, fontSize: 10, color: selectedDimension.color, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6 }}>
+                        {selectedDimension.label}
+                      </div>
+                      <div style={{ fontFamily: T.sans, fontSize: 13, color: T.textMid, maxWidth: 480, lineHeight: 1.6 }}>
+                        {selectedDimension.description}
+                      </div>
                     </div>
-                    <div style={{ fontSize: 10, color: T.textFaint, fontFamily: "'Space Mono', monospace", marginBottom: 6 }}>{q.desc}</div>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                      {q.corridors.map(c => (
-                        <span key={c.id} style={{ fontSize: 10, color: T.textMid }}>{c.flag_from}→{c.flag_to}</span>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontFamily: T.mono, fontSize: 48, color: selectedDimension.color, fontWeight: 600, lineHeight: 1 }}>{selectedDimension.score}</div>
+                      <div style={{ fontFamily: T.mono, fontSize: 10, color: T.textDim }}>/ 100 · Weight {(selectedDimension.weight * 100).toFixed(0)}%</div>
+                    </div>
+                  </div>
+
+                  {/* Score bar */}
+                  <div style={{ height: 8, background: T.surface, borderRadius: 4, overflow: 'hidden', marginBottom: 20 }}>
+                    <div style={{ width: `${selectedDimension.score}%`, height: '100%', background: `linear-gradient(90deg, ${selectedDimension.color}88, ${selectedDimension.color})`, borderRadius: 4, transition: 'width 0.8s ease' }} />
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                    {/* Issues */}
+                    <div>
+                      <div style={{ fontFamily: T.mono, fontSize: 10, color: T.red, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>What Is Pulling the Score Down</div>
+                      {selectedDimension.issues.map((issue, i) => (
+                        <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 8 }}>
+                          <span style={{ color: T.red, fontFamily: T.mono, fontSize: 12, flexShrink: 0, marginTop: 1 }}>▼</span>
+                          <span style={{ fontFamily: T.sans, fontSize: 12, color: T.textMid, lineHeight: 1.6 }}>{issue}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Levers */}
+                    <div>
+                      <div style={{ fontFamily: T.mono, fontSize: 10, color: T.green, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>Levers to Improve the Score</div>
+                      {selectedDimension.levers.map((lever, i) => (
+                        <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 8 }}>
+                          <span style={{ color: T.green, fontFamily: T.mono, fontSize: 12, flexShrink: 0, marginTop: 1 }}>▲</span>
+                          <span style={{ fontFamily: T.sans, fontSize: 12, color: T.textMid, lineHeight: 1.6 }}>{lever}</span>
+                        </div>
                       ))}
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Portfolio waterfall */}
-            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 24 }}>
-              <SectionTitle>Portfolio Corridor Margin Waterfall</SectionTitle>
-              <WaterfallRow label="Gross Fee Revenue" value={withAnalytics.reduce((s,c)=>s+c.grossFee,0)} isPositive base={portfolio.grossRevenue} />
-              <WaterfallRow label="+ FX Margin" value={portfolio.fxMargin} isPositive base={portfolio.grossRevenue} />
-              <div style={{ borderTop: `1px dashed ${T.border}`, margin: "10px 0" }} />
-              <WaterfallRow label="− Rail Costs" value={-withAnalytics.reduce((s,c)=>s+c.railCost,0)} base={portfolio.grossRevenue} />
-              <WaterfallRow label="− Nostro Funding" value={-withAnalytics.reduce((s,c)=>s+c.nostro,0)} base={portfolio.grossRevenue} />
-              <WaterfallRow label="− Correspondent Charges" value={-withAnalytics.reduce((s,c)=>s+c.correspondent,0)} base={portfolio.grossRevenue} />
-              <WaterfallRow label="− Compliance Costs" value={-withAnalytics.reduce((s,c)=>s+c.compliance,0)} base={portfolio.grossRevenue} />
-              <WaterfallRow label="− Exception Costs" value={-withAnalytics.reduce((s,c)=>s+c.exceptions,0)} base={portfolio.grossRevenue} />
-              <div style={{ borderTop: `1px solid ${T.gold}44`, margin: "10px 0" }} />
-              <WaterfallRow label="NET CONTRIBUTION" value={portfolio.net} isNet base={portfolio.grossRevenue} />
-            </div>
-          </div>
-        )}
-
-        {/* ══ CORRIDOR RANKINGS ══════════════════════════════════════════ */}
-        {activeTab === "corridors" && (
-          <div className="fade-up">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
-              <SectionTitle>Corridor P&L Rankings</SectionTitle>
-              <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                <span style={{ fontSize: 9, color: T.textFaint, fontFamily: "'Space Mono', monospace" }}>FILTER:</span>
-                {["all","GROW","DEFEND","OPTIMIZE","DE-PRIORITIZE / EXIT"].map(f => (
-                  <button key={f} className={`filter-btn ${filterClass===f?"active":""}`} onClick={()=>setFilterClass(f)}>
-                    {f === "all" ? "ALL" : f === "DE-PRIORITIZE / EXIT" ? "EXIT" : f}
-                  </button>
-                ))}
-                <div style={{ width: 1, height: 16, background: T.border, margin: "0 4px" }} />
-                <span style={{ fontSize: 9, color: T.textFaint, fontFamily: "'Space Mono', monospace" }}>SORT:</span>
-                {[["net","NET $"],["margin","MARGIN %"],["growth","GROWTH"],["volume","VOLUME"]].map(([k,l])=>(
-                  <button key={k} className={`sort-btn ${sortBy===k?"active":""}`} onClick={()=>setSortBy(k)}>{l}</button>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, overflow: "hidden" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ background: "#0A0E14" }}>
-                    {["#","Corridor","Currency","Volume","Gross Rev","FX Margin","Total Cost","Net","Margin %","Growth","FX Volatility","Classification","Trend"].map(h=>(
-                      <th key={h} style={{ padding:"9px 12px", textAlign:"left", fontSize:8, color:T.textFaint, fontFamily:"'Space Mono', monospace", letterSpacing:"0.1em", borderBottom:`1px solid ${T.border}`, whiteSpace:"nowrap" }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {sorted.map((c, i) => (
-                    <tr key={c.id} className="corr-row"
-                      onClick={() => { setSelectedCorridor(c); setActiveTab("deep-dive"); }}
-                      style={{ background: selectedCorridor?.id===c.id ? `${T.gold}08` : i%2===0 ? T.card : T.surface, borderBottom:`1px solid ${T.grid}`, borderLeft: selectedCorridor?.id===c.id ? `3px solid ${T.gold}` : "3px solid transparent" }}>
-                      <td style={{ padding:"11px 12px", fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>{String(i+1).padStart(2,"0")}</td>
-                      <td style={{ padding:"11px 12px" }}>
-                        <div style={{ fontSize:13, fontWeight:500, color:T.text }}>{c.flag_from} → {c.flag_to}</div>
-                        <div style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>{c.from} → {c.to}</div>
-                      </td>
-                      <td style={{ padding:"11px 12px", fontSize:10, color:T.textMid, fontFamily:"'Space Mono', monospace" }}>{c.currency}</td>
-                      <td style={{ padding:"11px 12px", fontSize:10, color:T.text, fontFamily:"'Space Mono', monospace" }}>{c.volume.toLocaleString()}</td>
-                      <td style={{ padding:"11px 12px", fontSize:11, color:T.text, fontFamily:"'Space Mono', monospace" }}>{fmt(c.grossRevenue)}</td>
-                      <td style={{ padding:"11px 12px", fontSize:11, color:T.teal, fontFamily:"'Space Mono', monospace" }}>{fmt(c.fxMargin)}</td>
-                      <td style={{ padding:"11px 12px", fontSize:11, color:T.red, fontFamily:"'Space Mono', monospace" }}>{fmt(c.totalCost)}</td>
-                      <td style={{ padding:"11px 12px", fontSize:12, fontWeight:700, color:c.net>0?T.green:T.red, fontFamily:"'Cormorant Garamond', serif" }}>{fmt(c.net)}</td>
-                      <td style={{ padding:"11px 12px", fontSize:11, color:c.netMarginPct>35?T.green:c.netMarginPct>20?T.amber:T.red, fontFamily:"'Space Mono', monospace" }}>{fmtPct(c.netMarginPct)}</td>
-                      <td style={{ padding:"11px 12px", fontSize:11, color:c.growthRate>15?T.green:c.growthRate>8?T.amber:T.textMid, fontFamily:"'Space Mono', monospace" }}>+{fmtPct(c.growthRate)}</td>
-                      <td style={{ padding:"11px 12px" }}>
-                        <div style={{ fontSize:9, color:c.fxVolatility>15?T.red:c.fxVolatility>8?T.amber:T.green, fontFamily:"'Space Mono', monospace" }}>σ {c.fxVolatility}%</div>
-                      </td>
-                      <td style={{ padding:"11px 12px" }}><ClassBadge label={c.classification} color={c.classColor} /></td>
-                      <td style={{ padding:"11px 12px" }}><Sparkline data={c.trend} color={c.classColor} /></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div style={{ marginTop:12, fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>Click any corridor to open the Deep Dive analysis →</div>
-          </div>
-        )}
-
-        {/* ══ DEEP DIVE ══════════════════════════════════════════════════ */}
-        {activeTab === "deep-dive" && selectedCorridor && (
-          <div className="fade-up">
-            {/* Corridor header */}
-            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 24, marginBottom: 20 }}>
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:16 }}>
-                <div>
-                  <div style={{ fontSize:28, fontWeight:700, fontFamily:"'Cormorant Garamond', serif", color:T.text, marginBottom:4 }}>
-                    {selectedCorridor.flag_from} {selectedCorridor.from} → {selectedCorridor.flag_to} {selectedCorridor.to}
-                  </div>
-                  <div style={{ display:"flex", gap:8, alignItems:"center" }}>
-                    <span style={{ fontSize:11, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>{selectedCorridor.currency} · {selectedCorridor.fxPair} · {selectedCorridor.corridorMaturity}</span>
-                    <ClassBadge label={selectedCorridor.classification} color={selectedCorridor.classColor} />
-                    <span style={{ fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>Regulatory Risk: <span style={{ color: selectedCorridor.regulatoryRisk==="Low"?T.green:selectedCorridor.regulatoryRisk==="Medium"?T.amber:T.red }}>{selectedCorridor.regulatoryRisk}</span></span>
-                  </div>
-                </div>
-                <div style={{ textAlign:"right" }}>
-                  <div style={{ fontSize:32, fontWeight:700, fontFamily:"'Cormorant Garamond', serif", color:selectedCorridor.net>0?T.green:T.red }}>{fmt(selectedCorridor.net)}</div>
-                  <div style={{ fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>net contribution · {fmtPct(selectedCorridor.netMarginPct)} margin</div>
-                </div>
-              </div>
-
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:12 }}>
-                {[
-                  { l:"Volume", v:selectedCorridor.volume.toLocaleString() },
-                  { l:"Avg Ticket", v:fmt(selectedCorridor.avgTicket) },
-                  { l:"FX Spread", v:`${selectedCorridor.fxSpreadBps} bps` },
-                  { l:"FX Volatility", v:`σ ${selectedCorridor.fxVolatility}%` },
-                  { l:"Nostro Turn Days", v:`${selectedCorridor.nostroTurnDays}d` },
-                  { l:"Exception Rate", v:`${selectedCorridor.exceptionRatePct}%` },
-                ].map(m=>(
-                  <div key={m.l} style={{ background:T.card, borderRadius:6, padding:"10px 12px" }}>
-                    <div style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace", marginBottom:4 }}>{m.l}</div>
-                    <div style={{ fontSize:14, fontWeight:600, color:T.text, fontFamily:"'Space Mono', monospace" }}>{m.v}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20, marginBottom:20 }}>
-              {/* Cost waterfall */}
-              <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:24 }}>
-                <SectionTitle>Corridor Margin Waterfall</SectionTitle>
-                <WaterfallRow label="Fee Revenue" value={selectedCorridor.grossFee} isPositive base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="+ FX Margin" value={selectedCorridor.fxMargin} isPositive base={selectedCorridor.grossRevenue} />
-                <div style={{ borderTop:`1px dashed ${T.border}`, margin:"8px 0" }} />
-                <WaterfallRow label="− Rail Costs" value={-selectedCorridor.railCost} base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="− Nostro Funding" value={-selectedCorridor.nostro} base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="− Correspondent" value={-selectedCorridor.correspondent} base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="− Compliance" value={-selectedCorridor.compliance} base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="− Exceptions" value={-selectedCorridor.exceptions} base={selectedCorridor.grossRevenue} />
-                <div style={{ borderTop:`1px solid ${T.gold}44`, margin:"8px 0" }} />
-                <WaterfallRow label="NET CONTRIBUTION" value={selectedCorridor.net} isNet base={selectedCorridor.grossRevenue} />
-              </div>
-
-              {/* Cost mix + trend */}
-              <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
-                <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:24, flex:1 }}>
-                  <SectionTitle>Cost Structure Breakdown</SectionTitle>
-                  <ResponsiveContainer width="100%" height={180}>
-                    <BarChart data={costBreakdown} layout="vertical" barSize={14}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={T.grid} horizontal={false} />
-                      <XAxis type="number" tick={{ fill:T.textFaint, fontSize:9, fontFamily:"'Space Mono', monospace" }} tickFormatter={v=>`$${(v/1000).toFixed(0)}K`} />
-                      <YAxis type="category" dataKey="name" tick={{ fill:T.textMid, fontSize:9, fontFamily:"'Space Mono', monospace" }} width={110} />
-                      <Tooltip contentStyle={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:6, fontFamily:"'Space Mono', monospace", fontSize:10 }} formatter={v=>[fmt(v)]} />
-                      <Bar dataKey="value" radius={[0,3,3,0]}>
-                        {costBreakdown.map((d,i)=><Cell key={i} fill={d.color} />)}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
                 </div>
 
-                <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:24 }}>
-                  <SectionTitle>12-Month Revenue Trend</SectionTitle>
-                  <ResponsiveContainer width="100%" height={100}>
-                    <ComposedChart data={selectedCorridor.trend.map((v,i)=>({ month:["J","F","M","A","M","J","J","A","S","O","N","D"][i], value:v }))}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={T.grid} />
-                      <XAxis dataKey="month" tick={{ fill:T.textFaint, fontSize:9, fontFamily:"'Space Mono', monospace" }} />
-                      <YAxis tick={{ fill:T.textFaint, fontSize:9, fontFamily:"'Space Mono', monospace" }} tickFormatter={v=>`$${v}K`} />
-                      <Tooltip contentStyle={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:6, fontFamily:"'Space Mono', monospace", fontSize:10 }} formatter={v=>[`$${v}K`]} />
-                      <Area type="monotone" dataKey="value" stroke={selectedCorridor.classColor} fill={`${selectedCorridor.classColor}18`} strokeWidth={2} />
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </div>
-
-            {/* AI Strategic Assessment */}
-            <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:24 }}>
-              <SectionTitle>AI Strategic Assessment</SectionTitle>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:16 }}>
-                {[
-                  {
-                    label:"Strategic Recommendation",
-                    color: selectedCorridor.classColor,
-                    icon: selectedCorridor.classification==="GROW"?"↗":selectedCorridor.classification==="DEFEND"?"◎":selectedCorridor.classification==="OPTIMIZE"?"⚙":"⚠",
-                    body: `${selectedCorridor.classDesc}. At ${fmtPct(selectedCorridor.netMarginPct)} net margin and ${fmtPct(selectedCorridor.growthRate)} annual growth, this corridor ${selectedCorridor.classification==="GROW"?"warrants incremental volume investment and competitive pricing discipline":selectedCorridor.classification==="DEFEND"?"is a core franchise asset — prioritise retention over new acquisition":selectedCorridor.classification==="OPTIMIZE"?"requires cost structure review before additional volume investment":"should be reviewed for restructuring or exit within 2 quarters"}.`
-                  },
-                  {
-                    label:"Largest Cost Lever",
-                    color: T.amber,
-                    icon: "◈",
-                    body: (() => {
-                      const costs = { "Nostro Funding": selectedCorridor.nostro, "Exceptions": selectedCorridor.exceptions, "Correspondent Charges": selectedCorridor.correspondent, "Compliance": selectedCorridor.compliance };
-                      const top = Object.entries(costs).sort((a,b)=>b[1]-a[1])[0];
-                      return `${top[0]} is the primary cost driver at ${fmt(top[1])} — ${fmtPct(top[1]/selectedCorridor.grossRevenue*100)} of gross revenue. ${top[0]==="Nostro Funding"?`Nostro turn days of ${selectedCorridor.nostroTurnDays}d suggest prefunding optimisation opportunity. A 20% reduction in nostro balance requirement would save ${fmt(selectedCorridor.nostro*0.20)} annually.`:top[0]==="Exceptions"?`Exception rate of ${selectedCorridor.exceptionRatePct}% is above portfolio average. Root cause is likely data quality in payment instructions. Structured remediation could recover ${fmt(selectedCorridor.exceptions*0.40)}.`:`Renegotiate correspondent banking terms at next renewal cycle.`}`;
-                    })()
-                  },
-                  {
-                    label:"FX & Risk Profile",
-                    color: T.teal,
-                    icon: "⇌",
-                    body: `FX volatility of σ ${selectedCorridor.fxVolatility}% is ${selectedCorridor.fxVolatility>15?"elevated — margin at risk in adverse rate scenarios. Consider dynamic FX spread floors to protect revenue":selectedCorridor.fxVolatility>8?"moderate. Current spread of "+selectedCorridor.fxSpreadBps+"bps is adequate but should be reviewed quarterly against rate movements":"low — the pegged or managed rate environment provides stable margin visibility. FX spread of "+selectedCorridor.fxSpreadBps+"bps can be maintained without dynamic adjustment"}. Regulatory risk is rated ${selectedCorridor.regulatoryRisk}.`
-                  },
-                ].map(n=>(
-                  <div key={n.label} style={{ background:T.card, borderRadius:8, padding:18, borderTop:`3px solid ${n.color}` }}>
-                    <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:10 }}>
-                      <span style={{ fontSize:18, color:n.color, fontFamily:"'Space Mono', monospace" }}>{n.icon}</span>
-                      <span style={{ fontSize:11, fontWeight:600, color:T.text }}>{n.label}</span>
-                    </div>
-                    <p style={{ fontSize:11, color:T.textMid, lineHeight:1.7, margin:0 }}>{n.body}</p>
-                  </div>
-                ))}
-              </div>
-              {/* Key drivers */}
-              <div style={{ marginTop:14, padding:"10px 16px", background:`${T.gold}08`, borderRadius:8, border:`1px solid ${T.gold}22`, display:"flex", gap:12, alignItems:"center" }}>
-                <span style={{ fontSize:10, color:T.gold, fontFamily:"'Space Mono', monospace", fontWeight:700, flexShrink:0 }}>KEY FLOW DRIVERS:</span>
-                <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-                  {selectedCorridor.keyDrivers.map(d=>(
-                    <span key={d} style={{ fontSize:10, padding:"2px 10px", background:`${T.gold}18`, color:T.goldLt, borderRadius:3, fontFamily:"'Space Mono', monospace" }}>{d}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ══ STRATEGY MATRIX ════════════════════════════════════════════ */}
-        {activeTab === "matrix" && (
-          <div className="fade-up">
-            <SectionTitle sub="AI-generated investment priorities and action plan for each corridor classification">Portfolio Strategy Matrix — Investment Allocation Framework</SectionTitle>
-
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20, marginBottom:20 }}>
-              {[
-                {
-                  cls:"GROW", color:T.green, icon:"↗",
-                  corridors: withAnalytics.filter(c=>c.classification==="GROW"),
-                  actions: ["Increase sales coverage and volume targets","Maintain competitive pricing — do not discount","Invest in corridor STP automation to scale without proportional cost growth","Consider dedicated nostro optimisation for high-volume routes"],
-                  metric: "Target: 20%+ volume growth YoY"
-                },
-                {
-                  cls:"DEFEND", color:T.teal, icon:"◎",
-                  corridors: withAnalytics.filter(c=>c.classification==="DEFEND"),
-                  actions: ["Anchor pricing at current spread — resist client pressure to reduce","Focus on wallet share growth within existing client base","Monitor competitive entry — these corridors attract attention","Build switching costs through workflow integration and liquidity structures"],
-                  metric: "Target: Hold margin within 2% of current"
-                },
-                {
-                  cls:"OPTIMIZE", color:T.amber, icon:"⚙",
-                  corridors: withAnalytics.filter(c=>c.classification==="OPTIMIZE"),
-                  actions: ["Conduct full cost audit: nostro, correspondent, compliance, exceptions","Renegotiate correspondent banking terms at next renewal","Set STP improvement targets — reduce exception rate by 30%","Evaluate whether FX spread is adequately capturing risk"],
-                  metric: "Target: Lift net margin by 8–12pp in 12 months"
-                },
-                {
-                  cls:"DE-PRIORITIZE / EXIT", color:T.red, icon:"⚠",
-                  corridors: withAnalytics.filter(c=>c.classification==="DE-PRIORITIZE / EXIT"),
-                  actions: ["Prepare restructuring case: repricing or volume minimum commitments","Engage clients on new pricing terms within 60 days","If restructuring fails, begin managed wind-down — no new volume acquisition","Reassign nostro and correspondent capacity to GROW corridors"],
-                  metric: "Decision point: 90 days"
-                },
-              ].map(q=>(
-                <div key={q.cls} style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:24, borderTop:`3px solid ${q.color}` }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                      <span style={{ fontSize:24, color:q.color }}>{q.icon}</span>
-                      <ClassBadge label={q.cls} color={q.color} />
-                    </div>
-                    <span style={{ fontSize:12, color:q.color, fontFamily:"'Space Mono', monospace", fontWeight:700 }}>{q.corridors.length} corridor{q.corridors.length!==1?"s":""}</span>
-                  </div>
-
-                  {/* Corridor tags */}
-                  <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:16 }}>
-                    {q.corridors.map(c=>(
-                      <div key={c.id} style={{ background:T.card, borderRadius:6, padding:"6px 10px", border:`1px solid ${q.color}33`, cursor:"pointer" }}
-                        onClick={()=>{ setSelectedCorridor(c); setActiveTab("deep-dive"); }}>
-                        <div style={{ fontSize:12 }}>{c.flag_from}→{c.flag_to}</div>
-                        <div style={{ fontSize:9, color:q.color, fontFamily:"'Space Mono', monospace" }}>{fmtPct(c.netMarginPct)} · +{fmtPct(c.growthRate)}</div>
+                {/* Relevant actions for this dimension */}
+                <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                  <SectionHead title={`Actions Linked to ${selectedDimension.label}`} />
+                  {ACTIONS.filter(a => a.dimension === selectedDimension.id).length === 0 ? (
+                    <div style={{ fontFamily: T.sans, fontSize: 12, color: T.textDim }}>No active actions for this dimension.</div>
+                  ) : (
+                    ACTIONS.filter(a => a.dimension === selectedDimension.id).map(a => (
+                      <div key={a.rank} style={{ padding: '12px 14px', background: T.surface, borderRadius: 6, border: `1px solid ${T.border}`, marginBottom: 8, display: 'grid', gridTemplateColumns: '1fr 100px 120px 100px', gap: 12, alignItems: 'center' }}>
+                        <div>
+                          <div style={{ fontFamily: T.sans, fontSize: 12, color: T.text, fontWeight: 500, marginBottom: 2 }}>{a.action}</div>
+                          <div style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid }}>{a.owner}</div>
+                        </div>
+                        <div style={{ fontFamily: T.mono, fontSize: 13, color: T.green, fontWeight: 600 }}>{fmt(a.revenueUplift)}</div>
+                        <div style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid }}>{a.timeToImpact}</div>
+                        <Tag label={a.status} color={statusColor(a.status)} small />
                       </div>
-                    ))}
-                    {q.corridors.length===0 && <span style={{ fontSize:11, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>None currently</span>}
-                  </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
-                  {/* Actions */}
-                  <div style={{ marginBottom:12 }}>
-                    {q.actions.map((a,i)=>(
-                      <div key={i} style={{ display:"flex", gap:8, marginBottom:6 }}>
-                        <span style={{ color:q.color, fontSize:11, flexShrink:0, fontFamily:"'Space Mono', monospace" }}>{"0"+(i+1)}</span>
-                        <span style={{ fontSize:11, color:T.textMid, lineHeight:1.6 }}>{a}</span>
-                      </div>
-                    ))}
+        {/* ── TAB 3: SCENARIO MODELING ── */}
+        {tab === 'scenarios' && (
+          <div className="fade-up">
+            {/* Scenario selector */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16, marginBottom: 24 }}>
+              {Object.entries(SCENARIOS).map(([key, s]) => (
+                <div key={key} className="p05-scenario"
+                  onClick={() => setActiveScenario(key)}
+                  style={{ background: T.card, border: `2px solid ${activeScenario === key ? s.color : T.border}`, borderRadius: 8, padding: 20, cursor: 'pointer', transition: 'border-color 0.15s' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+                    <Tag label={s.label} color={s.color} />
+                    <div style={{ fontFamily: T.mono, fontSize: 22, color: s.color, fontWeight: 600 }}>
+                      {s.phiProjected[s.phiProjected.length - 1]}
+                    </div>
                   </div>
-                  <div style={{ padding:"8px 12px", background:`${q.color}10`, borderRadius:6, border:`1px solid ${q.color}22` }}>
-                    <span style={{ fontSize:10, color:q.color, fontFamily:"'Space Mono', monospace", fontWeight:700 }}>{q.metric}</span>
+                  <div style={{ fontFamily: T.sans, fontSize: 12, color: T.textMid, lineHeight: 1.5, marginBottom: 10 }}>{s.description}</div>
+                  <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, marginBottom: 6 }}>PHI IN 6 QUARTERS</div>
+                  <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                    <span style={{ fontFamily: T.mono, fontSize: 11, color: T.textDim }}>{PHI_SCORE}</span>
+                    <div style={{ flex: 1, height: 2, background: T.border }} />
+                    <span style={{ fontFamily: T.mono, fontSize: 11, color: s.color, fontWeight: 600 }}>{s.phiProjected[s.phiProjected.length - 1]}</span>
+                    <span style={{ fontFamily: T.mono, fontSize: 11, color: s.phiProjected[s.phiProjected.length - 1] > PHI_SCORE ? T.green : T.red }}>
+                      {s.phiProjected[s.phiProjected.length - 1] > PHI_SCORE ? '▲' : '▼'} {Math.abs(s.phiProjected[s.phiProjected.length - 1] - PHI_SCORE)}pts
+                    </span>
+                  </div>
+                  <div style={{ marginTop: 12, padding: '8px 10px', background: `${s.color}10`, borderRadius: 4, border: `1px solid ${s.color}22` }}>
+                    <div style={{ fontFamily: T.mono, fontSize: 9, color: s.color, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 3 }}>Key Risk</div>
+                    <div style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid }}>{s.keyRisk}</div>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Connection callouts */}
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
-              <div style={{ padding:"12px 16px", background:`${T.blue}10`, borderRadius:8, border:`1px solid ${T.blue}22`, display:"flex", gap:12, alignItems:"flex-start" }}>
-                <span style={{ fontSize:14, color:T.blue, flexShrink:0 }}>⟵</span>
-                <div>
-                  <span style={{ fontSize:10, color:T.blue, fontFamily:"'Space Mono', monospace", fontWeight:700 }}>MODEL 01 CONNECTION: </span>
-                  <span style={{ fontSize:11, color:T.textMid }}>Corridor P&L builds on the Model 01 margin waterfall. Gross revenue, rail cost, and exception data are sourced from the Profitability Engine baseline, ensuring consistent economic accounting across the framework.</span>
-                </div>
+            {/* Scenario charts */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
+              {/* PHI trajectory */}
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <SectionHead title="Portfolio Health Index — All Scenarios" sub="6-quarter forward projection" />
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart data={scenarioChartData}>
+                    <CartesianGrid vertical={false} stroke={T.border} strokeDasharray="3 3" />
+                    <XAxis dataKey="month" tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textDim }} axisLine={false} tickLine={false} />
+                    <YAxis domain={[30, 90]} tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textDim }} axisLine={false} tickLine={false} />
+                    <ReferenceLine y={PHI_SCORE} stroke={T.border} strokeDasharray="4 4" label={{ value: 'Now', fill: T.textDim, fontSize: 9, fontFamily: T.mono }} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Line type="monotone" dataKey="optimized" name="Priority Interventions" stroke={T.green} strokeWidth={2} dot={{ fill: T.green, r: 3 }} />
+                    <Line type="monotone" dataKey="base" name="Base Case" stroke={T.textMid} strokeWidth={2} strokeDasharray="4 4" dot={false} />
+                    <Line type="monotone" dataKey="stress" name="Stress Case" stroke={T.red} strokeWidth={2} strokeDasharray="2 3" dot={false} />
+                    <Legend wrapperStyle={{ fontFamily: T.mono, fontSize: 10, color: T.textDim }} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
-              <div style={{ padding:"12px 16px", background:`${T.teal}10`, borderRadius:8, border:`1px solid ${T.teal}22`, display:"flex", gap:12, alignItems:"flex-start" }}>
-                <span style={{ fontSize:14, color:T.teal, flexShrink:0 }}>⟶</span>
-                <div>
-                  <span style={{ fontSize:10, color:T.teal, fontFamily:"'Space Mono', monospace", fontWeight:700 }}>MODEL 04 CONNECTION: </span>
-                  <span style={{ fontSize:11, color:T.textMid }}>Corridor growth rates and classification feed into the Client Behavior Engine (Model 04). Clients active in GROW corridors are flagged as expansion targets; clients concentrated in EXIT corridors are elevated as retention risks.</span>
-                </div>
+
+              {/* Revenue trajectory */}
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <SectionHead title="Monthly Revenue — All Scenarios ($M)" sub="6-quarter forward projection" />
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart data={revenueChartData}>
+                    <CartesianGrid vertical={false} stroke={T.border} strokeDasharray="3 3" />
+                    <XAxis dataKey="month" tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textDim }} axisLine={false} tickLine={false} />
+                    <YAxis domain={[8, 24]} tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textDim }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}M`} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Line type="monotone" dataKey="optimized" name="Priority Interventions" stroke={T.green} strokeWidth={2} dot={{ fill: T.green, r: 3 }} />
+                    <Line type="monotone" dataKey="base" name="Base Case" stroke={T.textMid} strokeWidth={2} strokeDasharray="4 4" dot={false} />
+                    <Line type="monotone" dataKey="stress" name="Stress Case" stroke={T.red} strokeWidth={2} strokeDasharray="2 3" dot={false} />
+                    <Legend wrapperStyle={{ fontFamily: T.mono, fontSize: 10, color: T.textDim }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Trade-off analysis */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+              <SectionHead title="Trade-Off Analysis" sub="What moves if we fix pricing vs corridor mix vs rail economics — sequencing matters" />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+                {[
+                  {
+                    label: 'If we fix Pricing first',
+                    color: T.amber,
+                    phi: '+8 pts in 60 days',
+                    revenue: '+$761K annually',
+                    tradeoff: 'Some client relationship friction during repricing conversations. Low operational dependency — can execute in parallel with other initiatives.',
+                    sequence: 'Start here. Highest ROI, lowest complexity. Creates budget for operational investments.',
+                  },
+                  {
+                    label: 'If we fix Corridors first',
+                    color: T.teal,
+                    phi: '+5 pts in 90 days',
+                    revenue: '+$180K annually',
+                    tradeoff: 'Requires Finance alignment and potentially difficult client conversations on US→BR and US→NG. Slower to impact PHI but removes structural drag.',
+                    sequence: 'Second priority. Removes the floor from corridor economics before volume grows further.',
+                  },
+                  {
+                    label: 'If we fix Rail Mix first',
+                    color: T.blue,
+                    phi: '+4 pts in 120 days',
+                    revenue: '+$118K annually',
+                    tradeoff: 'Requires technology and product investment. Longer time to impact. Client incentive program needed to shift rail behavior.',
+                    sequence: 'Third priority. Important for long-term unit economics but not the most urgent. Build alongside pricing and corridor work.',
+                  },
+                ].map((t, i) => (
+                  <div key={i} style={{ background: T.surface, borderRadius: 6, padding: 18, borderTop: `2px solid ${t.color}` }}>
+                    <div style={{ fontFamily: T.mono, fontSize: 10, color: t.color, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 12 }}>{t.label}</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
+                      <div style={{ background: T.card, borderRadius: 4, padding: '8px 10px' }}>
+                        <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, marginBottom: 3 }}>PHI IMPACT</div>
+                        <div style={{ fontFamily: T.mono, fontSize: 13, color: t.color, fontWeight: 600 }}>{t.phi}</div>
+                      </div>
+                      <div style={{ background: T.card, borderRadius: 4, padding: '8px 10px' }}>
+                        <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, marginBottom: 3 }}>REVENUE</div>
+                        <div style={{ fontFamily: T.mono, fontSize: 13, color: T.green, fontWeight: 600 }}>{t.revenue}</div>
+                      </div>
+                    </div>
+                    <div style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid, lineHeight: 1.6, marginBottom: 10 }}>{t.tradeoff}</div>
+                    <div style={{ padding: '8px 10px', background: `${t.color}10`, borderRadius: 4, border: `1px solid ${t.color}22` }}>
+                      <div style={{ fontFamily: T.mono, fontSize: 9, color: t.color, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 3 }}>Sequencing Recommendation</div>
+                      <div style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid }}>{t.sequence}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         )}
+
+        {/* ── TAB 4: ACTION REGISTER ── */}
+        {tab === 'actions' && (
+          <div className="fade-up">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <SectionHead title="Ranked Intervention Register"
+                sub={`Total revenue opportunity: ${fmt(totalUplift)} · Executives do not fund diagnostics. They fund ranked interventions with clear economic outcomes.`} />
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <span style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim }}>CATEGORY:</span>
+                {['all', 'Client', 'Pricing', 'Corridor', 'Rail', 'Operational', 'Revenue'].map(f => (
+                  <button key={f} className={`filter-btn ${filterCategory === f ? 'active' : ''}`}
+                    onClick={() => setFilterCategory(f)}>
+                    {f.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Summary bar */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 20 }}>
+              <KPI label="Total Opportunity" value={fmt(totalUplift)} sub="Across all 8 interventions" accent={T.green} />
+              <KPI label="Avg Time to Impact" value="45–90d" sub="For top 5 actions" accent={T.teal} />
+              <KPI label="Low Complexity" value={`${ACTIONS.filter(a => a.complexity === 'LOW').length} actions`} sub="No blocker — execute now" accent={T.green} />
+              <KPI label="High Complexity" value={`${ACTIONS.filter(a => a.complexity === 'HIGH').length} actions`} sub="Require cross-team alignment" accent={T.amber} />
+            </div>
+
+            {/* Action cards */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {filteredActions.map((a, i) => (
+                <div key={a.rank} className="p05-action"
+                  style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, borderLeft: `4px solid ${dimensionColor(a.dimension)}`, transition: 'background 0.12s' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '44px 1fr 120px 160px 120px 120px 120px', gap: 14, alignItems: 'center' }}>
+                    {/* Rank */}
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontFamily: T.mono, fontSize: 20, color: T.gold, fontWeight: 600 }}>#{a.rank}</div>
+                    </div>
+
+                    {/* Action detail */}
+                    <div>
+                      <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 4 }}>
+                        <span style={{ fontFamily: T.sans, fontSize: 14, color: T.text, fontWeight: 500 }}>{a.action}</span>
+                        <Tag label={a.category} color={dimensionColor(a.dimension)} small />
+                      </div>
+                      <div style={{ fontFamily: T.sans, fontSize: 12, color: T.textMid, lineHeight: 1.5 }}>{a.detail}</div>
+                      <div style={{ fontFamily: T.mono, fontSize: 10, color: T.textDim, marginTop: 6 }}>Owner: {a.owner}</div>
+                    </div>
+
+                    {/* Revenue uplift */}
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Revenue Uplift</div>
+                      <div style={{ fontFamily: T.mono, fontSize: 18, color: T.green, fontWeight: 600 }}>{fmt(a.revenueUplift)}</div>
+                      <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim }}>annually</div>
+                    </div>
+
+                    {/* Time to impact */}
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Time to Impact</div>
+                      <div style={{ fontFamily: T.sans, fontSize: 12, color: T.text }}>{a.timeToImpact}</div>
+                    </div>
+
+                    {/* Complexity */}
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Complexity</div>
+                      <Tag label={a.complexity} color={complexityColor(a.complexity)} />
+                    </div>
+
+                    {/* Status */}
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Status</div>
+                      <Tag label={a.status} color={statusColor(a.status)} />
+                    </div>
+
+                    {/* PHI dimension */}
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Dimension</div>
+                      <Tag label={PHI_DIMENSIONS.find(d => d.id === a.dimension)?.label.split(' ')[0] || a.dimension} color={dimensionColor(a.dimension)} small />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Cumulative uplift chart */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+              <SectionHead title="Cumulative Revenue Uplift by Action Sequence" sub="If executed in ranked order" />
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={ACTIONS.map((a, i) => ({
+                  action: `#${a.rank}`,
+                  uplift: a.revenueUplift / 1000,
+                  cumulative: ACTIONS.slice(0, i + 1).reduce((s, x) => s + x.revenueUplift, 0) / 1000,
+                }))}>
+                  <CartesianGrid vertical={false} stroke={T.border} strokeDasharray="3 3" />
+                  <XAxis dataKey="action" tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textDim }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontFamily: T.mono, fontSize: 9, fill: T.textDim }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}K`} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="uplift" name="Uplift ($K)" radius={[3, 3, 0, 0]}>
+                    {ACTIONS.map((a, i) => <Cell key={i} fill={dimensionColor(a.dimension)} />)}
+                  </Bar>
+                  <Line type="monotone" dataKey="cumulative" name="Cumulative ($K)" stroke={T.gold} strokeWidth={2} dot={{ fill: T.gold, r: 3 }} />
+                </BarChart>
+              </ResponsiveContainer>
+              <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end' }}>
+                <div style={{ padding: '8px 16px', background: T.greenSoft, borderRadius: 6, border: `1px solid ${T.green}22` }}>
+                  <span style={{ fontFamily: T.mono, fontSize: 11, color: T.green, fontWeight: 600 }}>Total: {fmt(totalUplift)} </span>
+                  <span style={{ fontFamily: T.mono, fontSize: 11, color: T.textMid }}>annual revenue recovery if all 8 actions executed</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Model connections */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginTop: 20 }}>
+              {[
+                { model: 'MODEL 01', label: 'Profitability Engine', color: T.blue, desc: 'Pricing governance and margin waterfall inputs. Exception cost data feeding operational drag score.' },
+                { model: 'MODEL 02', label: 'Rail Economics', color: T.teal, desc: 'Rail mix efficiency and STP rate inputs. Instant rail migration opportunity quantified here.' },
+                { model: 'MODEL 03', label: 'Corridor Analyzer', color: T.gold, desc: 'Corridor classification and margin data. DE-PRIORITIZE / EXIT corridors reflected in corridor dimension score.' },
+                { model: 'MODEL 04', label: 'Behavior Engine', color: T.purple, desc: 'Client migration signals and monetization gaps. Revenue at risk and RM action items feed client retention score.' },
+              ].map(m => (
+                <div key={m.model} style={{ padding: '12px 14px', background: `${m.color}08`, borderRadius: 8, border: `1px solid ${m.color}22` }}>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
+                    <span style={{ fontSize: 12, color: m.color }}>⟵</span>
+                    <span style={{ fontFamily: T.mono, fontSize: 9, color: m.color, fontWeight: 700, letterSpacing: '0.06em' }}>{m.model}</span>
+                  </div>
+                  <div style={{ fontFamily: T.mono, fontSize: 10, color: m.color, marginBottom: 4 }}>{m.label}</div>
+                  <div style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid, lineHeight: 1.5 }}>{m.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
 
       {/* FOOTER */}
-      <div style={{ borderTop:`1px solid ${T.border}`, padding:"14px 32px", display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:20 }}>
-        <span style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace", letterSpacing:"0.1em" }}>PAYMENTS PORTFOLIO DECISION ENGINE · MODEL 05 · EXECUTIVE DECISION LAYER · CARLOS UREÑA PAYMENTS STRATEGY</span>
-        <span style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>PROTOTYPE · SYNTHETIC DATA · 10 CORRIDORS · Q1 2025</span>
+      <div style={{ borderTop: `1px solid ${T.border}`, padding: '16px 32px', marginTop: 20 }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontFamily: T.mono, fontSize: 10, color: T.textDim }}>
+            PAYMENTS PORTFOLIO DECISION ENGINE · MODEL 05 · EXECUTIVE DECISION LAYER · CARLOS UREÑA PAYMENTS STRATEGY
+          </span>
+          <span style={{ fontFamily: T.mono, fontSize: 10, color: T.textDim }}>
+            PROTOTYPE · SYNTHETIC DATA · PHI V1 · 6-DIMENSION SCORING
+          </span>
+        </div>
       </div>
     </div>
   );
