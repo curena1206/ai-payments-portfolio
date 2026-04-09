@@ -339,11 +339,11 @@ const MODELS = [
     desc: 'Calculates where revenue is generated and where margin is lost across clients, rails, and flows. The economic anchor of the system. Every downstream model draws on its outputs.',
     minData: 'Transaction extract with client ID, rail, destination corridor, amount, and fee charged (partial completeness is sufficient). Standard pricing schedule by rail and corridor.',
     maturity: [
-      { label: 'Immediate visibility', desc: 'Revenue ranking by client, corridor, and rail. Pricing exception concentration. Where the portfolio generates the most and least revenue.' },
-      { label: 'Economic precision', desc: 'Margin by corridor using rate-card-based cost estimates across four cost layers: network and scheme fees, correspondent and intermediary costs, liquidity and prefunding cost, and operational and exception cost. Balance sheet linkage where available.' },
-      { label: 'Portfolio optimization', desc: 'True net margin at the transaction level. Full cost attribution by corridor. Pricing leakage quantified as recoverable revenue.' },
+      { label: 'Immediate visibility', desc: 'Revenue ranking by client, flow, and rail. Pricing exception concentration. Where the portfolio generates the most and least revenue.' },
+      { label: 'Economic precision', desc: 'Margin by flow and corridor using rate-card-based cost estimates across four cost layers: network and scheme fees, correspondent and intermediary costs, liquidity and prefunding cost, and operational and exception cost. Balance sheet linkage where available.' },
+      { label: 'Portfolio optimization', desc: 'True net margin at the transaction level. Full cost attribution across flows. Pricing leakage quantified as recoverable revenue.' },
     ],
-    tells: 'Where revenue is made and lost. Where pricing exceptions are eroding margin silently. Which clients are under-monetized relative to internal peers on the same corridor. Which corridors are likely margin-negative even under conservative cost assumptions.',
+    tells: 'Where revenue is made and lost. Where pricing exceptions are eroding margin silently. Which clients are under-monetized relative to internal peers on the same flow and rail. Which corridors are likely margin-negative even under conservative cost assumptions.',
     connection: '',
   },
   {
@@ -366,7 +366,7 @@ const MODELS = [
     layer: 'Layer 3 — Network Intelligence',
     name: 'Payment Flow & Corridor Analyzer',
     route: '/models/03-corridor-analyzer',
-    desc: 'Maps the economics of each active payment flow and corridor, comparing revenue against estimated cost, and classifies each into four strategic categories: Grow, Defend, Optimize, or De-prioritize.',
+    desc: 'Maps the economics of payment flows, including corridor-level performance where relevant, comparing revenue against estimated cost and classifying each into four strategic categories: Grow, Defend, Optimize, or De-prioritize.',
     minData: 'Volume and revenue by corridor. Average cost estimate per corridor — derived from correspondent fee schedules, GL entries, or SWIFT benchmarks where formal claims data is unavailable.',
     maturity: [
       { label: 'Immediate visibility', desc: 'Corridor classification by revenue and volume. Which corridors are building the franchise and which are diluting it directionally.' },
@@ -385,7 +385,7 @@ const MODELS = [
     minData: 'Transaction history by client over 12 to 24 months. Rail and corridor usage by client.',
     maturity: [
       { label: 'Immediate visibility', desc: 'Client growth and decline patterns. Rail and corridor concentration risk. Early signals of volume migration away from the bank.' },
-      { label: 'Economic precision', desc: 'Under-monetized clients identified by comparing revenue per payment against internal peer groups on the same corridor and rail — no external benchmarks required. Pricing inconsistencies across similar client profiles. Early indicators of pricing leakage at the client level.' },
+      { label: 'Economic precision', desc: 'Under-monetized clients identified by comparing revenue per payment against internal peer groups on the same flow and rail — no external benchmarks required. Pricing inconsistencies across similar client profiles. Early indicators of pricing leakage at the client level.' },
       { label: 'Portfolio optimization', desc: 'Estimated revenue at risk combining volume decline, pricing compression, and concentration signals. Outputs structured for relationship manager action — identifying which clients require repricing, migration, or retention intervention, and the associated revenue impact.' },
     ],
     tells: 'Where client relationships are deepening, where they are stable, and where volume is migrating. The model quantifies the signal. The relationship explains the cause.',
@@ -401,7 +401,7 @@ const MODELS = [
     maturity: [
       { label: 'Visibility', desc: 'Consolidated portfolio view across six dimensions: pricing governance, rail economics, corridor profitability, client retention risk, revenue concentration, and operational drag. Identification of where the most significant issues exist.' },
       { label: 'Prioritization', desc: 'Issues ranked by revenue impact and intervention complexity. Top actions with estimated revenue uplift, time to impact, and execution difficulty. Portfolio health index — a composite view translating multiple KPIs into a single economic signal — scored across all six dimensions with transparent methodology.' },
-      { label: 'Scenario and trade-off', desc: 'Three scenario models: base case if nothing changes, optimized if priority interventions are implemented, and stress case under adverse corridor or pricing conditions. Trade-off analysis across competing interventions.' },
+      { label: 'Scenario and trade-off', desc: 'Three scenario models: base case if nothing changes, optimized if priority interventions are implemented, and stress case under adverse flow or pricing conditions. Trade-off analysis across competing interventions.' },
     ],
     tells: 'Not just where the problems are — but which ones to fix first, in what sequence, and what the revenue impact of each intervention is. Executives do not fund diagnostics. They fund ranked interventions with clear economic outcomes.',
     connection: 'Synthesis layer. Receives inputs from all four upstream models.',
@@ -415,7 +415,7 @@ const MODELS = [
     minData: 'Volume and revenue by network. Network participation costs — membership, settlement, connectivity. Internal processing cost per network transaction.',
     maturity: [
       { label: 'Immediate visibility', desc: 'Revenue versus cost by network. Which networks are generating positive economics at current volumes.' },
-      { label: 'Economic precision', desc: 'Margin trajectory by network as volume scales, including estimated breakeven thresholds and time to profitability. Pricing leverage points where fee adjustments would materially change network economics. Corridor coverage gaps where participation is incomplete.' },
+      { label: 'Economic precision', desc: 'Margin trajectory by network as volume scales, including estimated breakeven thresholds and time to profitability. Pricing leverage points where fee adjustments would materially change network economics. Flow coverage gaps where participation is incomplete.' },
       { label: 'Portfolio optimization', desc: 'Each network classified by strategic role: Core profit driver, Strategic enabler, Defensive necessity, or Value-destructive. Investment and exit decisions supported by margin modeling and strategic positioning analysis, supporting capital allocation and investment prioritization decisions.' },
     ],
     tells: 'Whether each network justifies its infrastructure investment — and whether that participation is a profit driver, a strategic entry point, a competitive defense, or a value drain. RTP may be loss-making today but protecting the deposit franchise. This model makes that trade-off explicit and quantifiable.',
