@@ -1,755 +1,930 @@
 import { useState, useMemo } from "react";
 import {
-  ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, BarChart, Bar, Cell, LineChart, Line, Legend,
-  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-  ComposedChart, Area
+  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, Cell, ScatterChart, Scatter, ZAxis, Area, AreaChart,
+  ComposedChart, ReferenceLine
 } from "recharts";
 import { ModelBackBar } from '../pages/FrameworkIndex';
 
-// ─── DESIGN TOKENS ─────────────────────────────────────────────────────────
-// Aesthetic: Rich midnight blue with gold accents — cartographic, premium, global
+// ── DESIGN TOKENS ──────────────────────────────────────────────────────────
 const T = {
-  bg:        "#0D1117",
-  surface:   "#161B22",
-  card:      "#1C2333",
-  border:    "#2D3748",
-  borderLt:  "#3D4F6B",
-  gold:      "#D4A843",
-  goldLt:    "#F5E6B8",
-  goldDim:   "#8A6C27",
-  teal:      "#2DD4BF",
-  tealDim:   "#0D9488",
-  red:       "#F87171",
-  redDim:    "#991B1B",
-  amber:     "#FBBF24",
-  green:     "#34D399",
-  greenDim:  "#065F46",
-  blue:      "#60A5FA",
-  blueDim:   "#1D4ED8",
-  text:      "#E2E8F0",
-  textMid:   "#94A3B8",
-  textFaint: "#4B5563",
-  grid:      "#1E2A3A",
+  bg:        '#0a0d14',
+  surface:   '#0f1520',
+  card:      '#141c2a',
+  cardHov:   '#1a2438',
+  border:    '#1e2d45',
+  borderHi:  '#2a4060',
+  navy:      '#0f1f3d',
+  gold:      '#c9a84c',
+  goldDim:   '#8a6f30',
+  goldSoft:  'rgba(201,168,76,0.10)',
+  teal:      '#2dd4bf',
+  tealSoft:  'rgba(45,212,191,0.10)',
+  red:       '#f87171',
+  redSoft:   'rgba(248,113,113,0.10)',
+  amber:     '#fbbf24',
+  amberSoft: 'rgba(251,191,36,0.08)',
+  green:     '#34d399',
+  greenSoft: 'rgba(52,211,153,0.08)',
+  blue:      '#60a5fa',
+  blueSoft:  'rgba(96,165,250,0.08)',
+  text:      '#e2e8f0',
+  textMid:   '#94a3b8',
+  textDim:   '#64748b',
+  mono:      "'IBM Plex Mono', 'Courier New', monospace",
+  sans:      "'Inter', system-ui, sans-serif",
+  serif:     "'Playfair Display', Georgia, serif",
 };
 
-// ─── CORRIDOR DATA ──────────────────────────────────────────────────────────
-// Full economics per corridor — built on Model 01 corridor P&L foundation
-const CORRIDORS = [
+// ── SYNTHETIC CLIENT DATA ──────────────────────────────────────────────────
+// 12 clients with 24 months of behavioral data
+// Revenue per payment benchmarked internally by segment + corridor
+const CLIENTS = [
   {
-    id: "US-EU", from: "United States", to: "Eurozone", flag_from: "🇺🇸", flag_to: "🇪🇺",
-    currency: "USD/EUR", fxPair: "EURUSD",
-    volume: 14200, avgTicket: 129577, grossFee: 1840000, fxMargin: 420000,
-    railCost: 198000, nostro: 145000, correspondent: 68000, compliance: 38000, exceptions: 42000,
-    fxVolatility: 7.2, competitorCount: 8, marketSharePct: 12.4,
-    growthRate: 14.2, regulatoryRisk: "Low", corridorMaturity: "Mature",
-    keyDrivers: ["EUR trade flows", "Intra-company transfers", "EU payroll"],
-    fxSpreadBps: 18, nostroTurnDays: 1.8, exceptionRatePct: 2.1,
-    trend: [380,410,395,428,442,460,448,471,490,512,498,420],
+    id: 'C01', name: 'Meridian Industries', segment: 'Corporate',
+    relationship: 'Core', rm: 'Sarah Chen',
+    rails: ['Wire', 'ACH'], corridors: ['US→EU', 'US→UK'],
+    avgRevenuePerPmt: 158, segmentPeerAvg: 142,
+    monthlyVolume:  [18,19,20,21,22,21,23,24,22,20,19,18, 17,16,15,14,13,12,11,10,10,9,9,8],
+    monthlyRevenue: [2840,2960,3100,3240,3380,3220,3540,3680,3380,3080,2960,2840, 2680,2520,2340,2180,2020,1880,1720,1580,1560,1420,1400,1280],
+    railMix: { Wire: 72, ACH: 28 },
+    pricingTier: 'Standard',
+    lastRepriced: '2023-Q2',
+    signal: 'MIGRATION_RISK',
+    signalStrength: 'HIGH',
+    revenueAtRisk: 380000,
+    insight: 'Volume declining 11 months consecutively. Wire-to-ACH shift suggests treasury team optimizing costs. Peer clients in same segment generating 11% more revenue per payment.',
+    action: 'REPRICE',
+    actionDetail: 'Schedule repricing conversation. Peer benchmark shows $16/payment gap. Retention offer: enhanced FX rate in exchange for volume commitment.',
   },
   {
-    id: "US-UK", from: "United States", to: "United Kingdom", flag_from: "🇺🇸", flag_to: "🇬🇧",
-    currency: "USD/GBP", fxPair: "GBPUSD",
-    volume: 8900, avgTicket: 125843, grossFee: 1120000, fxMargin: 280000,
-    railCost: 148000, nostro: 98000, correspondent: 44000, compliance: 29000, exceptions: 28000,
-    fxVolatility: 8.8, competitorCount: 10, marketSharePct: 9.8,
-    growthRate: 8.4, regulatoryRisk: "Medium", corridorMaturity: "Mature",
-    keyDrivers: ["Post-Brexit trade", "Financial services", "Real estate"],
-    fxSpreadBps: 15, nostroTurnDays: 1.2, exceptionRatePct: 1.8,
-    trend: [210,224,218,235,242,251,238,261,270,284,268,253],
+    id: 'C02', name: 'Apex Global Trade', segment: 'Corporate',
+    relationship: 'Strategic', rm: 'Marcus Williams',
+    rails: ['SWIFT', 'Wire'], corridors: ['US→AE', 'US→IN', 'US→HK'],
+    avgRevenuePerPmt: 339, segmentPeerAvg: 298,
+    monthlyVolume:  [9,10,11,12,13,14,15,16,17,18,19,20, 21,22,23,24,25,26,27,28,29,30,31,32],
+    monthlyRevenue: [3050,3380,3720,4060,4390,4720,5060,5390,5720,6060,6390,6720, 7060,7390,7720,8060,8390,8720,9060,9390,9720,10060,10390,10720],
+    railMix: { SWIFT: 65, Wire: 35 },
+    pricingTier: 'Premium',
+    lastRepriced: '2024-Q1',
+    signal: 'DEEPENING',
+    signalStrength: 'HIGH',
+    revenueAtRisk: 0,
+    insight: 'Consistent volume growth 24 months. New corridors added Q3. Revenue per payment 14% above segment peer average — strong pricing position. Expansion opportunity in US→SG.',
+    action: 'EXPAND',
+    actionDetail: 'Propose US→SG corridor activation. Client has Singapore subsidiary. Estimated incremental revenue $180K annually at current ticket size.',
   },
   {
-    id: "US-SG", from: "United States", to: "Singapore", flag_from: "🇺🇸", flag_to: "🇸🇬",
-    currency: "USD/SGD", fxPair: "USDSGD",
-    volume: 4100, avgTicket: 173170, grossFee: 710000, fxMargin: 195000,
-    railCost: 108000, nostro: 88000, correspondent: 52000, compliance: 42000, exceptions: 31000,
-    fxVolatility: 4.2, competitorCount: 6, marketSharePct: 14.2,
-    growthRate: 22.8, regulatoryRisk: "Low", corridorMaturity: "Growing",
-    keyDrivers: ["APAC treasury hubs", "Tech sector", "Private wealth"],
-    fxSpreadBps: 22, nostroTurnDays: 2.1, exceptionRatePct: 2.8,
-    trend: [98,105,112,118,128,136,142,151,162,174,180,195],
+    id: 'C03', name: 'Northgate Capital', segment: 'FI',
+    relationship: 'Core', rm: 'Jennifer Park',
+    rails: ['Wire', 'SWIFT'], corridors: ['US→EU', 'US→CH'],
+    avgRevenuePerPmt: 382, segmentPeerAvg: 401,
+    monthlyVolume:  [5,5,5,5,5,6,6,6,6,6,6,6, 6,6,6,6,5,5,5,5,5,5,5,5],
+    monthlyRevenue: [1890,1910,1930,1950,1970,2280,2290,2300,2310,2320,2330,2340, 2340,2350,2350,2350,1960,1950,1940,1940,1930,1930,1920,1910],
+    railMix: { Wire: 45, SWIFT: 55 },
+    pricingTier: 'Standard',
+    lastRepriced: '2022-Q4',
+    signal: 'UNDER_MONETIZED',
+    signalStrength: 'MEDIUM',
+    revenueAtRisk: 114000,
+    insight: 'Revenue per payment is $19 below FI segment peer average. Pricing has not been reviewed since 2022. Volume stable — low churn risk but clear monetization gap.',
+    action: 'REPRICE',
+    actionDetail: 'Pricing review overdue. Bring to segment average would recover $114K annually. Low relationship risk given stable volumes and no competitor signals.',
   },
   {
-    id: "US-IN", from: "United States", to: "India", flag_from: "🇺🇸", flag_to: "🇮🇳",
-    currency: "USD/INR", fxPair: "USDINR",
-    volume: 3800, avgTicket: 126315, grossFee: 480000, fxMargin: 92000,
-    railCost: 118000, nostro: 112000, correspondent: 78000, compliance: 58000, exceptions: 64000,
-    fxVolatility: 6.8, competitorCount: 14, marketSharePct: 4.2,
-    growthRate: 18.4, regulatoryRisk: "High", corridorMaturity: "Growing",
-    keyDrivers: ["IT services", "Remittance", "Shared service centers"],
-    fxSpreadBps: 28, nostroTurnDays: 3.4, exceptionRatePct: 7.8,
-    trend: [62,68,72,78,82,88,84,92,96,98,102,104],
+    id: 'C04', name: 'Solara Payments', segment: 'Fintech',
+    relationship: 'Growth', rm: 'David Okafor',
+    rails: ['RTP', 'ACH', 'FedNow'], corridors: ['US DOM'],
+    avgRevenuePerPmt: 0.48, segmentPeerAvg: 0.52,
+    monthlyVolume:  [142,158,174,190,210,228,248,268,290,312,336,360, 385,412,440,468,498,530,562,596,632,668,706,746],
+    monthlyRevenue: [68,76,84,91,101,110,119,129,139,150,162,173, 185,198,212,225,240,255,270,286,304,321,340,358],
+    railMix: { RTP: 48, ACH: 38, FedNow: 14 },
+    pricingTier: 'Volume',
+    lastRepriced: '2024-Q3',
+    signal: 'DEEPENING',
+    signalStrength: 'HIGH',
+    revenueAtRisk: 0,
+    insight: 'Volume growing 18% month-on-month. FedNow adoption increasing. Revenue per payment slightly below fintech peer average — volume discount justified at current scale.',
+    action: 'MONITOR',
+    actionDetail: 'Review pricing at 800K monthly transactions. Current volume discount appropriate. Watch FedNow adoption — potential to renegotiate rail mix terms at next tier.',
   },
   {
-    id: "US-AE", from: "United States", to: "UAE", flag_from: "🇺🇸", flag_to: "🇦🇪",
-    currency: "USD/AED", fxPair: "USDAED",
-    volume: 2900, avgTicket: 213793, grossFee: 620000, fxMargin: 148000,
-    railCost: 98000, nostro: 95000, correspondent: 48000, compliance: 48000, exceptions: 38000,
-    fxVolatility: 0.8, competitorCount: 7, marketSharePct: 11.2,
-    growthRate: 28.4, regulatoryRisk: "Medium", corridorMaturity: "Growing",
-    keyDrivers: ["Energy sector", "Real estate", "Trade finance"],
-    fxSpreadBps: 12, nostroTurnDays: 1.4, exceptionRatePct: 3.8,
-    trend: [88,95,102,110,118,124,132,140,148,158,164,174],
+    id: 'C05', name: 'Crescent Logistics', segment: 'Mid-Market',
+    relationship: 'Standard', rm: 'Amy Torres',
+    rails: ['ACH', 'Wire'], corridors: ['US→MX', 'US→BR'],
+    avgRevenuePerPmt: 88, segmentPeerAvg: 76,
+    monthlyVolume:  [8,8,8,8,7,7,7,7,7,7,8,8, 8,7,7,7,6,6,6,6,6,5,5,5],
+    monthlyRevenue: [700,702,705,702,618,620,621,618,622,624,704,706, 705,620,619,618,531,530,529,531,530,443,442,441],
+    railMix: { ACH: 62, Wire: 38 },
+    pricingTier: 'Standard',
+    lastRepriced: '2023-Q1',
+    signal: 'MIGRATION_RISK',
+    signalStrength: 'MEDIUM',
+    revenueAtRisk: 124000,
+    insight: 'Volume declining 6 months. US→BR corridor showing elevated exception rates. Revenue per payment above peer average — pricing not the issue. Operational friction likely driving migration.',
+    action: 'RETAIN',
+    actionDetail: 'Escalate US→BR exception issues to operations. Schedule RM touchpoint. Exception rate of 9.4% on Brazil corridor is double portfolio average — fix this before repricing.',
   },
   {
-    id: "US-MX", from: "United States", to: "Mexico", flag_from: "🇺🇸", flag_to: "🇲🇽",
-    currency: "USD/MXN", fxPair: "USDMXN",
-    volume: 6200, avgTicket: 62903, grossFee: 390000, fxMargin: 58000,
-    railCost: 68000, nostro: 42000, correspondent: 28000, compliance: 28000, exceptions: 22000,
-    fxVolatility: 14.8, competitorCount: 18, marketSharePct: 5.8,
-    growthRate: 6.2, regulatoryRisk: "Medium", corridorMaturity: "Mature",
-    keyDrivers: ["USMCA trade", "Manufacturing payroll", "Nearshoring"],
-    fxSpreadBps: 35, nostroTurnDays: 1.1, exceptionRatePct: 2.2,
-    trend: [58,62,60,64,66,68,65,70,72,68,71,73],
+    id: 'C06', name: 'Atlas Commodities', segment: 'Corporate',
+    relationship: 'Core', rm: 'Sarah Chen',
+    rails: ['SWIFT'], corridors: ['US→NG', 'US→ZA', 'US→IN'],
+    avgRevenuePerPmt: 565, segmentPeerAvg: 298,
+    monthlyVolume:  [4,4,4,3,3,4,4,4,4,4,3,3, 3,3,4,4,4,4,4,4,4,4,4,4],
+    monthlyRevenue: [2240,2250,2240,1680,1680,2260,2260,2250,2260,2260,1680,1680, 1680,1680,2260,2260,2260,2260,2250,2260,2260,2250,2260,2260],
+    railMix: { SWIFT: 100 },
+    pricingTier: 'Premium',
+    lastRepriced: '2024-Q2',
+    signal: 'STABLE',
+    signalStrength: 'LOW',
+    revenueAtRisk: 0,
+    insight: 'Revenue per payment 90% above corporate peer average — driven by complex emerging market corridors. Volume stable. Single-rail dependency is a concentration risk worth monitoring.',
+    action: 'MONITOR',
+    actionDetail: 'No action required. Strong pricing position. Consider introducing wire as backup rail to reduce SWIFT dependency and protect against network disruption.',
   },
   {
-    id: "US-JP", from: "United States", to: "Japan", flag_from: "🇺🇸", flag_to: "🇯🇵",
-    currency: "USD/JPY", fxPair: "USDJPY",
-    volume: 2100, avgTicket: 276190, grossFee: 580000, fxMargin: 168000,
-    railCost: 88000, nostro: 78000, correspondent: 42000, compliance: 35000, exceptions: 18000,
-    fxVolatility: 11.2, competitorCount: 5, marketSharePct: 16.8,
-    growthRate: 4.8, regulatoryRisk: "Low", corridorMaturity: "Mature",
-    keyDrivers: ["Automotive supply chain", "Electronics", "Investment flows"],
-    fxSpreadBps: 14, nostroTurnDays: 1.6, exceptionRatePct: 1.2,
-    trend: [118,124,130,136,142,148,144,150,156,162,158,154],
+    id: 'C07', name: 'Veritas Healthcare', segment: 'Mid-Market',
+    relationship: 'Standard', rm: 'Amy Torres',
+    rails: ['ACH'], corridors: ['US DOM'],
+    avgRevenuePerPmt: 0.62, segmentPeerAvg: 0.76,
+    monthlyVolume:  [48,49,50,51,52,52,53,54,54,55,56,57, 58,59,60,61,62,63,64,65,66,67,68,69],
+    monthlyRevenue: [30,30,31,32,32,32,33,33,33,34,35,35, 36,37,37,38,38,39,40,40,41,42,42,43],
+    railMix: { ACH: 100 },
+    pricingTier: 'Standard',
+    lastRepriced: '2022-Q3',
+    signal: 'UNDER_MONETIZED',
+    signalStrength: 'MEDIUM',
+    revenueAtRisk: 89000,
+    insight: 'Revenue per payment is $0.14 below mid-market domestic peer average — pricing not reviewed in 2+ years. Volume growing steadily. Low churn risk. Straightforward repricing opportunity.',
+    action: 'REPRICE',
+    actionDetail: 'Bring pricing to peer average. Incremental $89K annually at current volumes. Growth trajectory means this gap widens every month without action.',
   },
   {
-    id: "US-HK", from: "United States", to: "Hong Kong", flag_from: "🇺🇸", flag_to: "🇭🇰",
-    currency: "USD/HKD", fxPair: "USDHKD",
-    volume: 1800, avgTicket: 272222, grossFee: 490000, fxMargin: 145000,
-    railCost: 78000, nostro: 72000, correspondent: 38000, compliance: 38000, exceptions: 14000,
-    fxVolatility: 0.5, competitorCount: 6, marketSharePct: 18.4,
-    growthRate: 3.2, regulatoryRisk: "Medium", corridorMaturity: "Mature",
-    keyDrivers: ["Capital markets", "Private banking", "Trade finance"],
-    fxSpreadBps: 8, nostroTurnDays: 1.2, exceptionRatePct: 1.0,
-    trend: [108,112,116,120,124,128,122,128,132,135,132,130],
+    id: 'C08', name: 'Pinnacle Asset Mgmt', segment: 'FI',
+    relationship: 'Core', rm: 'Jennifer Park',
+    rails: ['Wire', 'SWIFT'], corridors: ['US→EU', 'US→JP', 'US→UK'],
+    avgRevenuePerPmt: 400, segmentPeerAvg: 401,
+    monthlyVolume:  [4,4,5,5,5,5,5,5,5,5,5,5, 5,5,5,5,5,5,6,6,6,6,6,6],
+    monthlyRevenue: [1600,1600,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000, 2000,2000,2000,2000,2000,2000,2400,2400,2400,2400,2400,2400],
+    railMix: { Wire: 50, SWIFT: 50 },
+    pricingTier: 'Premium',
+    lastRepriced: '2024-Q1',
+    signal: 'STABLE',
+    signalStrength: 'LOW',
+    revenueAtRisk: 0,
+    insight: 'Revenue per payment exactly at FI segment peer average. Volume gradually increasing. New corridor (US→JP) added Q4. Well-positioned relationship — no immediate action needed.',
+    action: 'MONITOR',
+    actionDetail: 'Relationship performing to benchmark. Review at next QBR. Watch US→JP volumes for growth — if they scale, pricing review may be warranted.',
   },
   {
-    id: "US-BR", from: "United States", to: "Brazil", flag_from: "🇺🇸", flag_to: "🇧🇷",
-    currency: "USD/BRL", fxPair: "USDBRL",
-    volume: 2400, avgTicket: 129166, grossFee: 310000, fxMargin: 42000,
-    railCost: 88000, nostro: 95000, correspondent: 62000, compliance: 68000, exceptions: 72000,
-    fxVolatility: 18.4, competitorCount: 12, marketSharePct: 3.8,
-    growthRate: 9.8, regulatoryRisk: "High", corridorMaturity: "Developing",
-    keyDrivers: ["Commodities", "Consumer goods", "Agribusiness"],
-    fxSpreadBps: 48, nostroTurnDays: 4.2, exceptionRatePct: 9.4,
-    trend: [38,40,42,44,48,46,50,52,48,54,52,56],
+    id: 'C09', name: 'TerraFin Services', segment: 'Fintech',
+    relationship: 'Growth', rm: 'David Okafor',
+    rails: ['FedNow', 'RTP'], corridors: ['US DOM'],
+    avgRevenuePerPmt: 0.51, segmentPeerAvg: 0.52,
+    monthlyVolume:  [210,224,238,254,270,288,306,326,348,370,394,420, 448,478,508,540,574,610,648,688,730,774,820,868],
+    monthlyRevenue: [107,114,121,129,138,147,156,166,177,189,201,214, 228,244,259,275,293,311,330,350,372,395,418,443],
+    railMix: { FedNow: 60, RTP: 40 },
+    pricingTier: 'Volume',
+    lastRepriced: '2024-Q2',
+    signal: 'DEEPENING',
+    signalStrength: 'HIGH',
+    revenueAtRisk: 0,
+    insight: 'Fastest growing client in portfolio. FedNow-first routing. Revenue per payment at fintech peer average. Volume doubling approximately every 14 months.',
+    action: 'MONITOR',
+    actionDetail: 'Flag for strategic account upgrade at 1M monthly transactions. Current pricing appropriate. FedNow-native client — potential reference case for instant rail adoption.',
   },
   {
-    id: "US-NG", from: "United States", to: "Nigeria", flag_from: "🇺🇸", flag_to: "🇳🇬",
-    currency: "USD/NGN", fxPair: "USDNGN",
-    volume: 820, avgTicket: 353658, grossFee: 290000, fxMargin: 48000,
-    railCost: 78000, nostro: 112000, correspondent: 88000, compliance: 88000, exceptions: 98000,
-    fxVolatility: 32.8, competitorCount: 4, marketSharePct: 8.2,
-    growthRate: 14.8, regulatoryRisk: "Very High", corridorMaturity: "Developing",
-    keyDrivers: ["Energy sector", "Trade finance", "Diaspora flows"],
-    fxSpreadBps: 68, nostroTurnDays: 6.8, exceptionRatePct: 14.2,
-    trend: [28,30,32,34,36,34,38,36,40,38,42,44],
+    id: 'C10', name: 'Orion Energy Corp', segment: 'Corporate',
+    relationship: 'Core', rm: 'Marcus Williams',
+    rails: ['SWIFT', 'Wire'], corridors: ['US→NO', 'US→SA', 'US→QA'],
+    avgRevenuePerPmt: 310, segmentPeerAvg: 298,
+    monthlyVolume:  [6,6,6,7,7,7,7,7,6,6,6,6, 6,7,7,7,7,7,7,6,6,6,6,6],
+    monthlyRevenue: [1860,1860,1860,2170,2170,2170,2170,2170,1860,1860,1860,1860, 1860,2170,2170,2170,2170,2170,2170,1860,1860,1860,1860,1860],
+    railMix: { SWIFT: 70, Wire: 30 },
+    pricingTier: 'Standard',
+    lastRepriced: '2023-Q3',
+    signal: 'STABLE',
+    signalStrength: 'LOW',
+    revenueAtRisk: 0,
+    insight: 'Revenue per payment 4% above corporate peer average. Volume driven by energy cycle — Q2/Q3 seasonal uplift consistent. Stable relationship. Nordic and Gulf corridors performing well.',
+    action: 'MONITOR',
+    actionDetail: 'No action required. Consider pricing review at next contract renewal in Q3 2025 — opportunity to move from Standard to Premium tier given corridor complexity.',
+  },
+  {
+    id: 'C11', name: 'Pacific Trade Finance', segment: 'FI',
+    relationship: 'Growth', rm: 'Jennifer Park',
+    rails: ['SWIFT', 'Wire'], corridors: ['US→SG', 'US→HK', 'US→JP'],
+    avgRevenuePerPmt: 285, segmentPeerAvg: 401,
+    monthlyVolume:  [2,2,3,3,3,4,4,4,4,5,5,5, 5,5,6,6,6,6,7,7,7,7,8,8],
+    monthlyRevenue: [570,570,855,855,855,1140,1140,1140,1140,1425,1425,1425, 1425,1425,1710,1710,1710,1710,1995,1995,1995,1995,2280,2280],
+    railMix: { SWIFT: 80, Wire: 20 },
+    pricingTier: 'Standard',
+    lastRepriced: '2023-Q4',
+    signal: 'UNDER_MONETIZED',
+    signalStrength: 'HIGH',
+    revenueAtRisk: 462000,
+    insight: 'Revenue per payment is $116 below FI segment peer average — the largest monetization gap in the portfolio. Volume growing strongly. Client was onboarded at introductory pricing that was never reviewed.',
+    action: 'REPRICE',
+    actionDetail: 'Highest priority repricing in portfolio. Introductory pricing expired. $116/payment gap vs FI peer average represents $462K annual revenue opportunity at current volumes.',
+  },
+  {
+    id: 'C12', name: 'Zenith Manufacturing', segment: 'Mid-Market',
+    relationship: 'Standard', rm: 'Amy Torres',
+    rails: ['ACH', 'Wire'], corridors: ['US→MX'],
+    avgRevenuePerPmt: 52, segmentPeerAvg: 76,
+    monthlyVolume:  [12,12,11,11,11,10,10,10,9,9,9,8, 8,8,7,7,7,6,6,6,5,5,5,4],
+    monthlyRevenue: [620,624,572,572,572,520,520,520,468,468,468,416, 416,416,364,364,364,312,312,312,260,260,260,208],
+    railMix: { ACH: 75, Wire: 25 },
+    pricingTier: 'Standard',
+    lastRepriced: '2021-Q2',
+    signal: 'MIGRATION_RISK',
+    signalStrength: 'HIGH',
+    revenueAtRisk: 208000,
+    insight: 'Volume declining 18 months consecutively — 67% reduction from peak. Revenue per payment $24 below mid-market peer average. Likely moving US→MX flows to a lower-cost provider.',
+    action: 'RETAIN',
+    actionDetail: 'Urgent retention intervention required. Schedule senior RM call. Consider competitive repricing offer — at $24 below peer average, pricing is not the issue. Investigate competitor.',
   },
 ];
 
-// ─── DERIVED ANALYTICS ──────────────────────────────────────────────────────
-const withAnalytics = CORRIDORS.map(c => {
-  const totalCost = c.railCost + c.nostro + c.correspondent + c.compliance + c.exceptions;
-  const grossRevenue = c.grossFee + c.fxMargin;
-  const net = grossRevenue - totalCost;
-  const netMarginPct = (net / grossRevenue) * 100;
-  const costRatioPct = (totalCost / grossRevenue) * 100;
-  const revenuePerTxn = grossRevenue / c.volume;
-  const costPerTxn = totalCost / c.volume;
-  const netPerTxn = net / c.volume;
+// ── PORTFOLIO AGGREGATES ────────────────────────────────────────────────────
+const MONTHS_24 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec',
+                   'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS_12 = MONTHS_24.slice(12);
 
-  // Strategic classification
-  let classification, classColor, classDesc;
-  if (netMarginPct > 40 && c.growthRate > 10) {
-    classification = "GROW"; classColor = T.green;
-    classDesc = "High margin + high growth — invest aggressively";
-  } else if (netMarginPct > 40 && c.growthRate <= 10) {
-    classification = "DEFEND"; classColor = T.teal;
-    classDesc = "High margin, mature — protect pricing and share";
-  } else if (netMarginPct > 20 && c.growthRate > 10) {
-    classification = "OPTIMIZE"; classColor = T.amber;
-    classDesc = "Growth corridor — improve cost structure to unlock margin";
-  } else if (netMarginPct > 20) {
-    classification = "OPTIMIZE"; classColor = T.amber;
-    classDesc = "Adequate margin — operational efficiency opportunity";
-  } else {
-    classification = "DE-PRIORITIZE / EXIT"; classColor = T.red;
-    classDesc = "Below threshold — renegotiate or exit";
-  }
+// Signal summary
+const signalCounts = {
+  DEEPENING: CLIENTS.filter(c => c.signal === 'DEEPENING').length,
+  STABLE: CLIENTS.filter(c => c.signal === 'STABLE').length,
+  MIGRATION_RISK: CLIENTS.filter(c => c.signal === 'MIGRATION_RISK').length,
+  UNDER_MONETIZED: CLIENTS.filter(c => c.signal === 'UNDER_MONETIZED').length,
+};
 
-  return { ...c, totalCost, grossRevenue, net, netMarginPct, costRatioPct, revenuePerTxn, costPerTxn, netPerTxn, classification, classColor, classDesc };
-});
+// Total revenue at risk
+const totalRevenueAtRisk = CLIENTS.reduce((s, c) => s + c.revenueAtRisk, 0);
 
-// Portfolio totals
-const portfolio = withAnalytics.reduce((acc, c) => ({
-  grossRevenue: acc.grossRevenue + c.grossRevenue,
-  totalCost: acc.totalCost + c.totalCost,
-  net: acc.net + c.net,
-  volume: acc.volume + c.volume,
-  fxMargin: acc.fxMargin + c.fxMargin,
-}), { grossRevenue: 0, totalCost: 0, net: 0, volume: 0, fxMargin: 0 });
-portfolio.netMarginPct = (portfolio.net / portfolio.grossRevenue) * 100;
+// Action queue
+const actionQueue = CLIENTS
+  .filter(c => c.action !== 'MONITOR')
+  .map(c => ({
+    ...c,
+    priority: c.signalStrength === 'HIGH' ? 1 : c.signalStrength === 'MEDIUM' ? 2 : 3,
+  }))
+  .sort((a, b) => a.priority - b.priority || b.revenueAtRisk - a.revenueAtRisk);
 
-// Classification counts
-const classCounts = { GROW: 0, DEFEND: 0, OPTIMIZE: 0, "DE-PRIORITIZE / EXIT": 0 };
-withAnalytics.forEach(c => classCounts[c.classification]++);
+// ── HELPERS ─────────────────────────────────────────────────────────────────
+const fmt = n => n >= 1000000 ? `$${(n/1000000).toFixed(1)}M` : n >= 1000 ? `$${(n/1000).toFixed(0)}K` : `$${n.toFixed(0)}`;
+const fmtK = n => n >= 1000 ? `${(n/1000).toFixed(0)}K` : n;
 
-// ─── HELPERS ────────────────────────────────────────────────────────────────
-const fmt = (n) => n >= 1000000 ? `$${(n/1000000).toFixed(1)}M` : n >= 1000 ? `$${(n/1000).toFixed(0)}K` : `$${n.toFixed(0)}`;
-const fmtPct = (n) => `${n.toFixed(1)}%`;
+const signalColor = s => ({
+  DEEPENING: T.green,
+  STABLE: T.teal,
+  MIGRATION_RISK: T.red,
+  UNDER_MONETIZED: T.amber,
+}[s] || T.textDim);
 
-// ─── SUBCOMPONENTS ───────────────────────────────────────────────────────────
-const SectionTitle = ({ children, sub }) => (
+const signalLabel = s => ({
+  DEEPENING: 'Deepening',
+  STABLE: 'Stable',
+  MIGRATION_RISK: 'Migration Risk',
+  UNDER_MONETIZED: 'Under-Monetized',
+}[s] || s);
+
+const actionColor = a => ({
+  EXPAND: T.green,
+  MONITOR: T.teal,
+  REPRICE: T.amber,
+  RETAIN: T.red,
+}[a] || T.textDim);
+
+const strengthColor = s => ({
+  HIGH: T.red,
+  MEDIUM: T.amber,
+  LOW: T.teal,
+}[s] || T.textDim);
+
+// ── SUBCOMPONENTS ───────────────────────────────────────────────────────────
+const Tag = ({ label, color, small }) => (
+  <span style={{
+    background: `${color}18`, border: `1px solid ${color}44`, color,
+    borderRadius: 3, padding: small ? '1px 6px' : '2px 8px',
+    fontFamily: T.mono, fontSize: small ? 9 : 10, fontWeight: 600, letterSpacing: '0.06em',
+    whiteSpace: 'nowrap',
+  }}>{label}</span>
+);
+
+const KPI = ({ label, value, sub, accent = T.gold }) => (
+  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px' }}>
+    <div style={{ fontFamily: T.mono, fontSize: 10, color: T.textDim, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6 }}>{label}</div>
+    <div style={{ fontFamily: T.mono, fontSize: 22, color: accent, fontWeight: 600, marginBottom: 4 }}>{value}</div>
+    {sub && <div style={{ fontFamily: T.sans, fontSize: 12, color: T.textMid }}>{sub}</div>}
+  </div>
+);
+
+const SectionHead = ({ title, sub }) => (
   <div style={{ marginBottom: 18 }}>
-    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
       <div style={{ width: 2, height: 16, background: T.gold }} />
-      <h2 style={{ margin: 0, fontSize: 10, fontWeight: 600, color: T.gold, fontFamily: "'Space Mono', monospace", letterSpacing: "0.16em", textTransform: "uppercase" }}>{children}</h2>
+      <h2 style={{ margin: 0, fontSize: 10, fontWeight: 600, color: T.gold, fontFamily: T.mono, letterSpacing: '0.14em', textTransform: 'uppercase' }}>{title}</h2>
     </div>
-    {sub && <div style={{ fontSize: 11, color: T.textFaint, fontFamily: "'Space Mono', monospace", paddingLeft: 12 }}>{sub}</div>}
+    {sub && <div style={{ fontSize: 11, color: T.textDim, fontFamily: T.mono, paddingLeft: 12 }}>{sub}</div>}
   </div>
 );
 
-const ClassBadge = ({ label, color }) => (
-  <span style={{ fontSize: 9, padding: "3px 8px", borderRadius: 2, background: `${color}18`, color, border: `1px solid ${color}44`, fontFamily: "'Space Mono', monospace", letterSpacing: "0.1em", fontWeight: 600 }}>{label}</span>
-);
-
-const KpiCard = ({ label, value, sub, accent, wide }) => (
-  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: "16px 20px", borderLeft: `3px solid ${accent || T.gold}`, gridColumn: wide ? "span 2" : "span 1" }}>
-    <div style={{ fontSize: 9, color: T.textFaint, letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: "'Space Mono', monospace", marginBottom: 6 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: T.text, fontFamily: "'Cormorant Garamond', serif", letterSpacing: "-0.01em" }}>{value}</div>
-    {sub && <div style={{ fontSize: 10, color: T.textFaint, fontFamily: "'Space Mono', monospace", marginTop: 4 }}>{sub}</div>}
-  </div>
-);
-
-const WaterfallRow = ({ label, value, isPositive, isNet, base }) => {
-  const pct = Math.min(Math.abs(value / base) * 100, 100);
-  const color = isNet ? T.gold : isPositive ? T.green : T.red;
+const CustomTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 7 }}>
-      <div style={{ width: 160, fontSize: 10, color: T.textFaint, textAlign: "right", fontFamily: "'Space Mono', monospace", flexShrink: 0 }}>{label}</div>
-      <div style={{ flex: 1, height: 22, background: T.surface, borderRadius: 3, overflow: "hidden", position: "relative" }}>
-        <div style={{ width: `${pct}%`, height: "100%", background: isNet ? `linear-gradient(90deg, ${T.goldDim}, ${T.gold})` : color, opacity: 0.85, borderRadius: 3, transition: "width 0.7s ease" }} />
-        <div style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", fontSize: 10, color: T.text, fontFamily: "'Space Mono', monospace", fontWeight: isNet ? 700 : 400 }}>
-          {isPositive ? "+" : ""}{fmt(value)}
+    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: '10px 14px' }}>
+      <div style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, marginBottom: 6 }}>{label}</div>
+      {payload.map((p, i) => (
+        <div key={i} style={{ fontFamily: T.mono, fontSize: 11, color: p.color || T.text }}>
+          {p.name}: {typeof p.value === 'number' ? p.value.toLocaleString() : p.value}
         </div>
-      </div>
+      ))}
     </div>
   );
 };
 
-// Sparkline mini component
-const Sparkline = ({ data, color }) => {
+// Mini sparkline
+const Spark = ({ data, color, height = 32, width = 80 }) => {
   const min = Math.min(...data);
   const max = Math.max(...data);
+  const range = max - min || 1;
   const pts = data.map((v, i) => {
-    const x = (i / (data.length - 1)) * 80;
-    const y = 20 - ((v - min) / (max - min)) * 18;
+    const x = (i / (data.length - 1)) * (width - 4) + 2;
+    const y = (height - 4) - ((v - min) / range) * (height - 8) + 2;
     return `${x},${y}`;
-  }).join(" ");
+  }).join(' ');
+  const last = pts.split(' ').pop().split(',');
   return (
-    <svg width="80" height="22" style={{ flexShrink: 0 }}>
-      <polyline points={pts} fill="none" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
-      <circle cx={pts.split(" ").pop().split(",")[0]} cy={pts.split(" ").pop().split(",")[1]} r="2.5" fill={color} />
+    <svg width={width} height={height} style={{ flexShrink: 0 }}>
+      <polyline points={pts} fill="none" stroke={color} strokeWidth={1.5} strokeLinejoin="round" />
+      <circle cx={last[0]} cy={last[1]} r={2.5} fill={color} />
     </svg>
   );
 };
 
-// Custom scatter tooltip
-const CorridorTooltip = ({ active, payload }) => {
-  if (!active || !payload?.length) return null;
-  const d = payload[0]?.payload;
-  if (!d) return null;
-  return (
-    <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: "12px 16px", fontFamily: "'Space Mono', monospace" }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: T.gold, marginBottom: 6 }}>{d.flag_from} → {d.flag_to} {d.currency}</div>
-      <div style={{ fontSize: 10, color: T.textMid }}>Net Margin: <span style={{ color: d.classColor, fontWeight: 600 }}>{fmtPct(d.netMarginPct)}</span></div>
-      <div style={{ fontSize: 10, color: T.textMid }}>Growth Rate: <span style={{ color: T.teal }}>{fmtPct(d.growthRate)}</span></div>
-      <div style={{ fontSize: 10, color: T.textMid }}>Volume: <span style={{ color: T.text }}>{d.volume.toLocaleString()} txns</span></div>
-      <div style={{ marginTop: 6 }}><ClassBadge label={d.classification} color={d.classColor} /></div>
-    </div>
-  );
-};
+// ── TABS ────────────────────────────────────────────────────────────────────
+const TABS = [
+  { id: 'overview',  label: 'Portfolio Overview' },
+  { id: 'clients',   label: 'Client Rankings' },
+  { id: 'signals',   label: 'Behavioral Signals' },
+  { id: 'actions',   label: 'RM Action Queue' },
+];
 
-// ─── MAIN ───────────────────────────────────────────────────────────────────
-export default function CorridorEconomicsAnalyzer() {
-  const [activeTab, setActiveTab] = useState("overview");
-  const [selectedCorridor, setSelectedCorridor] = useState(withAnalytics[0]);
-  const [sortBy, setSortBy] = useState("net");
-  const [filterClass, setFilterClass] = useState("all");
+// ── MAIN COMPONENT ──────────────────────────────────────────────────────────
+export default function ClientPaymentBehaviorEngine() {
+  const [tab, setTab] = useState('overview');
+  const [selectedClient, setSelectedClient] = useState(CLIENTS[0]);
+  const [filterSignal, setFilterSignal] = useState('all');
+  const [filterAction, setFilterAction] = useState('all');
+  const [sortBy, setSortBy] = useState('revenueAtRisk');
 
-  const sorted = useMemo(() => {
-    let list = filterClass === "all" ? withAnalytics : withAnalytics.filter(c => c.classification === filterClass);
-    return [...list].sort((a, b) =>
-      sortBy === "net" ? b.net - a.net :
-      sortBy === "margin" ? b.netMarginPct - a.netMarginPct :
-      sortBy === "growth" ? b.growthRate - a.growthRate :
-      b.volume - a.volume
-    );
-  }, [sortBy, filterClass]);
+  const filteredClients = useMemo(() => {
+    let list = filterSignal === 'all' ? CLIENTS : CLIENTS.filter(c => c.signal === filterSignal);
+    return [...list].sort((a, b) => {
+      if (sortBy === 'revenueAtRisk') return b.revenueAtRisk - a.revenueAtRisk;
+      if (sortBy === 'volume') return b.monthlyVolume[23] - a.monthlyVolume[23];
+      if (sortBy === 'revenue') return b.monthlyRevenue[23] - a.monthlyRevenue[23];
+      if (sortBy === 'gap') return (b.segmentPeerAvg - b.avgRevenuePerPmt) - (a.segmentPeerAvg - a.avgRevenuePerPmt);
+      return 0;
+    });
+  }, [filterSignal, sortBy]);
 
-  // Cost breakdown chart data for selected corridor
-  const costBreakdown = selectedCorridor ? [
-    { name: "Rail Cost",     value: selectedCorridor.railCost,       color: T.red   },
-    { name: "Nostro Funding",value: selectedCorridor.nostro,         color: T.amber },
-    { name: "Correspondent", value: selectedCorridor.correspondent,  color: T.blue  },
-    { name: "Compliance",    value: selectedCorridor.compliance,     color: "#A78BFA"},
-    { name: "Exceptions",    value: selectedCorridor.exceptions,     color: T.red   },
-  ] : [];
-
-  // Scatter data: x=growthRate, y=netMarginPct, z=volume
-  const scatterData = withAnalytics.map(c => ({
-    ...c, x: c.growthRate, y: c.netMarginPct, z: c.volume / 200
+  // Portfolio trend — last 12 months
+  const portfolioTrend = MONTHS_12.map((m, i) => ({
+    month: m,
+    revenue: CLIENTS.reduce((s, c) => s + c.monthlyRevenue[12 + i], 0) / 1000,
+    volume: CLIENTS.reduce((s, c) => s + c.monthlyVolume[12 + i], 0),
   }));
 
-  const tabs = ["overview", "corridors", "deep-dive", "matrix"];
+  // Monetization gap scatter data
+  const scatterData = CLIENTS.map(c => ({
+    ...c,
+    gap: c.segmentPeerAvg - c.avgRevenuePerPmt,
+    volumeTrend: ((c.monthlyVolume[23] - c.monthlyVolume[12]) / c.monthlyVolume[12]) * 100,
+    x: c.avgRevenuePerPmt,
+    y: ((c.monthlyVolume[23] - c.monthlyVolume[12]) / c.monthlyVolume[12]) * 100,
+    z: c.monthlyRevenue[23] / 500,
+  }));
 
-return (
-    <div style={{ minHeight: "100vh", background: T.bg, fontFamily: "'DM Sans', sans-serif", color: T.text }}>
-      <ModelBackBar />
+  return (
+    <div style={{ minHeight: '100vh', background: T.bg, fontFamily: T.sans, color: T.text }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 4px; height: 4px; } ::-webkit-scrollbar-track { background: ${T.bg}; } ::-webkit-scrollbar-thumb { background: ${T.border}; border-radius: 2px; }
-        .tab-btn { background: none; border: none; cursor: pointer; padding: 10px 20px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; transition: all 0.2s; border-bottom: 2px solid transparent; white-space: nowrap; }
-        .tab-btn:hover { color: ${T.gold} !important; }
-        .corr-row { cursor: pointer; transition: all 0.15s; }
-        .corr-row:hover { background: ${T.card} !important; }
-        .filter-btn { cursor: pointer; background: none; border: 1px solid ${T.border}; color: ${T.textFaint}; padding: 4px 12px; border-radius: 3px; font-size: 9px; font-family: 'Space Mono', monospace; letter-spacing: 0.1em; transition: all 0.15s; }
-        .filter-btn.active { border-color: ${T.gold}; color: ${T.gold}; background: ${T.gold}12; }
-        .filter-btn:hover { border-color: ${T.gold}66; color: ${T.textMid}; }
-        .sort-btn { cursor: pointer; background: none; border: 1px solid ${T.border}; color: ${T.textFaint}; padding: 3px 10px; border-radius: 3px; font-size: 9px; font-family: 'Space Mono', monospace; letter-spacing: 0.08em; transition: all 0.15s; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: ${T.bg}; }
+        ::-webkit-scrollbar-thumb { background: ${T.border}; border-radius: 2px; }
+        .c04-tab { cursor: pointer; transition: all 0.15s; background: none; border: none; }
+        .c04-tab:hover { color: ${T.gold} !important; }
+        .c04-row { cursor: pointer; transition: background 0.12s; }
+        .c04-row:hover { background: ${T.cardHov} !important; }
+        .c04-card:hover { border-color: ${T.gold} !important; cursor: pointer; }
+        .filter-btn { cursor: pointer; background: none; border: 1px solid ${T.border}; color: ${T.textDim}; padding: 3px 10px; border-radius: 3px; font-size: 9px; font-family: ${T.mono}; letter-spacing: 0.08em; transition: all 0.15s; }
+        .filter-btn.active { border-color: ${T.gold}; color: ${T.gold}; background: ${T.goldSoft}; }
+        .filter-btn:hover { border-color: ${T.gold}66; }
+        .sort-btn { cursor: pointer; background: none; border: 1px solid ${T.border}; color: ${T.textDim}; padding: 3px 10px; border-radius: 3px; font-size: 9px; font-family: ${T.mono}; letter-spacing: 0.08em; transition: all 0.15s; }
         .sort-btn.active { border-color: ${T.gold}; color: ${T.gold}; }
-        @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-        .fade-up { animation: fadeUp 0.4s ease forwards; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-up { animation: fadeUp 0.35s ease forwards; }
       `}</style>
 
-      {/* ── HEADER ──────────────────────────────────────────────────────── */}
-      <div style={{ background: `linear-gradient(135deg, #0D1117 0%, #161B2E 100%)`, borderBottom: `1px solid ${T.border}`, padding: "0 32px" }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <div style={{ width: 32, height: 32, background: `linear-gradient(135deg, ${T.goldDim}, ${T.gold})`, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <span style={{ fontSize: 14 }}>🌐</span>
-            </div>
+      <ModelBackBar />
+
+      {/* HEADER */}
+      <div style={{ borderBottom: `1px solid ${T.border}`, padding: '0 32px', background: T.surface }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '24px 0 0' }}>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 600, fontFamily: "'Space Mono', monospace", color: T.gold, letterSpacing: "0.06em" }}>CLIENT PAYMENT BEHAVIOR ENGINE</div>
-              <div style={{ fontSize: 9, color: T.textFaint, fontFamily: "'Space Mono', monospace", letterSpacing: "0.12em" }}>MODEL 04 — BEHAVIORAL INTELLIGENCE · LAYER 4</div>
+              <div style={{ fontFamily: T.mono, fontSize: 10, color: T.gold, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
+                Model 04 · Layer 4 · Behavioral Intelligence
+              </div>
+              <h1 style={{ fontFamily: T.serif, fontSize: 'clamp(22px,2.5vw,32px)', fontWeight: 500, color: T.text, lineHeight: 1.2, marginBottom: 8 }}>
+                Client Payment<br />Behavior Engine
+              </h1>
+              <p style={{ fontFamily: T.sans, fontSize: 13, color: T.textMid, maxWidth: 480, lineHeight: 1.65 }}>
+                Analyzes client payment patterns to surface volume migration risk, monetization gaps relative to internal peers, and relationship deepening signals across the portfolio.
+              </p>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, minWidth: 480, paddingBottom: 24 }}>
+              <KPI label="Revenue at Risk" value={fmt(totalRevenueAtRisk)} sub="Identified gap" accent={T.red} />
+              <KPI label="Migration Risk" value={signalCounts.MIGRATION_RISK} sub="Clients declining" accent={T.red} />
+              <KPI label="Under-Monetized" value={signalCounts.UNDER_MONETIZED} sub="Below peer average" accent={T.amber} />
+              <KPI label="Deepening" value={signalCounts.DEEPENING} sub="Growing relationships" accent={T.green} />
             </div>
           </div>
-          <div style={{ display: "flex", gap: 28 }}>
-            {[
-              { l: "CORRIDORS", v: CORRIDORS.length },
-              { l: "TOTAL VOLUME", v: `${(portfolio.volume/1000).toFixed(0)}K txns` },
-              { l: "PORTFOLIO NET", v: fmt(portfolio.net) },
-              { l: "AVG NET MARGIN", v: fmtPct(portfolio.netMarginPct) },
-            ].map(m => (
-              <div key={m.l} style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: T.gold, fontFamily: "'Cormorant Garamond', serif" }}>{m.v}</div>
-                <div style={{ fontSize: 8, color: T.textFaint, fontFamily: "'Space Mono', monospace", letterSpacing: "0.12em" }}>{m.l}</div>
-              </div>
+
+          {/* TABS */}
+          <div style={{ display: 'flex', gap: 0, borderTop: `1px solid ${T.border}` }}>
+            {TABS.map(t => (
+              <button key={t.id} className="c04-tab"
+                onClick={() => setTab(t.id)}
+                style={{
+                  padding: '13px 24px', fontFamily: T.mono, fontSize: 11, letterSpacing: '0.06em',
+                  color: tab === t.id ? T.gold : T.textDim,
+                  borderBottom: tab === t.id ? `2px solid ${T.gold}` : '2px solid transparent',
+                  transition: 'all 0.15s',
+                }}>
+                {t.label}
+              </button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* ── TABS ────────────────────────────────────────────────────────── */}
-      <div style={{ background: T.surface, borderBottom: `1px solid ${T.border}`, padding: "0 32px" }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", display: "flex" }}>
-          {tabs.map(t => (
-            <button key={t} className="tab-btn" onClick={() => setActiveTab(t)}
-              style={{ color: activeTab === t ? T.gold : T.textFaint, borderBottomColor: activeTab === t ? T.gold : "transparent", fontWeight: activeTab === t ? 700 : 400 }}>
-              {t === "overview" ? "Portfolio Overview" : t === "corridors" ? "Corridor Rankings" : t === "deep-dive" ? "Corridor Deep Dive" : "Strategy Matrix"}
-            </button>
-          ))}
-        </div>
-      </div>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '28px 32px' }}>
 
-      {/* ── CONTENT ─────────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 1400, margin: "0 auto", padding: "28px 32px" }}>
-
-        {/* ══ OVERVIEW ═══════════════════════════════════════════════════ */}
-        {activeTab === "overview" && (
+        {/* ── TAB 1: OVERVIEW ── */}
+        {tab === 'overview' && (
           <div className="fade-up">
-            {/* KPI strip */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, marginBottom: 24 }}>
-              <KpiCard label="Gross Revenue" value={fmt(portfolio.grossRevenue)} sub="Fees + FX margin" accent={T.gold} />
-              <KpiCard label="FX Margin" value={fmt(portfolio.fxMargin)} sub={fmtPct(portfolio.fxMargin/portfolio.grossRevenue*100) + " of gross revenue"} accent={T.teal} />
-              <KpiCard label="Total Cost Base" value={fmt(portfolio.totalCost)} sub="Rail + nostro + compliance + exceptions" accent={T.red} />
-              <KpiCard label="Net Contribution" value={fmt(portfolio.net)} sub={fmtPct(portfolio.netMarginPct) + " net margin"} accent={T.green} />
-              <KpiCard label="Total Volume" value={`${(portfolio.volume/1000).toFixed(1)}K`} sub="Transactions across all corridors" accent={T.blue} />
+
+            {/* Signal summary cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 24 }}>
+              {[
+                { signal: 'DEEPENING', count: signalCounts.DEEPENING, desc: 'Volume growing, relationship expanding', color: T.green, icon: '↗' },
+                { signal: 'STABLE', count: signalCounts.STABLE, desc: 'Consistent usage, no significant change', color: T.teal, icon: '→' },
+                { signal: 'MIGRATION_RISK', count: signalCounts.MIGRATION_RISK, desc: 'Volume declining, possible competitor activity', color: T.red, icon: '↘' },
+                { signal: 'UNDER_MONETIZED', count: signalCounts.UNDER_MONETIZED, desc: 'Below internal peer average revenue per payment', color: T.amber, icon: '◈' },
+              ].map(s => (
+                <div key={s.signal} className="c04-card"
+                  style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, borderTop: `3px solid ${s.color}`, cursor: 'pointer', transition: 'border-color 0.15s' }}
+                  onClick={() => { setFilterSignal(s.signal); setTab('clients'); }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+                    <div style={{ fontFamily: T.mono, fontSize: 20, color: s.color }}>{s.icon}</div>
+                    <div style={{ fontFamily: T.mono, fontSize: 28, color: s.color, fontWeight: 600 }}>{s.count}</div>
+                  </div>
+                  <div style={{ fontFamily: T.mono, fontSize: 10, color: s.color, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>
+                    {signalLabel(s.signal)}
+                  </div>
+                  <div style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid, lineHeight: 1.5 }}>{s.desc}</div>
+                </div>
+              ))}
             </div>
 
-            {/* Growth vs margin scatter + classification counts */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20, marginBottom: 20 }}>
-              <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 24 }}>
-                <SectionTitle sub="Bubble size = transaction volume">Growth Rate vs. Net Margin — Corridor Positioning</SectionTitle>
-                <ResponsiveContainer width="100%" height={320}>
-                  <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.grid} />
-                    <XAxis dataKey="x" name="Growth Rate" unit="%" type="number" domain={[0, 35]}
-                      tick={{ fill: T.textFaint, fontSize: 10, fontFamily: "'Space Mono', monospace" }}
-                      label={{ value: "Annual Growth Rate (%)", position: "insideBottom", offset: -10, style: { fill: T.textFaint, fontSize: 10, fontFamily: "'Space Mono', monospace" } }} />
-                    <YAxis dataKey="y" name="Net Margin" unit="%" type="number" domain={[0, 65]}
-                      tick={{ fill: T.textFaint, fontSize: 10, fontFamily: "'Space Mono', monospace" }}
-                      label={{ value: "Net Margin (%)", angle: -90, position: "insideLeft", style: { fill: T.textFaint, fontSize: 10, fontFamily: "'Space Mono', monospace" } }} />
-                    <ZAxis dataKey="z" range={[40, 400]} />
-                    <Tooltip content={<CorridorTooltip />} />
-                    {/* Quadrant lines */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
+              {/* Portfolio revenue trend */}
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <SectionHead title="Portfolio Revenue Trend — Last 12 Months" sub="Aggregate across all clients ($K)" />
+                <ResponsiveContainer width="100%" height={200}>
+                  <ComposedChart data={portfolioTrend}>
+                    <defs>
+                      <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={T.gold} stopOpacity={0.25} />
+                        <stop offset="95%" stopColor={T.gold} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid vertical={false} stroke={T.border} strokeDasharray="3 3" />
+                    <XAxis dataKey="month" tick={{ fontFamily: T.mono, fontSize: 9, fill: T.textDim }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontFamily: T.mono, fontSize: 9, fill: T.textDim }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}K`} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Area type="monotone" dataKey="revenue" name="Revenue ($K)" stroke={T.gold} strokeWidth={2} fill="url(#revGrad)" dot={false} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Revenue per payment vs peer benchmark scatter */}
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <SectionHead title="Revenue / Payment vs Volume Trend" sub="Bubble = current monthly revenue · color = signal" />
+                <ResponsiveContainer width="100%" height={200}>
+                  <ScatterChart margin={{ top: 10, right: 20, bottom: 10, left: 10 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="x" name="Rev/Payment" type="number"
+                      tick={{ fontFamily: T.mono, fontSize: 9, fill: T.textDim }}
+                      label={{ value: 'Rev / Payment ($)', position: 'insideBottom', offset: -5, style: { fill: T.textDim, fontSize: 9, fontFamily: T.mono } }} />
+                    <YAxis dataKey="y" name="Volume Trend"
+                      tick={{ fontFamily: T.mono, fontSize: 9, fill: T.textDim }}
+                      label={{ value: 'Vol Trend (%)', angle: -90, position: 'insideLeft', style: { fill: T.textDim, fontSize: 9, fontFamily: T.mono } }} />
+                    <ZAxis dataKey="z" range={[40, 300]} />
+                    <ReferenceLine y={0} stroke={T.border} strokeDasharray="4 4" />
+                    <Tooltip content={({ active, payload }) => {
+                      if (!active || !payload?.length) return null;
+                      const d = payload[0]?.payload;
+                      return (
+                        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: '10px 14px', fontFamily: T.mono, fontSize: 11 }}>
+                          <div style={{ color: T.gold, marginBottom: 4 }}>{d.name}</div>
+                          <div style={{ color: T.textMid }}>Rev/Pmt: <span style={{ color: T.text }}>${d.avgRevenuePerPmt}</span></div>
+                          <div style={{ color: T.textMid }}>Peer avg: <span style={{ color: T.teal }}>${d.segmentPeerAvg}</span></div>
+                          <div style={{ color: T.textMid }}>Vol trend: <span style={{ color: d.y >= 0 ? T.green : T.red }}>{d.y?.toFixed(1)}%</span></div>
+                          <div style={{ marginTop: 6 }}><Tag label={signalLabel(d.signal)} color={signalColor(d.signal)} small /></div>
+                        </div>
+                      );
+                    }} />
                     <Scatter data={scatterData} shape={(props) => {
                       const { cx, cy, payload } = props;
+                      const r = Math.sqrt(payload.z) * 2;
                       return (
                         <g>
-                          <circle cx={cx} cy={cy} r={Math.sqrt(payload.z) * 2.5} fill={payload.classColor} fillOpacity={0.2} stroke={payload.classColor} strokeWidth={1.5} />
-                          <text x={cx} y={cy + 4} textAnchor="middle" fontSize={9} fill={T.text} fontFamily="'Space Mono', monospace">{payload.flag_to}</text>
+                          <circle cx={cx} cy={cy} r={r} fill={signalColor(payload.signal)} fillOpacity={0.25} stroke={signalColor(payload.signal)} strokeWidth={1.5} />
+                          <text x={cx} y={cy + 3} textAnchor="middle" fontSize={8} fill={T.text} fontFamily={T.mono}>{payload.name.split(' ')[0]}</text>
                         </g>
                       );
                     }} />
                   </ScatterChart>
                 </ResponsiveContainer>
-                {/* Quadrant labels */}
-                <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginTop: 8 }}>
-                  {[["GROW",T.green],["DEFEND",T.teal],["OPTIMIZE",T.amber],["DE-PRIORITIZE / EXIT",T.red]].map(([l,c]) => (
-                    <span key={l} style={{ fontSize: 9, color: c, fontFamily: "'Space Mono', monospace", display: "flex", alignItems: "center", gap: 4 }}>
-                      <span style={{ width: 8, height: 8, borderRadius: "50%", background: c, display: "inline-block" }} />{l} ({classCounts[l]})
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Classification summary */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <SectionTitle>Strategy Classification</SectionTitle>
-                {[
-                  { cls: "GROW", color: T.green, corridors: withAnalytics.filter(c=>c.classification==="GROW"), desc: "High margin + high growth — invest" },
-                  { cls: "DEFEND", color: T.teal, corridors: withAnalytics.filter(c=>c.classification==="DEFEND"), desc: "Mature + profitable — protect" },
-                  { cls: "OPTIMIZE", color: T.amber, corridors: withAnalytics.filter(c=>c.classification==="OPTIMIZE"), desc: "Margin pressure — restructure costs" },
-                  { cls: "DE-PRIORITIZE / EXIT", color: T.red, corridors: withAnalytics.filter(c=>c.classification==="DE-PRIORITIZE / EXIT"), desc: "Below threshold — act now" },
-                ].map(q => (
-                  <div key={q.cls} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: "14px 16px", borderLeft: `3px solid ${q.color}` }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                      <ClassBadge label={q.cls} color={q.color} />
-                      <span style={{ fontSize: 18, fontWeight: 700, color: q.color, fontFamily: "'Cormorant Garamond', serif" }}>{q.corridors.length}</span>
-                    </div>
-                    <div style={{ fontSize: 10, color: T.textFaint, fontFamily: "'Space Mono', monospace", marginBottom: 6 }}>{q.desc}</div>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                      {q.corridors.map(c => (
-                        <span key={c.id} style={{ fontSize: 10, color: T.textMid }}>{c.flag_from}→{c.flag_to}</span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
 
-            {/* Portfolio waterfall */}
-            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 24 }}>
-              <SectionTitle>Portfolio Corridor Margin Waterfall</SectionTitle>
-              <WaterfallRow label="Gross Fee Revenue" value={withAnalytics.reduce((s,c)=>s+c.grossFee,0)} isPositive base={portfolio.grossRevenue} />
-              <WaterfallRow label="+ FX Margin" value={portfolio.fxMargin} isPositive base={portfolio.grossRevenue} />
-              <div style={{ borderTop: `1px dashed ${T.border}`, margin: "10px 0" }} />
-              <WaterfallRow label="− Rail Costs" value={-withAnalytics.reduce((s,c)=>s+c.railCost,0)} base={portfolio.grossRevenue} />
-              <WaterfallRow label="− Nostro Funding" value={-withAnalytics.reduce((s,c)=>s+c.nostro,0)} base={portfolio.grossRevenue} />
-              <WaterfallRow label="− Correspondent Charges" value={-withAnalytics.reduce((s,c)=>s+c.correspondent,0)} base={portfolio.grossRevenue} />
-              <WaterfallRow label="− Compliance Costs" value={-withAnalytics.reduce((s,c)=>s+c.compliance,0)} base={portfolio.grossRevenue} />
-              <WaterfallRow label="− Exception Costs" value={-withAnalytics.reduce((s,c)=>s+c.exceptions,0)} base={portfolio.grossRevenue} />
-              <div style={{ borderTop: `1px solid ${T.gold}44`, margin: "10px 0" }} />
-              <WaterfallRow label="NET CONTRIBUTION" value={portfolio.net} isNet base={portfolio.grossRevenue} />
+            {/* Monetization gap summary */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+              <SectionHead title="Internal Peer Benchmark — Revenue Per Payment vs Segment Average" sub="No external benchmarks required — comparison uses internal client portfolio by segment and corridor" />
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: T.surface }}>
+                      {['Client', 'Segment', 'Rev / Payment', 'Segment Peer Avg', 'Gap', 'Signal', 'Revenue at Risk'].map(h => (
+                        <th key={h} style={{ padding: '9px 14px', textAlign: 'left', fontFamily: T.mono, fontSize: 9, color: T.textDim, letterSpacing: '0.1em', borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...CLIENTS].sort((a, b) => (b.segmentPeerAvg - b.avgRevenuePerPmt) - (a.segmentPeerAvg - a.avgRevenuePerPmt)).map((c, i) => {
+                      const gap = c.segmentPeerAvg - c.avgRevenuePerPmt;
+                      return (
+                        <tr key={c.id} className="c04-row"
+                          onClick={() => { setSelectedClient(c); setTab('signals'); }}
+                          style={{ background: i % 2 === 0 ? T.card : T.surface, borderBottom: `1px solid ${T.border}` }}>
+                          <td style={{ padding: '10px 14px', fontFamily: T.sans, fontSize: 13, color: T.text, fontWeight: 500 }}>{c.name}</td>
+                          <td style={{ padding: '10px 14px' }}><Tag label={c.segment} color={T.blue} small /></td>
+                          <td style={{ padding: '10px 14px', fontFamily: T.mono, fontSize: 12, color: T.text }}>${c.avgRevenuePerPmt.toFixed(2)}</td>
+                          <td style={{ padding: '10px 14px', fontFamily: T.mono, fontSize: 12, color: T.teal }}>${c.segmentPeerAvg.toFixed(2)}</td>
+                          <td style={{ padding: '10px 14px', fontFamily: T.mono, fontSize: 12, color: gap > 0 ? T.amber : T.green, fontWeight: 600 }}>
+                            {gap > 0 ? `−$${gap.toFixed(2)}` : `+$${Math.abs(gap).toFixed(2)}`}
+                          </td>
+                          <td style={{ padding: '10px 14px' }}><Tag label={signalLabel(c.signal)} color={signalColor(c.signal)} small /></td>
+                          <td style={{ padding: '10px 14px', fontFamily: T.mono, fontSize: 12, color: c.revenueAtRisk > 0 ? T.red : T.textDim, fontWeight: c.revenueAtRisk > 0 ? 600 : 400 }}>
+                            {c.revenueAtRisk > 0 ? fmt(c.revenueAtRisk) : '—'}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <div style={{ marginTop: 12, padding: '10px 14px', background: T.goldSoft, borderRadius: 6, border: `1px solid ${T.gold}22` }}>
+                <span style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, fontWeight: 600 }}>NOTE: </span>
+                <span style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid }}>
+                  Peer averages are calculated from internal portfolio data — clients in the same segment transacting on the same corridors. No external market data required.
+                  The model surfaces where to look and what the revenue implication is. That context comes from the relationship.
+                </span>
+              </div>
             </div>
           </div>
         )}
 
-        {/* ══ CORRIDOR RANKINGS ══════════════════════════════════════════ */}
-        {activeTab === "corridors" && (
+        {/* ── TAB 2: CLIENT RANKINGS ── */}
+        {tab === 'clients' && (
           <div className="fade-up">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
-              <SectionTitle>Corridor P&L Rankings</SectionTitle>
-              <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                <span style={{ fontSize: 9, color: T.textFaint, fontFamily: "'Space Mono', monospace" }}>FILTER:</span>
-                {["all","GROW","DEFEND","OPTIMIZE","DE-PRIORITIZE / EXIT"].map(f => (
-                  <button key={f} className={`filter-btn ${filterClass===f?"active":""}`} onClick={()=>setFilterClass(f)}>
-                    {f === "all" ? "ALL" : f === "DE-PRIORITIZE / EXIT" ? "EXIT" : f}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <SectionHead title="Client Behavioral Rankings" sub="24-month volume and revenue patterns with migration signals" />
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                <span style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim }}>SIGNAL:</span>
+                {['all', 'MIGRATION_RISK', 'UNDER_MONETIZED', 'DEEPENING', 'STABLE'].map(f => (
+                  <button key={f} className={`filter-btn ${filterSignal === f ? 'active' : ''}`} onClick={() => setFilterSignal(f)}>
+                    {f === 'all' ? 'ALL' : f === 'MIGRATION_RISK' ? 'MIGRATION' : f === 'UNDER_MONETIZED' ? 'UNDER-MON.' : f}
                   </button>
                 ))}
-                <div style={{ width: 1, height: 16, background: T.border, margin: "0 4px" }} />
-                <span style={{ fontSize: 9, color: T.textFaint, fontFamily: "'Space Mono', monospace" }}>SORT:</span>
-                {[["net","NET $"],["margin","MARGIN %"],["growth","GROWTH"],["volume","VOLUME"]].map(([k,l])=>(
-                  <button key={k} className={`sort-btn ${sortBy===k?"active":""}`} onClick={()=>setSortBy(k)}>{l}</button>
+                <div style={{ width: 1, height: 16, background: T.border, margin: '0 4px' }} />
+                <span style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim }}>SORT:</span>
+                {[['revenueAtRisk', 'REV AT RISK'], ['volume', 'VOLUME'], ['revenue', 'REVENUE'], ['gap', 'PEER GAP']].map(([k, l]) => (
+                  <button key={k} className={`sort-btn ${sortBy === k ? 'active' : ''}`} onClick={() => setSortBy(k)}>{l}</button>
                 ))}
               </div>
             </div>
 
-            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, overflow: "hidden" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: "#0A0E14" }}>
-                    {["#","Corridor","Currency","Volume","Gross Rev","FX Margin","Total Cost","Net","Margin %","Growth","FX Volatility","Classification","Trend"].map(h=>(
-                      <th key={h} style={{ padding:"9px 12px", textAlign:"left", fontSize:8, color:T.textFaint, fontFamily:"'Space Mono', monospace", letterSpacing:"0.1em", borderBottom:`1px solid ${T.border}`, whiteSpace:"nowrap" }}>{h}</th>
+                  <tr style={{ background: T.surface }}>
+                    {['#', 'Client', 'Segment', 'RM', 'Rails', 'Rev/Pmt', 'Peer Avg', 'Gap', 'Vol (12m)', 'Rev (12m)', 'Trend', 'Signal', 'Strength', 'Action'].map(h => (
+                      <th key={h} style={{ padding: '9px 12px', textAlign: 'left', fontFamily: T.mono, fontSize: 9, color: T.textDim, letterSpacing: '0.08em', borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {sorted.map((c, i) => (
-                    <tr key={c.id} className="corr-row"
-                      onClick={() => { setSelectedCorridor(c); setActiveTab("deep-dive"); }}
-                      style={{ background: selectedCorridor?.id===c.id ? `${T.gold}08` : i%2===0 ? T.card : T.surface, borderBottom:`1px solid ${T.grid}`, borderLeft: selectedCorridor?.id===c.id ? `3px solid ${T.gold}` : "3px solid transparent" }}>
-                      <td style={{ padding:"11px 12px", fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>{String(i+1).padStart(2,"0")}</td>
-                      <td style={{ padding:"11px 12px" }}>
-                        <div style={{ fontSize:13, fontWeight:500, color:T.text }}>{c.flag_from} → {c.flag_to}</div>
-                        <div style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>{c.from} → {c.to}</div>
-                      </td>
-                      <td style={{ padding:"11px 12px", fontSize:10, color:T.textMid, fontFamily:"'Space Mono', monospace" }}>{c.currency}</td>
-                      <td style={{ padding:"11px 12px", fontSize:10, color:T.text, fontFamily:"'Space Mono', monospace" }}>{c.volume.toLocaleString()}</td>
-                      <td style={{ padding:"11px 12px", fontSize:11, color:T.text, fontFamily:"'Space Mono', monospace" }}>{fmt(c.grossRevenue)}</td>
-                      <td style={{ padding:"11px 12px", fontSize:11, color:T.teal, fontFamily:"'Space Mono', monospace" }}>{fmt(c.fxMargin)}</td>
-                      <td style={{ padding:"11px 12px", fontSize:11, color:T.red, fontFamily:"'Space Mono', monospace" }}>{fmt(c.totalCost)}</td>
-                      <td style={{ padding:"11px 12px", fontSize:12, fontWeight:700, color:c.net>0?T.green:T.red, fontFamily:"'Cormorant Garamond', serif" }}>{fmt(c.net)}</td>
-                      <td style={{ padding:"11px 12px", fontSize:11, color:c.netMarginPct>35?T.green:c.netMarginPct>20?T.amber:T.red, fontFamily:"'Space Mono', monospace" }}>{fmtPct(c.netMarginPct)}</td>
-                      <td style={{ padding:"11px 12px", fontSize:11, color:c.growthRate>15?T.green:c.growthRate>8?T.amber:T.textMid, fontFamily:"'Space Mono', monospace" }}>+{fmtPct(c.growthRate)}</td>
-                      <td style={{ padding:"11px 12px" }}>
-                        <div style={{ fontSize:9, color:c.fxVolatility>15?T.red:c.fxVolatility>8?T.amber:T.green, fontFamily:"'Space Mono', monospace" }}>σ {c.fxVolatility}%</div>
-                      </td>
-                      <td style={{ padding:"11px 12px" }}><ClassBadge label={c.classification} color={c.classColor} /></td>
-                      <td style={{ padding:"11px 12px" }}><Sparkline data={c.trend} color={c.classColor} /></td>
-                    </tr>
-                  ))}
+                  {filteredClients.map((c, i) => {
+                    const gap = c.segmentPeerAvg - c.avgRevenuePerPmt;
+                    const vol12 = c.monthlyVolume.slice(12).reduce((s, v) => s + v, 0);
+                    const rev12 = c.monthlyRevenue.slice(12).reduce((s, v) => s + v, 0);
+                    return (
+                      <tr key={c.id} className="c04-row"
+                        onClick={() => { setSelectedClient(c); setTab('signals'); }}
+                        style={{ background: selectedClient?.id === c.id ? `${T.gold}08` : i % 2 === 0 ? T.card : T.surface, borderBottom: `1px solid ${T.border}`, borderLeft: selectedClient?.id === c.id ? `3px solid ${T.gold}` : '3px solid transparent' }}>
+                        <td style={{ padding: '10px 12px', fontFamily: T.mono, fontSize: 10, color: T.textDim }}>{String(i + 1).padStart(2, '0')}</td>
+                        <td style={{ padding: '10px 12px' }}>
+                          <div style={{ fontFamily: T.sans, fontSize: 13, color: T.text, fontWeight: 500 }}>{c.name}</div>
+                          <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, marginTop: 2 }}>{c.corridors.join(' · ')}</div>
+                        </td>
+                        <td style={{ padding: '10px 12px' }}><Tag label={c.segment} color={T.blue} small /></td>
+                        <td style={{ padding: '10px 12px', fontFamily: T.sans, fontSize: 11, color: T.textMid }}>{c.rm}</td>
+                        <td style={{ padding: '10px 12px', fontFamily: T.mono, fontSize: 10, color: T.textMid }}>{c.rails.join('+')}</td>
+                        <td style={{ padding: '10px 12px', fontFamily: T.mono, fontSize: 11, color: T.text }}>${c.avgRevenuePerPmt.toFixed(2)}</td>
+                        <td style={{ padding: '10px 12px', fontFamily: T.mono, fontSize: 11, color: T.teal }}>${c.segmentPeerAvg.toFixed(2)}</td>
+                        <td style={{ padding: '10px 12px', fontFamily: T.mono, fontSize: 11, color: gap > 0 ? T.amber : T.green, fontWeight: 600 }}>
+                          {gap > 0 ? `−$${gap.toFixed(2)}` : `+$${Math.abs(gap).toFixed(2)}`}
+                        </td>
+                        <td style={{ padding: '10px 12px', fontFamily: T.mono, fontSize: 11, color: T.text }}>{fmtK(vol12)}</td>
+                        <td style={{ padding: '10px 12px', fontFamily: T.mono, fontSize: 11, color: T.text }}>{fmt(rev12)}</td>
+                        <td style={{ padding: '10px 12px' }}><Spark data={c.monthlyVolume} color={signalColor(c.signal)} /></td>
+                        <td style={{ padding: '10px 12px' }}><Tag label={signalLabel(c.signal)} color={signalColor(c.signal)} small /></td>
+                        <td style={{ padding: '10px 12px' }}><Tag label={c.signalStrength} color={strengthColor(c.signalStrength)} small /></td>
+                        <td style={{ padding: '10px 12px' }}><Tag label={c.action} color={actionColor(c.action)} small /></td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
-            <div style={{ marginTop:12, fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>Click any corridor to open the Deep Dive analysis →</div>
+            <div style={{ marginTop: 10, fontFamily: T.mono, fontSize: 10, color: T.textDim }}>
+              Click any client to open behavioral deep dive →
+            </div>
           </div>
         )}
 
-        {/* ══ DEEP DIVE ══════════════════════════════════════════════════ */}
-        {activeTab === "deep-dive" && selectedCorridor && (
+        {/* ── TAB 3: BEHAVIORAL SIGNALS ── */}
+        {tab === 'signals' && selectedClient && (
           <div className="fade-up">
-            {/* Corridor header */}
-            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 24, marginBottom: 20 }}>
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:16 }}>
+
+            {/* Client header */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 24, marginBottom: 20 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
                 <div>
-                  <div style={{ fontSize:28, fontWeight:700, fontFamily:"'Cormorant Garamond', serif", color:T.text, marginBottom:4 }}>
-                    {selectedCorridor.flag_from} {selectedCorridor.from} → {selectedCorridor.flag_to} {selectedCorridor.to}
-                  </div>
-                  <div style={{ display:"flex", gap:8, alignItems:"center" }}>
-                    <span style={{ fontSize:11, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>{selectedCorridor.currency} · {selectedCorridor.fxPair} · {selectedCorridor.corridorMaturity}</span>
-                    <ClassBadge label={selectedCorridor.classification} color={selectedCorridor.classColor} />
-                    <span style={{ fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>Regulatory Risk: <span style={{ color: selectedCorridor.regulatoryRisk==="Low"?T.green:selectedCorridor.regulatoryRisk==="Medium"?T.amber:T.red }}>{selectedCorridor.regulatoryRisk}</span></span>
+                  <div style={{ fontFamily: T.serif, fontSize: 24, color: T.text, fontWeight: 500, marginBottom: 6 }}>{selectedClient.name}</div>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                    <Tag label={selectedClient.segment} color={T.blue} />
+                    <Tag label={selectedClient.relationship} color={T.teal} small />
+                    <Tag label={`RM: ${selectedClient.rm}`} color={T.textMid} small />
+                    <span style={{ fontFamily: T.mono, fontSize: 10, color: T.textDim }}>
+                      {selectedClient.corridors.join(' · ')} · {selectedClient.rails.join(' + ')}
+                    </span>
                   </div>
                 </div>
-                <div style={{ textAlign:"right" }}>
-                  <div style={{ fontSize:32, fontWeight:700, fontFamily:"'Cormorant Garamond', serif", color:selectedCorridor.net>0?T.green:T.red }}>{fmt(selectedCorridor.net)}</div>
-                  <div style={{ fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>net contribution · {fmtPct(selectedCorridor.netMarginPct)} margin</div>
+                <div style={{ textAlign: 'right' }}>
+                  <Tag label={signalLabel(selectedClient.signal)} color={signalColor(selectedClient.signal)} />
+                  <div style={{ marginTop: 6 }}>
+                    <Tag label={`${selectedClient.signalStrength} SIGNAL`} color={strengthColor(selectedClient.signalStrength)} small />
+                  </div>
                 </div>
               </div>
 
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:12 }}>
+              {/* Key metrics */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 12 }}>
                 {[
-                  { l:"Volume", v:selectedCorridor.volume.toLocaleString() },
-                  { l:"Avg Ticket", v:fmt(selectedCorridor.avgTicket) },
-                  { l:"FX Spread", v:`${selectedCorridor.fxSpreadBps} bps` },
-                  { l:"FX Volatility", v:`σ ${selectedCorridor.fxVolatility}%` },
-                  { l:"Nostro Turn Days", v:`${selectedCorridor.nostroTurnDays}d` },
-                  { l:"Exception Rate", v:`${selectedCorridor.exceptionRatePct}%` },
-                ].map(m=>(
-                  <div key={m.l} style={{ background:T.card, borderRadius:6, padding:"10px 12px" }}>
-                    <div style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace", marginBottom:4 }}>{m.l}</div>
-                    <div style={{ fontSize:14, fontWeight:600, color:T.text, fontFamily:"'Space Mono', monospace" }}>{m.v}</div>
+                  { l: 'Rev / Payment', v: `$${selectedClient.avgRevenuePerPmt.toFixed(2)}` },
+                  { l: 'Segment Peer Avg', v: `$${selectedClient.segmentPeerAvg.toFixed(2)}` },
+                  { l: 'Peer Gap', v: selectedClient.segmentPeerAvg > selectedClient.avgRevenuePerPmt ? `−$${(selectedClient.segmentPeerAvg - selectedClient.avgRevenuePerPmt).toFixed(2)}` : `+$${(selectedClient.avgRevenuePerPmt - selectedClient.segmentPeerAvg).toFixed(2)}` },
+                  { l: 'Pricing Tier', v: selectedClient.pricingTier },
+                  { l: 'Last Repriced', v: selectedClient.lastRepriced },
+                  { l: 'Rev at Risk', v: selectedClient.revenueAtRisk > 0 ? fmt(selectedClient.revenueAtRisk) : 'None' },
+                ].map((m, i) => (
+                  <div key={i} style={{ background: T.surface, borderRadius: 6, padding: '10px 12px' }}>
+                    <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>{m.l}</div>
+                    <div style={{ fontFamily: T.mono, fontSize: 14, color: i === 2 ? (selectedClient.segmentPeerAvg > selectedClient.avgRevenuePerPmt ? T.amber : T.green) : i === 5 && selectedClient.revenueAtRisk > 0 ? T.red : T.text, fontWeight: 500 }}>{m.v}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20, marginBottom:20 }}>
-              {/* Cost waterfall */}
-              <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:24 }}>
-                <SectionTitle>Corridor Margin Waterfall</SectionTitle>
-                <WaterfallRow label="Fee Revenue" value={selectedCorridor.grossFee} isPositive base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="+ FX Margin" value={selectedCorridor.fxMargin} isPositive base={selectedCorridor.grossRevenue} />
-                <div style={{ borderTop:`1px dashed ${T.border}`, margin:"8px 0" }} />
-                <WaterfallRow label="− Rail Costs" value={-selectedCorridor.railCost} base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="− Nostro Funding" value={-selectedCorridor.nostro} base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="− Correspondent" value={-selectedCorridor.correspondent} base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="− Compliance" value={-selectedCorridor.compliance} base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="− Exceptions" value={-selectedCorridor.exceptions} base={selectedCorridor.grossRevenue} />
-                <div style={{ borderTop:`1px solid ${T.gold}44`, margin:"8px 0" }} />
-                <WaterfallRow label="NET CONTRIBUTION" value={selectedCorridor.net} isNet base={selectedCorridor.grossRevenue} />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
+              {/* Volume trend 24 months */}
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <SectionHead title="24-Month Volume Trend" sub="Monthly transaction count" />
+                <ResponsiveContainer width="100%" height={180}>
+                  <ComposedChart data={selectedClient.monthlyVolume.map((v, i) => ({ month: MONTHS_24[i], volume: v, period: i < 12 ? 'Y-1' : 'Current' }))}>
+                    <defs>
+                      <linearGradient id="volGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={signalColor(selectedClient.signal)} stopOpacity={0.3} />
+                        <stop offset="95%" stopColor={signalColor(selectedClient.signal)} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid vertical={false} stroke={T.border} strokeDasharray="3 3" />
+                    <XAxis dataKey="month" tick={{ fontFamily: T.mono, fontSize: 8, fill: T.textDim }} axisLine={false} tickLine={false}
+                      tickFormatter={(v, i) => i % 3 === 0 ? v : ''} />
+                    <YAxis tick={{ fontFamily: T.mono, fontSize: 9, fill: T.textDim }} axisLine={false} tickLine={false} />
+                    <ReferenceLine x="Jan" stroke={T.border} strokeDasharray="4 4" label={{ value: 'Year 2', fill: T.textDim, fontSize: 9, fontFamily: T.mono }} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Area type="monotone" dataKey="volume" name="Volume" stroke={signalColor(selectedClient.signal)} strokeWidth={2} fill="url(#volGrad)" dot={false} />
+                  </ComposedChart>
+                </ResponsiveContainer>
               </div>
 
-              {/* Cost mix + trend */}
-              <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
-                <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:24, flex:1 }}>
-                  <SectionTitle>Cost Structure Breakdown</SectionTitle>
-                  <ResponsiveContainer width="100%" height={180}>
-                    <BarChart data={costBreakdown} layout="vertical" barSize={14}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={T.grid} horizontal={false} />
-                      <XAxis type="number" tick={{ fill:T.textFaint, fontSize:9, fontFamily:"'Space Mono', monospace" }} tickFormatter={v=>`$${(v/1000).toFixed(0)}K`} />
-                      <YAxis type="category" dataKey="name" tick={{ fill:T.textMid, fontSize:9, fontFamily:"'Space Mono', monospace" }} width={110} />
-                      <Tooltip contentStyle={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:6, fontFamily:"'Space Mono', monospace", fontSize:10 }} formatter={v=>[fmt(v)]} />
-                      <Bar dataKey="value" radius={[0,3,3,0]}>
-                        {costBreakdown.map((d,i)=><Cell key={i} fill={d.color} />)}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:24 }}>
-                  <SectionTitle>12-Month Revenue Trend</SectionTitle>
-                  <ResponsiveContainer width="100%" height={100}>
-                    <ComposedChart data={selectedCorridor.trend.map((v,i)=>({ month:["J","F","M","A","M","J","J","A","S","O","N","D"][i], value:v }))}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={T.grid} />
-                      <XAxis dataKey="month" tick={{ fill:T.textFaint, fontSize:9, fontFamily:"'Space Mono', monospace" }} />
-                      <YAxis tick={{ fill:T.textFaint, fontSize:9, fontFamily:"'Space Mono', monospace" }} tickFormatter={v=>`$${v}K`} />
-                      <Tooltip contentStyle={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:6, fontFamily:"'Space Mono', monospace", fontSize:10 }} formatter={v=>[`$${v}K`]} />
-                      <Area type="monotone" dataKey="value" stroke={selectedCorridor.classColor} fill={`${selectedCorridor.classColor}18`} strokeWidth={2} />
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                </div>
+              {/* Revenue trend 24 months */}
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <SectionHead title="24-Month Revenue Trend" sub="Monthly revenue ($)" />
+                <ResponsiveContainer width="100%" height={180}>
+                  <ComposedChart data={selectedClient.monthlyRevenue.map((v, i) => ({ month: MONTHS_24[i], revenue: v }))}>
+                    <defs>
+                      <linearGradient id="rGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={T.gold} stopOpacity={0.25} />
+                        <stop offset="95%" stopColor={T.gold} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid vertical={false} stroke={T.border} strokeDasharray="3 3" />
+                    <XAxis dataKey="month" tick={{ fontFamily: T.mono, fontSize: 8, fill: T.textDim }} axisLine={false} tickLine={false}
+                      tickFormatter={(v, i) => i % 3 === 0 ? v : ''} />
+                    <YAxis tick={{ fontFamily: T.mono, fontSize: 9, fill: T.textDim }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v / 1000).toFixed(0)}K`} />
+                    <ReferenceLine x="Jan" stroke={T.border} strokeDasharray="4 4" />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Area type="monotone" dataKey="revenue" name="Revenue ($)" stroke={T.gold} strokeWidth={2} fill="url(#rGrad)" dot={false} />
+                  </ComposedChart>
+                </ResponsiveContainer>
               </div>
             </div>
 
-            {/* AI Strategic Assessment */}
-            <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:24 }}>
-              <SectionTitle>AI Strategic Assessment</SectionTitle>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:16 }}>
-                {[
-                  {
-                    label:"Strategic Recommendation",
-                    color: selectedCorridor.classColor,
-                    icon: selectedCorridor.classification==="GROW"?"↗":selectedCorridor.classification==="DEFEND"?"◎":selectedCorridor.classification==="OPTIMIZE"?"⚙":"⚠",
-                    body: `${selectedCorridor.classDesc}. At ${fmtPct(selectedCorridor.netMarginPct)} net margin and ${fmtPct(selectedCorridor.growthRate)} annual growth, this corridor ${selectedCorridor.classification==="GROW"?"warrants incremental volume investment and competitive pricing discipline":selectedCorridor.classification==="DEFEND"?"is a core franchise asset — prioritise retention over new acquisition":selectedCorridor.classification==="OPTIMIZE"?"requires cost structure review before additional volume investment":"should be reviewed for restructuring or exit within 2 quarters"}.`
-                  },
-                  {
-                    label:"Largest Cost Lever",
-                    color: T.amber,
-                    icon: "◈",
-                    body: (() => {
-                      const costs = { "Nostro Funding": selectedCorridor.nostro, "Exceptions": selectedCorridor.exceptions, "Correspondent Charges": selectedCorridor.correspondent, "Compliance": selectedCorridor.compliance };
-                      const top = Object.entries(costs).sort((a,b)=>b[1]-a[1])[0];
-                      return `${top[0]} is the primary cost driver at ${fmt(top[1])} — ${fmtPct(top[1]/selectedCorridor.grossRevenue*100)} of gross revenue. ${top[0]==="Nostro Funding"?`Nostro turn days of ${selectedCorridor.nostroTurnDays}d suggest prefunding optimisation opportunity. A 20% reduction in nostro balance requirement would save ${fmt(selectedCorridor.nostro*0.20)} annually.`:top[0]==="Exceptions"?`Exception rate of ${selectedCorridor.exceptionRatePct}% is above portfolio average. Root cause is likely data quality in payment instructions. Structured remediation could recover ${fmt(selectedCorridor.exceptions*0.40)}.`:`Renegotiate correspondent banking terms at next renewal cycle.`}`;
-                    })()
-                  },
-                  {
-                    label:"FX & Risk Profile",
-                    color: T.teal,
-                    icon: "⇌",
-                    body: `FX volatility of σ ${selectedCorridor.fxVolatility}% is ${selectedCorridor.fxVolatility>15?"elevated — margin at risk in adverse rate scenarios. Consider dynamic FX spread floors to protect revenue":selectedCorridor.fxVolatility>8?"moderate. Current spread of "+selectedCorridor.fxSpreadBps+"bps is adequate but should be reviewed quarterly against rate movements":"low — the pegged or managed rate environment provides stable margin visibility. FX spread of "+selectedCorridor.fxSpreadBps+"bps can be maintained without dynamic adjustment"}. Regulatory risk is rated ${selectedCorridor.regulatoryRisk}.`
-                  },
-                ].map(n=>(
-                  <div key={n.label} style={{ background:T.card, borderRadius:8, padding:18, borderTop:`3px solid ${n.color}` }}>
-                    <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:10 }}>
-                      <span style={{ fontSize:18, color:n.color, fontFamily:"'Space Mono', monospace" }}>{n.icon}</span>
-                      <span style={{ fontSize:11, fontWeight:600, color:T.text }}>{n.label}</span>
+            {/* Rail mix + AI assessment */}
+            <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: 20 }}>
+              {/* Rail mix */}
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <SectionHead title="Rail Mix" />
+                {Object.entries(selectedClient.railMix).map(([rail, pct]) => (
+                  <div key={rail} style={{ marginBottom: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <span style={{ fontFamily: T.mono, fontSize: 11, color: T.text }}>{rail}</span>
+                      <span style={{ fontFamily: T.mono, fontSize: 11, color: T.gold }}>{pct}%</span>
                     </div>
-                    <p style={{ fontSize:11, color:T.textMid, lineHeight:1.7, margin:0 }}>{n.body}</p>
+                    <div style={{ height: 5, background: T.surface, borderRadius: 2, overflow: 'hidden' }}>
+                      <div style={{ width: `${pct}%`, height: '100%', background: T.gold, borderRadius: 2 }} />
+                    </div>
                   </div>
                 ))}
-              </div>
-              {/* Key drivers */}
-              <div style={{ marginTop:14, padding:"10px 16px", background:`${T.gold}08`, borderRadius:8, border:`1px solid ${T.gold}22`, display:"flex", gap:12, alignItems:"center" }}>
-                <span style={{ fontSize:10, color:T.gold, fontFamily:"'Space Mono', monospace", fontWeight:700, flexShrink:0 }}>KEY FLOW DRIVERS:</span>
-                <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-                  {selectedCorridor.keyDrivers.map(d=>(
-                    <span key={d} style={{ fontSize:10, padding:"2px 10px", background:`${T.gold}18`, color:T.goldLt, borderRadius:3, fontFamily:"'Space Mono', monospace" }}>{d}</span>
-                  ))}
+                <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid ${T.border}` }}>
+                  <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Pricing Tier</div>
+                  <Tag label={selectedClient.pricingTier} color={T.teal} />
                 </div>
               </div>
+
+              {/* AI insight + recommended action */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div style={{ background: T.card, border: `1px solid ${signalColor(selectedClient.signal)}33`, borderRadius: 8, padding: 20, borderTop: `3px solid ${signalColor(selectedClient.signal)}` }}>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
+                    <span style={{ fontFamily: T.mono, fontSize: 10, color: signalColor(selectedClient.signal), letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600 }}>Behavioral Signal</span>
+                    <Tag label={selectedClient.signalStrength} color={strengthColor(selectedClient.signalStrength)} small />
+                  </div>
+                  <p style={{ fontFamily: T.sans, fontSize: 13, color: T.textMid, lineHeight: 1.7, margin: 0 }}>{selectedClient.insight}</p>
+                </div>
+
+                <div style={{ background: T.card, border: `1px solid ${actionColor(selectedClient.action)}33`, borderRadius: 8, padding: 20, borderTop: `3px solid ${actionColor(selectedClient.action)}` }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                    <span style={{ fontFamily: T.mono, fontSize: 10, color: actionColor(selectedClient.action), letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600 }}>Recommended Action</span>
+                    <Tag label={selectedClient.action} color={actionColor(selectedClient.action)} />
+                  </div>
+                  <p style={{ fontFamily: T.sans, fontSize: 13, color: T.textMid, lineHeight: 1.7, margin: 0 }}>{selectedClient.actionDetail}</p>
+                  {selectedClient.revenueAtRisk > 0 && (
+                    <div style={{ marginTop: 12, padding: '8px 12px', background: T.redSoft, borderRadius: 6, border: `1px solid ${T.red}22` }}>
+                      <span style={{ fontFamily: T.mono, fontSize: 11, color: T.red, fontWeight: 600 }}>Revenue at risk: </span>
+                      <span style={{ fontFamily: T.mono, fontSize: 11, color: T.text }}>{fmt(selectedClient.revenueAtRisk)} annually at current volumes</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Client selector */}
+            <div style={{ marginTop: 16, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <span style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, alignSelf: 'center' }}>SWITCH CLIENT:</span>
+              {CLIENTS.map(c => (
+                <button key={c.id} onClick={() => setSelectedClient(c)}
+                  style={{ cursor: 'pointer', background: selectedClient.id === c.id ? T.goldSoft : 'none', border: `1px solid ${selectedClient.id === c.id ? T.gold : T.border}`, color: selectedClient.id === c.id ? T.gold : T.textDim, padding: '3px 10px', borderRadius: 3, fontFamily: T.mono, fontSize: 9, letterSpacing: '0.06em', transition: 'all 0.15s' }}>
+                  {c.name.split(' ')[0]}
+                </button>
+              ))}
             </div>
           </div>
         )}
 
-        {/* ══ STRATEGY MATRIX ════════════════════════════════════════════ */}
-        {activeTab === "matrix" && (
+        {/* ── TAB 4: RM ACTION QUEUE ── */}
+        {tab === 'actions' && (
           <div className="fade-up">
-            <SectionTitle sub="AI-generated investment priorities and action plan for each corridor classification">Portfolio Strategy Matrix — Investment Allocation Framework</SectionTitle>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <SectionHead title="RM Action Queue" sub="Ranked by revenue impact and signal strength — outputs structured for relationship manager action" />
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <span style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim }}>ACTION:</span>
+                {['all', 'REPRICE', 'RETAIN', 'EXPAND'].map(f => (
+                  <button key={f} className={`filter-btn ${filterAction === f ? 'active' : ''}`} onClick={() => setFilterAction(f)}>{f}</button>
+                ))}
+              </div>
+            </div>
 
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20, marginBottom:20 }}>
-              {[
-                {
-                  cls:"GROW", color:T.green, icon:"↗",
-                  corridors: withAnalytics.filter(c=>c.classification==="GROW"),
-                  actions: ["Increase sales coverage and volume targets","Maintain competitive pricing — do not discount","Invest in corridor STP automation to scale without proportional cost growth","Consider dedicated nostro optimisation for high-volume routes"],
-                  metric: "Target: 20%+ volume growth YoY"
-                },
-                {
-                  cls:"DEFEND", color:T.teal, icon:"◎",
-                  corridors: withAnalytics.filter(c=>c.classification==="DEFEND"),
-                  actions: ["Anchor pricing at current spread — resist client pressure to reduce","Focus on wallet share growth within existing client base","Monitor competitive entry — these corridors attract attention","Build switching costs through workflow integration and liquidity structures"],
-                  metric: "Target: Hold margin within 2% of current"
-                },
-                {
-                  cls:"OPTIMIZE", color:T.amber, icon:"⚙",
-                  corridors: withAnalytics.filter(c=>c.classification==="OPTIMIZE"),
-                  actions: ["Conduct full cost audit: nostro, correspondent, compliance, exceptions","Renegotiate correspondent banking terms at next renewal","Set STP improvement targets — reduce exception rate by 30%","Evaluate whether FX spread is adequately capturing risk"],
-                  metric: "Target: Lift net margin by 8–12pp in 12 months"
-                },
-                {
-                  cls:"DE-PRIORITIZE / EXIT", color:T.red, icon:"⚠",
-                  corridors: withAnalytics.filter(c=>c.classification==="DE-PRIORITIZE / EXIT"),
-                  actions: ["Prepare restructuring case: repricing or volume minimum commitments","Engage clients on new pricing terms within 60 days","If restructuring fails, begin managed wind-down — no new volume acquisition","Reassign nostro and correspondent capacity to GROW corridors"],
-                  metric: "Decision point: 90 days"
-                },
-              ].map(q=>(
-                <div key={q.cls} style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:24, borderTop:`3px solid ${q.color}` }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                      <span style={{ fontSize:24, color:q.color }}>{q.icon}</span>
-                      <ClassBadge label={q.cls} color={q.color} />
+            {/* Summary KPIs */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 24 }}>
+              <KPI label="Total Rev Opportunity" value={fmt(totalRevenueAtRisk)} sub="Across all action items" accent={T.amber} />
+              <KPI label="Reprice Actions" value={actionQueue.filter(c => c.action === 'REPRICE').length} sub="Pricing gap identified" accent={T.amber} />
+              <KPI label="Retain Actions" value={actionQueue.filter(c => c.action === 'RETAIN').length} sub="Migration risk flagged" accent={T.red} />
+              <KPI label="Expand Actions" value={actionQueue.filter(c => c.action === 'EXPAND').length} sub="Growth opportunity" accent={T.green} />
+            </div>
+
+            {/* Action cards */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {(filterAction === 'all' ? actionQueue : actionQueue.filter(c => c.action === filterAction)).map((c, i) => (
+                <div key={c.id} className="c04-card"
+                  onClick={() => { setSelectedClient(c); setTab('signals'); }}
+                  style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, borderLeft: `4px solid ${actionColor(c.action)}`, cursor: 'pointer', transition: 'border-color 0.15s' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '32px 1fr 160px 160px 200px 140px', gap: 16, alignItems: 'center' }}>
+                    <div style={{ fontFamily: T.mono, fontSize: 12, color: T.textDim }}>{String(i + 1).padStart(2, '0')}</div>
+                    <div>
+                      <div style={{ fontFamily: T.sans, fontSize: 14, color: T.text, fontWeight: 500, marginBottom: 4 }}>{c.name}</div>
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                        <Tag label={c.segment} color={T.blue} small />
+                        <Tag label={`RM: ${c.rm}`} color={T.textMid} small />
+                        <Tag label={signalLabel(c.signal)} color={signalColor(c.signal)} small />
+                      </div>
                     </div>
-                    <span style={{ fontSize:12, color:q.color, fontFamily:"'Space Mono', monospace", fontWeight:700 }}>{q.corridors.length} corridor{q.corridors.length!==1?"s":""}</span>
-                  </div>
-
-                  {/* Corridor tags */}
-                  <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:16 }}>
-                    {q.corridors.map(c=>(
-                      <div key={c.id} style={{ background:T.card, borderRadius:6, padding:"6px 10px", border:`1px solid ${q.color}33`, cursor:"pointer" }}
-                        onClick={()=>{ setSelectedCorridor(c); setActiveTab("deep-dive"); }}>
-                        <div style={{ fontSize:12 }}>{c.flag_from}→{c.flag_to}</div>
-                        <div style={{ fontSize:9, color:q.color, fontFamily:"'Space Mono', monospace" }}>{fmtPct(c.netMarginPct)} · +{fmtPct(c.growthRate)}</div>
+                    <div>
+                      <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Rev at Risk</div>
+                      <div style={{ fontFamily: T.mono, fontSize: 16, color: c.revenueAtRisk > 0 ? T.red : T.green, fontWeight: 600 }}>
+                        {c.revenueAtRisk > 0 ? fmt(c.revenueAtRisk) : 'Growth'}
                       </div>
-                    ))}
-                    {q.corridors.length===0 && <span style={{ fontSize:11, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>None currently</span>}
-                  </div>
-
-                  {/* Actions */}
-                  <div style={{ marginBottom:12 }}>
-                    {q.actions.map((a,i)=>(
-                      <div key={i} style={{ display:"flex", gap:8, marginBottom:6 }}>
-                        <span style={{ color:q.color, fontSize:11, flexShrink:0, fontFamily:"'Space Mono', monospace" }}>{"0"+(i+1)}</span>
-                        <span style={{ fontSize:11, color:T.textMid, lineHeight:1.6 }}>{a}</span>
+                    </div>
+                    <div>
+                      <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Signal Strength</div>
+                      <Tag label={c.signalStrength} color={strengthColor(c.signalStrength)} />
+                    </div>
+                    <div>
+                      <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Action Detail</div>
+                      <div style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid, lineHeight: 1.5 }}>
+                        {c.actionDetail.substring(0, 80)}...
                       </div>
-                    ))}
-                  </div>
-                  <div style={{ padding:"8px 12px", background:`${q.color}10`, borderRadius:6, border:`1px solid ${q.color}22` }}>
-                    <span style={{ fontSize:10, color:q.color, fontFamily:"'Space Mono', monospace", fontWeight:700 }}>{q.metric}</span>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <Tag label={c.action} color={actionColor(c.action)} />
+                      <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, marginTop: 6 }}>Click for full detail →</div>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Connection callouts */}
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
-              <div style={{ padding:"12px 16px", background:`${T.blue}10`, borderRadius:8, border:`1px solid ${T.blue}22`, display:"flex", gap:12, alignItems:"flex-start" }}>
-                <span style={{ fontSize:14, color:T.blue, flexShrink:0 }}>⟵</span>
+            {/* Model connections */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 24 }}>
+              <div style={{ padding: '12px 16px', background: T.blueSoft, borderRadius: 8, border: `1px solid ${T.blue}22`, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <span style={{ fontSize: 14, color: T.blue, flexShrink: 0 }}>⟵</span>
                 <div>
-                  <span style={{ fontSize:10, color:T.blue, fontFamily:"'Space Mono', monospace", fontWeight:700 }}>MODEL 01 CONNECTION: </span>
-                  <span style={{ fontSize:11, color:T.textMid }}>Corridor P&L builds on the Model 01 margin waterfall. Gross revenue, rail cost, and exception data are sourced from the Profitability Engine baseline, ensuring consistent economic accounting across the framework.</span>
+                  <span style={{ fontFamily: T.mono, fontSize: 10, color: T.blue, fontWeight: 700 }}>MODEL 01 CONNECTION: </span>
+                  <span style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid }}>Client net margin from the Profitability Engine weights the behavioral signals here. Clients generating the highest margin per payment receive elevated attention in the action queue.</span>
                 </div>
               </div>
-              <div style={{ padding:"12px 16px", background:`${T.teal}10`, borderRadius:8, border:`1px solid ${T.teal}22`, display:"flex", gap:12, alignItems:"flex-start" }}>
-                <span style={{ fontSize:14, color:T.teal, flexShrink:0 }}>⟶</span>
+              <div style={{ padding: '12px 16px', background: T.tealSoft, borderRadius: 8, border: `1px solid ${T.teal}22`, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <span style={{ fontSize: 14, color: T.teal, flexShrink: 0 }}>⟵</span>
                 <div>
-                  <span style={{ fontSize:10, color:T.teal, fontFamily:"'Space Mono', monospace", fontWeight:700 }}>MODEL 04 CONNECTION: </span>
-                  <span style={{ fontSize:11, color:T.textMid }}>Corridor growth rates and classification feed into the Client Behavior Engine (Model 04). Clients active in GROW corridors are flagged as expansion targets; clients concentrated in EXIT corridors are elevated as retention risks.</span>
+                  <span style={{ fontFamily: T.mono, fontSize: 10, color: T.teal, fontWeight: 700 }}>MODEL 03 CONNECTION: </span>
+                  <span style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid }}>Corridor classification from the Corridor Analyzer elevates migration risk signals. Clients concentrated in DE-PRIORITIZE / EXIT corridors receive higher signal strength ratings.</span>
                 </div>
               </div>
             </div>
           </div>
         )}
+
       </div>
 
       {/* FOOTER */}
-      <div style={{ borderTop:`1px solid ${T.border}`, padding:"14px 32px", display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:20 }}>
-        <span style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace", letterSpacing:"0.1em" }}>CLIENT PAYMENT BEHAVIOR ENGINE · MODEL 04 · BEHAVIORAL INTELLIGENCE · CARLOS UREÑA PAYMENTS STRATEGY</span>
-        <span style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>PROTOTYPE · SYNTHETIC DATA · 10 CORRIDORS · Q1 2025</span>
+      <div style={{ borderTop: `1px solid ${T.border}`, padding: '16px 32px', marginTop: 20 }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontFamily: T.mono, fontSize: 10, color: T.textDim }}>
+            CLIENT PAYMENT BEHAVIOR ENGINE · MODEL 04 · BEHAVIORAL INTELLIGENCE · CARLOS UREÑA PAYMENTS STRATEGY
+          </span>
+          <span style={{ fontFamily: T.mono, fontSize: 10, color: T.textDim }}>
+            PROTOTYPE · SYNTHETIC DATA · 12 CLIENTS · 24-MONTH HISTORY
+          </span>
+        </div>
       </div>
     </div>
   );
