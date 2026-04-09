@@ -336,7 +336,7 @@ const MODELS = [
     layer: 'Layer 1 — Economic Core',
     name: 'Payment Profitability Engine',
     route: '/models/01-profitability',
-    desc: 'Calculates revenue and margin at the client, rail, and corridor level. The economic anchor of the system — every downstream model draws on its cost and margin outputs.',
+    desc: 'Calculates where revenue is generated and where margin is lost across clients, rails, and flows. The economic anchor of the system. Every downstream model draws on its outputs.',
     minData: 'Transaction extract with client ID, rail, destination corridor, amount, and fee charged (partial completeness is sufficient). Standard pricing schedule by rail and corridor.',
     maturity: [
       { label: 'Immediate visibility', desc: 'Revenue ranking by client, corridor, and rail. Pricing exception concentration. Where the portfolio generates the most and least revenue.' },
@@ -364,16 +364,16 @@ const MODELS = [
   {
     num: '03',
     layer: 'Layer 3 — Network Intelligence',
-    name: 'Cross-Border Corridor Analyzer',
+    name: 'Payment Flow & Corridor Analyzer',
     route: '/models/03-corridor-analyzer',
-    desc: 'Maps the economics of each active payment corridor — revenue versus estimated cost — and classifies corridors into four strategic categories: Grow, Defend, Optimize, or De-prioritize / exit.',
+    desc: 'Maps the economics of each active payment flow and corridor, comparing revenue against estimated cost, and classifies each into four strategic categories: Grow, Defend, Optimize, or De-prioritize.',
     minData: 'Volume and revenue by corridor. Average cost estimate per corridor — derived from correspondent fee schedules, GL entries, or SWIFT benchmarks where formal claims data is unavailable.',
     maturity: [
       { label: 'Immediate visibility', desc: 'Corridor classification by revenue and volume. Which corridors are building the franchise and which are diluting it directionally.' },
       { label: 'Economic precision', desc: 'Corridor margin waterfall across four cost layers: network and scheme fees, correspondent and intermediary costs, liquidity and prefunding cost, and operational and exception cost. FX spread capture analysis by corridor.' },
       { label: 'Portfolio optimization', desc: 'Full corridor profitability with repricing recommendations. Minimum pricing thresholds by corridor to prevent structurally loss-making flows. Corridor de-prioritization and investment decisions supported by margin modeling. Correspondent relationship rationalization opportunities.' },
     ],
-    tells: 'Which corridors are margin-positive and which are margin-negative after cost allocation — even using estimated costs. Corridors that look profitable on revenue but are likely loss-making once the full cost stack is applied. That finding is actionable without perfect data.',
+    tells: 'Which payment flows are margin-positive and which are margin-negative after cost allocation, even using estimated costs. Flows that appear profitable on revenue but are likely loss-making once the full cost stack is applied. That finding is actionable without perfect data.',
     connection: 'Feeds corridor classifications and margin data to Models 04 and 05.',
   },
   {
@@ -381,7 +381,7 @@ const MODELS = [
     layer: 'Layer 4 — Behavioral Intelligence',
     name: 'Client Payment Behavior Engine',
     route: '/models/04-client-behavior',
-    desc: 'Analyzes client payment patterns over time to surface volume migration risk, monetization gaps relative to internal peers, and relationship deepening signals across the client base.',
+    desc: 'Identifies where client behavior is driving margin risk, pricing leakage, or revenue opportunity across the portfolio.',
     minData: 'Transaction history by client over 12 to 24 months. Rail and corridor usage by client.',
     maturity: [
       { label: 'Immediate visibility', desc: 'Client growth and decline patterns. Rail and corridor concentration risk. Early signals of volume migration away from the bank.' },
@@ -396,7 +396,7 @@ const MODELS = [
     layer: 'Layer 5 — Executive Decision Layer',
     name: 'Payments Portfolio Decision Engine',
     route: '/models/05-portfolio-scorecard',
-    desc: 'Synthesizes all upstream model outputs into a single portfolio health view and translates that view into ranked, sequenced interventions with estimated revenue impact. This is where analysis becomes action.',
+    desc: 'Synthesizes all upstream model outputs into a single portfolio health view and translates that view into ranked, sequenced interventions with estimated revenue impact. This is where analysis translates into prioritized economic action.',
     minData: 'Outputs from Models 01 through 04 at whatever maturity level is available. Management targets and KPIs where accessible.',
     maturity: [
       { label: 'Visibility', desc: 'Consolidated portfolio view across six dimensions: pricing governance, rail economics, corridor profitability, client retention risk, revenue concentration, and operational drag. Identification of where the most significant issues exist.' },
@@ -419,7 +419,7 @@ const MODELS = [
       { label: 'Portfolio optimization', desc: 'Each network classified by strategic role: Core profit driver, Strategic enabler, Defensive necessity, or Value-destructive. Investment and exit decisions supported by margin modeling and strategic positioning analysis, supporting capital allocation and investment prioritization decisions.' },
     ],
     tells: 'Whether each network justifies its infrastructure investment — and whether that participation is a profit driver, a strategic entry point, a competitive defense, or a value drain. RTP may be loss-making today but protecting the deposit franchise. This model makes that trade-off explicit and quantifiable.',
-    connection: 'Strategic positioning layer. Extends the economic framework to network participation decisions.',
+    connection: 'Extends the economic framework to network participation decisions.',
   },
 ]
 
@@ -445,12 +445,16 @@ export default function FrameworkIndex() {
           <h1 className="fi-h1">Payments Portfolio<br />Management System</h1>
           <p className="fi-hero-sub">A six-model system for managing payments portfolio economics — from transaction-level profitability through client behavior signals to executive decision support. Built on 20 years in payments across Citi, Deutsche Bank, HSBC, and Mashreq, including direct P&amp;L leadership in wire and cross-border businesses.</p>
           <div className="fi-system-statement">
-            In most payments businesses, economic decisions are constrained by data quality. This system is designed to generate decision-grade insight immediately, and compound precision as data improves. The system does not replace existing reporting. It sits above it — translating fragmented data into portfolio-level economic decisions.
+            In most payments businesses, economic decisions are constrained by fragmented data.
+
+This system generates decision-grade insight immediately and increases precision as data improves.
+
+It does not replace reporting. It translates it into economic decisions.
           </div>
 
           <div className="fi-margin-callout">
             <div className="fi-margin-callout-label">Economic Measurement Framework</div>
-            <p className="fi-margin-callout-intro">Payments portfolio economics are modeled across three levels, depending on data availability and decision context:</p>
+            <p className="fi-margin-callout-intro">Payments portfolio economics are measured across three levels, depending on data availability and decision context:</p>
             <div className="fi-margin-tier">
               <div className="fi-margin-tier-label">Contribution margin</div>
               <div className="fi-margin-tier-desc">Transaction-level economics including pricing, network, and processing cost</div>
@@ -470,11 +474,11 @@ export default function FrameworkIndex() {
         <div className="fi-section-block">
           <div className="fi-section-label">System Architecture</div>
           {[
-            {n:'1', title:'Payment Data Foundation', desc:'Transaction-level data across rails, corridors, clients, pricing, and operational performance. The source layer for all models.'},
+            {n:'1', title:'Payment Data Foundation', desc:'Transaction-level data across rails, corridors, clients, pricing, and operational performance. Source layer for all models.'},
             {n:'2', title:'Economic Core', desc:'The profitability engine that calculates revenue and margin at the client, rail, and corridor level. The anchor for all downstream analysis.'},
             {n:'3', title:'Infrastructure Intelligence', desc:'Rail economics analysis — where the rail mix is suboptimal, what the margin impact is, and what product, pricing, or migration strategy would improve it.'},
             {n:'4', title:'Network and Behavioral Intelligence', desc:'Models that map corridor economics, analyze client payment behavior, and surface migration risk and monetization gaps across the portfolio.'},
-            {n:'5', title:'Executive Decision Layer', desc:'Portfolio synthesis that translates all upstream outputs into ranked interventions with estimated revenue impact. Where analysis becomes action.'},
+            {n:'5', title:'Executive Decision Layer', desc:'Portfolio synthesis that translates all upstream outputs into ranked interventions with estimated revenue impact. Where analysis translates into prioritized economic action.'},
             {n:'6', title:'Strategic Positioning Layer', desc:'Network participation economics — evaluating whether each network the bank participates in justifies its infrastructure investment and classifying each by strategic role.'},
           ].map((l,i) => (
             <div key={i} className="fi-arch-row">
@@ -513,7 +517,7 @@ export default function FrameworkIndex() {
         <div className="fi-section-block">
           <div className="fi-section-label">Layer 1 — Data Foundation</div>
           <h2 className="fi-h2">What real deployment looks like</h2>
-          <p className="fi-p">This system is designed to run on existing bank infrastructure — not require new systems. Data requirements are incremental, not all-or-nothing.</p>
+          <p className="fi-p">This system runs on existing bank infrastructure and does not require new systems. Data requirements are incremental, not all-or-nothing.</p>
           <p className="fi-p">All six models run on synthetic data in prototype form. A production deployment would require field-level data from the source systems below — with defined ingestion patterns, data quality standards, and governance ownership for each. Models 01–05 draw on bank-side source systems. Model 06 additionally requires network-side data: scheme transaction logs, corridor settlement records, and network participation cost data.</p>
           <div className="fi-source-grid">
             {[
