@@ -337,7 +337,7 @@ const MODELS = [
     name: 'Payment Profitability Engine',
     route: '/models/01-profitability',
     desc: 'Calculates where revenue is generated and where margin is lost across clients, rails, and flows. The economic anchor of the system. Every downstream model draws on its outputs.',
-    minData: 'Transaction extract with client ID, rail, destination corridor, amount, and fee charged (partial completeness is sufficient). Standard pricing schedule by rail and corridor.',
+    minData: 'Transaction extract with client ID, rail, destination or payment flow, amount, and fee charged (partial completeness is sufficient). Standard pricing schedule by rail and flow, including corridor where applicable.',
     maturity: [
       { label: 'Immediate visibility', desc: 'Revenue ranking by client, flow, and rail. Pricing exception concentration. Where the portfolio generates the most and least revenue.' },
       { label: 'Economic precision', desc: 'Margin by flow and corridor using rate-card-based cost estimates across four cost layers: network and scheme fees, correspondent and intermediary costs, liquidity and prefunding cost, and operational and exception cost. Balance sheet linkage where available.' },
@@ -367,7 +367,7 @@ const MODELS = [
     name: 'Payment Flow & Corridor Analyzer',
     route: '/models/03-corridor-analyzer',
     desc: 'Maps the economics of payment flows, including corridor-level performance where relevant, comparing revenue against estimated cost and classifying each into four strategic categories: Grow, Defend, Optimize, or De-prioritize.',
-    minData: 'Volume and revenue by corridor. Average cost estimate per corridor — derived from correspondent fee schedules, GL entries, or SWIFT benchmarks where formal claims data is unavailable.',
+    minData: 'Volume and revenue by payment flow, with corridor-level detail where applicable. Average cost estimate by flow or corridor depending on payment type — derived from correspondent fee schedules, GL entries, or SWIFT benchmarks where formal claims data is unavailable.',
     maturity: [
       { label: 'Immediate visibility', desc: 'Corridor classification by revenue and volume. Which corridors are building the franchise and which are diluting it directionally.' },
       { label: 'Economic precision', desc: 'Corridor margin waterfall across four cost layers: network and scheme fees, correspondent and intermediary costs, liquidity and prefunding cost, and operational and exception cost. FX spread capture analysis by corridor.' },
@@ -382,7 +382,7 @@ const MODELS = [
     name: 'Client Payment Behavior Engine',
     route: '/models/04-client-behavior',
     desc: 'Identifies where client behavior is driving margin risk, pricing leakage, or revenue opportunity across the portfolio.',
-    minData: 'Transaction history by client over 12 to 24 months. Rail and corridor usage by client.',
+    minData: 'Transaction history by client over 12 to 24 months. Rail and flow usage by client.',
     maturity: [
       { label: 'Immediate visibility', desc: 'Client growth and decline patterns. Rail and corridor concentration risk. Early signals of volume migration away from the bank.' },
       { label: 'Economic precision', desc: 'Under-monetized clients identified by comparing revenue per payment against internal peer groups on the same flow and rail — no external benchmarks required. Pricing inconsistencies across similar client profiles. Early indicators of pricing leakage at the client level.' },
