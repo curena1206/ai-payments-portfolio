@@ -21,17 +21,17 @@ const css = `
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
   .fi-root {
     margin: 0;
-    font-family: ${S.sans};
-    font-size: 15px;
+    font-family: Georgia, serif;
+    font-size: 17px;
     line-height: 1.6;
     color: ${S.ink};
     background: ${S.white};
   }
   .fi-root *, .fi-root *::before, .fi-root *::after { box-sizing: border-box; }
-  .fi-root p { color: ${S.mid}; }
+  .fi-root p { color: ${S.mid}; font-family: Georgia, serif; font-size: 17px; }
   .fi-nav {
     background: #0f1f3d;
-    border-bottom: 2px solid #b7882c;
+    border-bottom: 3px solid #b7882c;
     padding: 0 24px;
     display: flex;
     align-items: center;
@@ -87,14 +87,14 @@ const css = `
     line-height: 1.2;
   }
   .fi-hero-sub {
-    font-size: 16px;
+    font-size: 17px;
     color: #4a5568;
     max-width: 680px;
     line-height: 1.65;
     margin: 0 0 20px;
   }
   .fi-system-statement {
-    font-size: 15px;
+    font-size: 17px;
     color: #4a5568;
     max-width: 680px;
     line-height: 1.7;
@@ -119,7 +119,7 @@ const css = `
     margin-bottom: 12px;
   }
   .fi-margin-callout-intro {
-    font-size: 14px;
+    font-size: 13px;
     color: #4a5568;
     line-height: 1.65;
     margin-bottom: 14px;
@@ -313,15 +313,7 @@ const css = `
   }
   .fi-links a:hover { color: #b7882c; }
   .fi-footer {
-    margin-top: 56px;
-    padding-top: 20px;
-    border-top: 1px solid #e2e8f0;
-    font-size: 12.5px;
-    color: #6b7280;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
+    margin-top: 0;
   }
   @media (min-width: 640px) {
     .fi-grid { grid-template-columns: 1fr 1fr; }
@@ -384,7 +376,8 @@ export default function FrameworkIndex() {
         <a href="https://carlosurena.com" className="fi-nav-name">Carlos Ure&#241;a</a>
         <div className="fi-nav-links">
           <a href="https://carlosurena.com">Home</a>
-          <a href="https://carlosurena.com/payments-portfolio-diagnostic/">Diagnostic</a>
+          <a href="https://carlosurena.com/consulting.html">Diagnostic</a>
+          <a href="https://carlosurena.com/payments-portfolio-diagnostic/">PFI</a>
           <a href="https://models.carlosurena.com" className="active" style={{color:'#b7882c'}}>Models</a>
           <a href="https://www.linkedin.com/in/carlosurena/" target="_blank" rel="noreferrer">LinkedIn</a>
         </div>
@@ -457,9 +450,14 @@ export default function FrameworkIndex() {
           </div>
         </div>
 
-        <footer className="fi-footer">
-          <span>Payments Strategy Analytics · V1 · Carlos Ure&#241;a · 2025</span>
-          <span>Synthetic data calibrated to realistic industry ranges</span>
+        <footer className="fi-footer" style={{borderTop:'2px solid #b7882c',background:'#0f1f3d',padding:'0 24px',height:'48px',display:'flex',alignItems:'center',justifyContent:'space-between',marginTop:'40px'}}>
+          <span style={{fontFamily:'Georgia, serif',fontSize:'13px',color:'#fff'}}>Carlos Ureña &nbsp;·&nbsp; <span style={{color:'rgba(255,255,255,0.5)',fontSize:'13px'}}>Making payments portfolio economics visible</span></span>
+          <span style={{fontSize:'13px',color:'rgba(255,255,255,0.5)'}}>
+            <a href="https://www.linkedin.com/in/carlosurena/" target="_blank" rel="noreferrer" style={{color:'#b7882c',textDecoration:'none'}}>LinkedIn</a>
+            <span style={{margin:'0 6px'}}>·</span>
+            <a href="mailto:carlos@carlosurena.com" style={{color:'#b7882c',textDecoration:'none'}}>Email</a>
+            <span style={{margin:'0 6px'}}>·</span> © 2026
+          </span>
         </footer>
 
       </main>
