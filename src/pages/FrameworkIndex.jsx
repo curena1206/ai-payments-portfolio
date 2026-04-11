@@ -79,7 +79,7 @@ const css = `
   }
   .fi-h1 {
     font-family: Georgia, serif;
-    font-size: 38px;
+    font-size: 32px;
     font-weight: normal;
     color: #0f1f3d;
     margin: 0 0 16px;
@@ -325,7 +325,7 @@ const css = `
   }
   @media (min-width: 640px) {
     .fi-grid { grid-template-columns: 1fr 1fr; }
-    .fi-h1 { font-size: 44px; }
+    .fi-h1 { font-size: 32px; }
     .fi-margin-tier { grid-template-columns: 200px 1fr; }
   }
 `
