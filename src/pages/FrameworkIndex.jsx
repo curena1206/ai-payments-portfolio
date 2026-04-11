@@ -336,90 +336,42 @@ const MODELS = [
     layer: 'Layer 1 — Economic Core',
     name: 'Payment Profitability Engine',
     route: '/models/01-profitability',
-    desc: 'Identifies where revenue is generated and where it is lost across clients, rails, and flows. Quantifies pricing leakage and under-monetization. The economic anchor of the system.',
-    minData: 'Transaction extract with client ID, rail, payment flow, amount, and fee charged. Standard pricing schedule by rail and flow.',
-    maturity: [
-      { label: 'Immediate visibility', desc: 'Revenue ranking by client, flow, and rail. Pricing exception concentration. Where the portfolio generates the most and least revenue.' },
-      { label: 'Economic precision', desc: 'Margin by flow using rate-card-based cost estimates across four layers: network fees, external processing costs, funding and liquidity cost, and operational cost.' },
-      { label: 'Portfolio optimization', desc: 'True net margin at the transaction level. Pricing leakage quantified as recoverable revenue.' },
-    ],
-    tells: 'Where revenue is made and lost. Where pricing exceptions are eroding margin silently. Which clients are under-monetized relative to internal peers on the same flow and rail.',
-    connection: '',
+    desc: 'Identifies where revenue is generated and where it is lost across clients, rails, and flows. Quantifies pricing leakage and under-monetization at the transaction level.',
   },
   {
     num: '02',
     layer: 'Layer 2 — Infrastructure Intelligence',
     name: 'Rail Economics Analyzer',
     route: '/models/02-rail-optimizer',
-    desc: 'Evaluates the cost, revenue, and margin contribution of each payment rail. Identifies where the rail mix is suboptimal and what pricing or migration strategies would improve economics.',
-    minData: 'Volume and revenue by rail. Processing cost per rail. STP rate by rail where available.',
-    maturity: [
-      { label: 'Immediate visibility', desc: 'Revenue and volume by rail. Cost efficiency comparison across rails. Where concentration creates economic risk.' },
-      { label: 'Economic precision', desc: 'Margin contribution by rail. Where pricing adjustments would improve rail economics.' },
-      { label: 'Portfolio optimization', desc: 'Rail migration strategy by client segment. Where packaging — bundles, tiers, incentives — can shift rail behavior profitably.' },
-    ],
-    tells: 'Which rails are generating margin and which are not. Quantifies the economic impact of shifting volume across rails at the portfolio and client segment level.',
-    connection: 'Consumes rail cost benchmarks and STP rates from Model 01.',
+    desc: 'Exposes where the rail mix is suboptimal and what it costs. Identifies where pricing or migration changes would improve margin contribution by rail.',
   },
   {
     num: '03',
     layer: 'Layer 3 — Flow Intelligence',
     name: 'Payment Flow Analyzer',
     route: '/models/03-corridor-analyzer',
-    desc: 'Maps the economics of payment flows, comparing revenue against estimated cost and classifying each into four strategic categories: Grow, Defend, Optimize, or De-prioritize.',
-    minData: 'Volume and revenue by payment flow. Average cost estimate by flow — derived from fee schedules, GL entries, or industry benchmarks where formal cost data is unavailable.',
-    maturity: [
-      { label: 'Immediate visibility', desc: 'Flow classification by revenue and volume. Which flows are building the franchise and which are diluting it.' },
-      { label: 'Economic precision', desc: 'Flow margin waterfall across four cost layers: network fees, external processing costs, funding and liquidity cost, and operational cost. FX spread capture analysis by flow where applicable.' },
-      { label: 'Portfolio optimization', desc: 'Full flow profitability with repricing recommendations. Minimum pricing thresholds to prevent structurally loss-making flows.' },
-    ],
-    tells: 'Which payment flows are margin-positive and which are margin-negative after cost allocation, even using estimated costs. Flows that appear profitable on revenue but are likely loss-making once the full cost stack is applied.',
-    connection: 'Feeds flow classifications and margin data to Models 04 and 05.',
+    desc: 'Maps the economics of each payment flow. Surfaces which flows are margin-positive and which are loss-making once the full cost stack is applied — even using estimated costs.',
   },
   {
     num: '04',
     layer: 'Layer 4 — Behavioral Intelligence',
     name: 'Client Payment Behavior Engine',
     route: '/models/04-client-behavior',
-    desc: 'Identifies where client behavior is driving margin risk, pricing leakage, or revenue opportunity across the portfolio.',
-    minData: 'Transaction history by client over 12 to 24 months. Rail and flow usage by client.',
-    maturity: [
-      { label: 'Immediate visibility', desc: 'Client growth and decline patterns. Rail concentration risk. Early signals of volume migration away from the bank.' },
-      { label: 'Economic precision', desc: 'Under-monetized clients identified by comparing revenue per payment against internal peer groups on the same flow and rail. Pricing inconsistencies across similar client profiles.' },
-      { label: 'Portfolio optimization', desc: 'Estimated revenue at risk combining volume decline, pricing compression, and concentration signals. Outputs structured for relationship manager action.' },
-    ],
-    tells: 'Where client relationships are deepening, where they are stable, and where volume is migrating. The model quantifies the signal.',
-    connection: 'Weighted by client net margin from Model 01. Flow risk from Model 03 elevates migration flags.',
+    desc: 'Identifies where client behavior is driving pricing leakage, margin risk, or revenue opportunity. Quantifies under-monetization by comparing clients on the same flow and rail.',
   },
   {
     num: '05',
     layer: 'Layer 5 — Executive Decision Layer',
     name: 'Payments Portfolio Decision Engine',
     route: '/models/05-portfolio-scorecard',
-    desc: 'Synthesizes all upstream model outputs into a single portfolio health view and translates it into ranked, sequenced interventions with estimated revenue impact.',
-    minData: 'Outputs from Models 01 through 04 at whatever maturity level is available. Management targets and KPIs where accessible.',
-    maturity: [
-      { label: 'Visibility', desc: 'Consolidated portfolio view across six dimensions: pricing governance, rail economics, flow profitability, client retention risk, revenue concentration, and operational drag.' },
-      { label: 'Prioritization', desc: 'Issues ranked by revenue impact and intervention complexity. Top actions with estimated revenue uplift, time to impact, and execution difficulty.' },
-      { label: 'Scenario and trade-off', desc: 'Three scenario models: base case, optimized if priority interventions are implemented, and stress case under adverse conditions.' },
-    ],
-    tells: 'Not just where the problems are — but which ones to fix first, in what sequence, and what the revenue impact of each intervention is.',
-    connection: 'Synthesis layer. Receives inputs from all four upstream models.',
+    desc: 'Synthesizes all upstream outputs into a ranked list of interventions with estimated revenue impact. Where analysis becomes prioritized economic action.',
   },
   {
     num: '06',
     layer: 'Layer 6 — Strategic Positioning Layer',
     name: 'Network Participation Economics',
     route: '/models/06-money-movement',
-    desc: 'Evaluates the bank\'s participation economics across push payment networks — RTP, FedNow, Visa Direct, Mastercard Move — assessing whether volume, pricing, and coverage are generating adequate return on infrastructure investment.',
-    minData: 'Volume and revenue by network. Network participation costs — membership, settlement, connectivity. Internal processing cost per network transaction.',
-    maturity: [
-      { label: 'Immediate visibility', desc: 'Revenue versus cost by network. Which networks are generating positive economics at current volumes.' },
-      { label: 'Economic precision', desc: 'Margin trajectory by network as volume scales, including estimated breakeven thresholds. Pricing leverage points where fee adjustments would materially change network economics.' },
-      { label: 'Portfolio optimization', desc: 'Each network classified by strategic role: Core profit driver, Strategic enabler, Defensive necessity, or Value-destructive. Investment and exit decisions supported by margin modeling.' },
-    ],
-    tells: 'Whether each network justifies its infrastructure investment — and whether that participation is a profit driver, a strategic entry point, a competitive defense, or a value drain.',
-    connection: 'Extends the economic framework to network participation decisions.',
+    desc: 'Evaluates whether each payment network the bank participates in justifies its infrastructure investment. Classifies each as a profit driver, strategic enabler, defensive necessity, or value drain.',
   },
 ]
 
@@ -443,18 +395,14 @@ export default function FrameworkIndex() {
         <div className="fi-hero">
           <div className="fi-eyebrow">Payments Strategy Analytics · V1 · 2025</div>
           <h1 className="fi-h1">Most payments portfolios cannot quantify where revenue is lost.<br/>This system makes it measurable.</h1>
-          <p className="fi-hero-sub">Revenue leakage exists across pricing, routing, and cost structures — but is rarely visible in standard reporting. This six-model system translates fragmented payment data into clear economic signals that can be acted on immediately.</p>
+          <p className="fi-hero-sub">Revenue leakage exists across pricing, routing, and cost structures — but is rarely visible in standard reporting. This system makes it measurable and actionable.</p>
           <div className="fi-system-statement">
-            The system is built from repeated exposure to the same pattern: revenue leakage that is not visible in standard reporting.
-
-It translates fragmented data into clear economic signals that can be acted on immediately.
-
-It does not replace reporting. It makes the leakage visible.
+            The system is built from repeated exposure to the same pattern: revenue leakage that is not visible in standard reporting. It translates fragmented data into clear economic signals. It does not replace reporting. It makes the leakage visible.
           </div>
 
           <div className="fi-margin-callout">
             <div className="fi-margin-callout-label">How leakage is measured</div>
-            <p className="fi-margin-callout-intro">Revenue leakage is measured across three levels, depending on data availability:</p>
+            <p className="fi-margin-callout-intro">Revenue leakage is measured across three levels depending on how much of the cost structure is visible:</p>
             <div className="fi-margin-tier">
               <div className="fi-margin-tier-label">Contribution margin</div>
               <div className="fi-margin-tier-desc">Transaction-level economics including pricing, network, and processing cost</div>
@@ -472,23 +420,10 @@ It does not replace reporting. It makes the leakage visible.
         </div>
 
         <div className="fi-section-block">
-          <div className="fi-section-label">How the system works</div>
-          {[
-            {n:'1', title:'Payment Data Foundation', desc:'Transaction-level data across rails, flows, clients, pricing, and operational performance. Source layer for all models.'},
-            {n:'2', title:'Economic Core', desc:'The profitability engine that calculates where revenue is generated and where it is lost at the client, rail, and flow level.'},
-            {n:'3', title:'Infrastructure Intelligence', desc:'Rail economics analysis — where the rail mix is suboptimal, what the margin impact is, and what pricing or migration strategy would correct it.'},
-            {n:'4', title:'Flow and Behavioral Intelligence', desc:'Models that map flow economics, analyze client payment behavior, and surface migration risk and pricing leakage across the portfolio.'},
-            {n:'5', title:'Executive Decision Layer', desc:'Portfolio synthesis that translates all upstream outputs into ranked interventions with estimated revenue impact.'},
-            {n:'6', title:'Strategic Positioning Layer', desc:'Network participation economics — evaluating whether each network the bank participates in justifies its infrastructure investment.'},
-          ].map((l,i) => (
-            <div key={i} className="fi-arch-row">
-              <div className="fi-arch-num">0{l.n}</div>
-              <div>
-                <div className="fi-arch-title">{l.title}</div>
-                <div className="fi-arch-desc">{l.desc}</div>
-              </div>
-            </div>
-          ))}
+          <div className="fi-section-label">How it works</div>
+          <p className="fi-p">The system evaluates the portfolio across six dimensions of a payments franchise.</p>
+          <p className="fi-p">Each model isolates a different source of revenue leakage and quantifies its impact.</p>
+          <p className="fi-p">Outputs are synthesized into a single view with prioritized actions and estimated revenue impact.</p>
         </div>
 
         <div className="fi-section-block">
@@ -500,49 +435,21 @@ It does not replace reporting. It makes the leakage visible.
                 <div className="fi-model-layer">{m.layer}</div>
                 <div className="fi-model-name">{m.name}</div>
                 <div className="fi-model-desc">{m.desc}</div>
-                <div className="fi-model-min-data"><strong>Minimum data:</strong> {m.minData}</div>
-                {m.maturity.map((t,j) => (
-                  <div key={j} className="fi-maturity-row">
-                    <div className="fi-maturity-label">{t.label}</div>
-                    <div className="fi-maturity-desc">{t.desc}</div>
-                  </div>
-                ))}
-                <div className="fi-model-tells">{m.tells}</div>
-                <div className="fi-model-connection">{m.connection}</div>
               </Link>
             ))}
           </div>
         </div>
 
         <div className="fi-section-block">
-          <div className="fi-section-label">Layer 1 — Data Foundation</div>
-          <h2 className="fi-h2">What deployment looks like</h2>
-          <p className="fi-p">This system runs on existing bank infrastructure and does not require new systems. Data requirements are incremental, not all-or-nothing.</p>
-          <p className="fi-p">All six models run on synthetic data in prototype form. A production deployment requires field-level data from the source systems below. Models 01–05 draw on bank-side source systems. Model 06 additionally requires network-side data.</p>
-          <div className="fi-source-grid">
-            {[
-              {sys:'Payment Processing', ex:'Temenos, Volante, Form3, ACI UP'},
-              {sys:'Core Banking / GL', ex:'Temenos T24, Finacle, FLEXCUBE'},
-              {sys:'FX & Treasury', ex:'Murex, FIS Quantum, ION Treasury'},
-              {sys:'External Processing', ex:'Fee schedules, settlement records, network statements'},
-              {sys:'Liquidity Management', ex:'Finastra Fusion, proprietary systems'},
-              {sys:'CRM & Operations', ex:'Salesforce FSC, ServiceNow, NICE Actimize'},
-              {sys:'Network Scheme Data', ex:'RTP, FedNow, Visa Direct, Mastercard Move'},
-              {sys:'Pricing & Exception Data', ex:'Internal pricing systems, exception logs'},
-            ].map((s,i) => (
-              <div key={i} className="fi-source-cell">
-                <div className="fi-source-name">{s.sys}</div>
-                <div className="fi-source-ex">{s.ex}</div>
-              </div>
-            ))}
-          </div>
+          <div className="fi-section-label">Deployment</div>
+          <p className="fi-p">The system runs on existing bank infrastructure using available data.</p>
+          <p className="fi-p">It does not require full data integration to produce useful output. Precision increases as data quality improves.</p>
         </div>
 
         <div className="fi-section-block">
           <div className="fi-section-label">About This Work</div>
-          <p className="fi-p">This system is built from repeated exposure to the same pattern: revenue leakage that is not visible in standard reporting. It translates fragmented data into clear economic signals that can be acted on immediately.</p>
-          <p className="fi-p">The system is designed to work with available data. It does not require a data warehouse project or systems integration to produce useful findings. The first output is directional. Precision compounds as data quality improves.</p>
-          <p className="fi-p">The Payments Portfolio Diagnostic — published separately — provides the qualitative entry point. Together they form a complete framework: one that diagnoses the franchise, the other that quantifies it.</p>
+          <p className="fi-p">This system exists to make revenue leakage visible and actionable.</p>
+          <p className="fi-p">The Payments Portfolio Diagnostic provides the qualitative entry point. This system quantifies it.</p>
           <div className="fi-links">
             <a href="https://carlosurena.com">&#8592; carlosurena.com</a>
             <a href="https://carlosurena.com/payments-portfolio-diagnostic/">Payments Portfolio Diagnostic &#8599;</a>
