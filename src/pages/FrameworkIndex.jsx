@@ -356,7 +356,7 @@ const MODELS = [
     layer: 'Layer 5 — Executive Decision Layer',
     name: 'Payments Portfolio Decision Engine',
     route: '/models/05-portfolio-scorecard',
-    desc: 'Synthesizes all upstream outputs into a ranked list of interventions with estimated revenue impact. Where analysis becomes prioritized economic action.',
+    desc: 'Synthesizes all upstream outputs into a ranked list of interventions with estimated revenue impact. Where analysis becomes prioritized action.',
   },
   {
     num: '06',
@@ -377,7 +377,7 @@ export default function FrameworkIndex() {
         <div className="fi-nav-links">
           <a href="https://carlosurena.com">Home</a>
           <a href="https://carlosurena.com/consulting.html">Diagnostic</a>
-          <a href="https://carlosurena.com/payments-portfolio-diagnostic/">PFI</a>
+          <a href="https://carlosurena.com/pfi.html">PFI</a>
           <a href="https://models.carlosurena.com" className="active" style={{color:'#b7882c'}}>Models</a>
           <a href="https://www.linkedin.com/in/carlosurena/" target="_blank" rel="noreferrer">LinkedIn</a>
         </div>
@@ -387,10 +387,10 @@ export default function FrameworkIndex() {
 
         <div className="fi-hero">
           <div className="fi-eyebrow">Payments Strategy Analytics · V1 · 2025</div>
-          <h1 className="fi-h1">Most payments portfolios cannot quantify where revenue is lost.<br/>This system makes it measurable.</h1>
-          <p className="fi-hero-sub">Revenue leakage exists across pricing, routing, and cost structures — but is rarely visible in standard reporting. This system makes it measurable and actionable.</p>
+          <h1 className="fi-h1">Most payments portfolios cannot quantify where revenue is lost.</h1>
+          <p className="fi-hero-sub">Revenue leakage exists across pricing, routing, and cost structures, but is rarely visible in standard reporting. This makes it measurable and actionable.</p>
           <div className="fi-system-statement">
-            The system is built from repeated exposure to the same pattern: revenue leakage that is not visible in standard reporting. It translates fragmented data into clear economic signals. It does not replace reporting. It makes the leakage visible.
+            Built from repeated exposure to the same pattern: revenue leakage that is not visible in standard reporting. It translates fragmented data into clear economic signals. It does not replace reporting. It makes the leakage visible.
           </div>
 
           <div className="fi-margin-callout">
@@ -408,14 +408,14 @@ export default function FrameworkIndex() {
               <div className="fi-margin-tier-label">Fully loaded margin</div>
               <div className="fi-margin-tier-desc">Liquidity-adjusted margin plus operational and exception cost</div>
             </div>
-            <div className="fi-margin-callout-footer">The system surfaces leakage at each level and increases precision as cost and balance sheet data mature.</div>
+            <div className="fi-margin-callout-footer">Leakage is surfaced at each level and increases precision as cost and balance sheet data mature.</div>
           </div>
         </div>
 
         <div className="fi-section-block">
           <div className="fi-section-label">How it works</div>
-          <p className="fi-p">The system evaluates the portfolio across six dimensions of a payments franchise.</p>
-          <p className="fi-p">Each model isolates a different source of revenue leakage and quantifies its impact.</p>
+          <p className="fi-p">The portfolio is evaluated across six dimensions of a payments franchise.</p>
+          <p className="fi-p">Each model isolates a different source of revenue leakage and quantifies the impact.</p>
           <p className="fi-p">Outputs are synthesized into a single view with prioritized actions and estimated revenue impact.</p>
         </div>
 
@@ -435,23 +435,23 @@ export default function FrameworkIndex() {
 
         <div className="fi-section-block">
           <div className="fi-section-label">Deployment</div>
-          <p className="fi-p">The system runs on existing bank infrastructure using available data.</p>
-          <p className="fi-p">It does not require full data integration to produce useful output. Precision increases as data quality improves.</p>
+          <p className="fi-p">Runs on existing bank infrastructure using available data.</p>
+          <p className="fi-p">Does not require full integration to produce useful output. Precision increases as data quality improves.</p>
         </div>
 
         <div className="fi-section-block">
           <div className="fi-section-label">About This Work</div>
-          <p className="fi-p">This system exists to make revenue leakage visible and actionable.</p>
-          <p className="fi-p">The Payments Portfolio Diagnostic provides the qualitative entry point. This system quantifies it.</p>
+          <p className="fi-p">This exists to make revenue leakage visible and actionable.</p>
+          <p className="fi-p">The Payments Portfolio Diagnostic provides the qualitative entry point. This quantifies it.</p>
           <div className="fi-links">
             <a href="https://carlosurena.com">&#8592; carlosurena.com</a>
-            <a href="https://carlosurena.com/payments-portfolio-diagnostic/">Payments Portfolio Diagnostic &#8599;</a>
+            <a href="https://carlosurena.com/pfi.html">Payments Portfolio Diagnostic &#8599;</a>
             <a href="https://www.linkedin.com/in/carlosurena/" target="_blank" rel="noreferrer">LinkedIn &#8599;</a>
           </div>
         </div>
 
-        <footer className="fi-footer" style={{borderTop:'2px solid #b7882c',background:'#0f1f3d',padding:'0 24px',height:'48px',display:'flex',alignItems:'center',justifyContent:'space-between',marginTop:'40px'}}>
-          <span style={{fontFamily:'Georgia, serif',fontSize:'13px',color:'#fff'}}>Carlos Ureña &nbsp;·&nbsp; <span style={{color:'rgba(255,255,255,0.5)',fontSize:'13px'}}>Making payments portfolio economics visible</span></span>
+        <footer className="fi-footer" style={{borderTop:'3px solid #b7882c',background:'#0f1f3d',padding:'0 24px',height:'48px',display:'flex',alignItems:'center',justifyContent:'space-between',marginTop:'40px'}}>
+          <span style={{fontFamily:'Georgia, serif',fontSize:'13px',color:'rgba(255,255,255,0.7)'}}>Making payments portfolio economics visible</span>
           <span style={{fontSize:'13px',color:'rgba(255,255,255,0.5)'}}>
             <a href="https://www.linkedin.com/in/carlosurena/" target="_blank" rel="noreferrer" style={{color:'#b7882c',textDecoration:'none'}}>LinkedIn</a>
             <span style={{margin:'0 6px'}}>·</span>
