@@ -60,9 +60,9 @@ const css = `
   .fi-nav-links a:hover { color: #b7882c !important; }
   .fi-nav-links a.active { color: #b7882c !important; }
   .fi-wrap {
-    max-width: 860px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 56px 24px 72px;
+    padding: 56px 28px 72px;
   }
   .fi-hero {
     padding-bottom: 40px;
@@ -89,14 +89,12 @@ const css = `
   .fi-hero-sub {
     font-size: 17px;
     color: #4a5568;
-    max-width: 680px;
     line-height: 1.65;
     margin: 0 0 20px;
   }
   .fi-system-statement {
     font-size: 17px;
     color: #4a5568;
-    max-width: 680px;
     line-height: 1.7;
     margin: 0;
     padding: 16px 20px;
@@ -386,11 +384,11 @@ export default function FrameworkIndex() {
       <main className="fi-wrap">
 
         <div className="fi-hero">
-          <div className="fi-eyebrow">Payments Strategy Analytics · V1 · 2025</div>
+          <div className="fi-eyebrow">Payments Strategy Analytics</div>
           <h1 className="fi-h1">Most payments portfolios cannot quantify where revenue is lost.</h1>
-          <p className="fi-hero-sub">Revenue leakage exists across pricing, routing, and cost structures, but is rarely visible in standard reporting. This makes it measurable and actionable.</p>
+          <p className="fi-hero-sub">Revenue leakage exists across pricing, routing, and cost structures, but is rarely visible in standard reporting.</p>
           <div className="fi-system-statement">
-            Built from repeated exposure to the same pattern: revenue leakage that is not visible in standard reporting. It translates fragmented data into clear economic signals. It does not replace reporting. It makes the leakage visible.
+            Built from repeated exposure to the same pattern. It translates fragmented data into clear economic signals. It does not replace reporting. It makes the leakage visible.
           </div>
 
           <div className="fi-margin-callout">
@@ -408,7 +406,7 @@ export default function FrameworkIndex() {
               <div className="fi-margin-tier-label">Fully loaded margin</div>
               <div className="fi-margin-tier-desc">Liquidity-adjusted margin plus operational and exception cost</div>
             </div>
-            <div className="fi-margin-callout-footer">Leakage is surfaced at each level and increases precision as cost and balance sheet data mature.</div>
+            <div className="fi-margin-callout-footer">Leakage is surfaced at each level. Precision increases as cost and balance sheet data mature.</div>
           </div>
         </div>
 
@@ -416,7 +414,7 @@ export default function FrameworkIndex() {
           <div className="fi-section-label">How it works</div>
           <p className="fi-p">The portfolio is evaluated across six dimensions of a payments franchise.</p>
           <p className="fi-p">Each model isolates a different source of revenue leakage and quantifies the impact.</p>
-          <p className="fi-p">Outputs are synthesized into a single view with prioritized actions and estimated revenue impact.</p>
+          <p className="fi-p">Outputs are synthesized into a single view with prioritized actions and estimated impact.</p>
         </div>
 
         <div className="fi-section-block">
@@ -441,7 +439,7 @@ export default function FrameworkIndex() {
 
         <div className="fi-section-block">
           <div className="fi-section-label">About This Work</div>
-          <p className="fi-p">This exists to make revenue leakage visible and actionable.</p>
+          <p className="fi-p">This exists to make revenue leakage visible and directly actionable.</p>
           <p className="fi-p">The Payments Portfolio Diagnostic provides the qualitative entry point. This quantifies it.</p>
           <div className="fi-links">
             <a href="https://carlosurena.com">&#8592; carlosurena.com</a>
