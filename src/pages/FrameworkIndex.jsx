@@ -323,45 +323,57 @@ const css = `
 const MODELS = [
   {
     num: '01',
+    group: 'Revenue Layer',
     layer: 'Layer 1 — Economic Core',
     name: 'Payment Profitability Engine',
     route: '/models/01-profitability',
     desc: 'Identifies where revenue is generated and where it is lost across clients, rails, and flows. Quantifies pricing leakage and under-monetization at the transaction level.',
+    usedIn: 'Diagnostic outputs · PFI scoring',
   },
   {
     num: '02',
+    group: 'Cost & Processing Layer',
     layer: 'Layer 2 — Infrastructure Intelligence',
     name: 'Rail Economics Analyzer',
     route: '/models/02-rail-optimizer',
     desc: 'Exposes where the rail mix is suboptimal and what it costs. Identifies where pricing or migration changes would improve margin contribution by rail.',
+    usedIn: 'Diagnostic outputs · PFI scoring',
   },
   {
     num: '03',
+    group: 'Cost & Processing Layer',
     layer: 'Layer 3 — Flow Intelligence',
     name: 'Payment Flow Analyzer',
     route: '/models/03-corridor-analyzer',
     desc: 'Maps the economics of each payment flow. Surfaces which flows are margin-positive and which are loss-making once the full cost stack is applied — even using estimated costs.',
+    usedIn: 'Diagnostic outputs',
   },
   {
     num: '04',
+    group: 'Balance Sheet Layer',
     layer: 'Layer 4 — Behavioral Intelligence',
     name: 'Client Payment Behavior Engine',
     route: '/models/04-client-behavior',
     desc: 'Identifies where client behavior is driving pricing leakage, margin risk, or revenue opportunity. Quantifies under-monetization by comparing clients on the same flow and rail.',
+    usedIn: 'PFI scoring · Prioritization logic',
   },
   {
     num: '05',
+    group: 'Optimization Layer',
     layer: 'Layer 5 — Executive Decision Layer',
     name: 'Payments Portfolio Decision Engine',
     route: '/models/05-portfolio-scorecard',
     desc: 'Synthesizes all upstream outputs into a ranked list of interventions with estimated revenue impact. Where analysis becomes prioritized action.',
+    usedIn: 'Prioritization logic · 90-day roadmap',
   },
   {
     num: '06',
+    group: 'Optimization Layer',
     layer: 'Layer 6 — Strategic Positioning Layer',
     name: 'Network Participation Economics',
     route: '/models/06-money-movement',
     desc: 'Evaluates whether each payment network the bank participates in justifies its infrastructure investment. Classifies each as a profit driver, strategic enabler, defensive necessity, or value drain.',
+    usedIn: 'Diagnostic outputs · Prioritization logic',
   },
 ]
 
@@ -385,11 +397,12 @@ export default function FrameworkIndex() {
 
         <div className="fi-hero">
           <div className="fi-eyebrow">Payments Strategy Analytics</div>
-          <h1 className="fi-h1">Most payments portfolios cannot quantify where revenue is lost.</h1>
-          <p className="fi-hero-sub">Revenue leakage exists across pricing, routing, and cost structures, but is rarely visible in standard reporting.</p>
+          <h1 className="fi-h1">The analytical engine behind the system.</h1>
+          <p className="fi-hero-sub">Revenue is lost in the flow and rarely visible in standard reporting.</p>
           <div className="fi-system-statement">
-            Built from repeated exposure to the same pattern. It translates fragmented data into clear economic signals. It does not replace reporting. It makes the leakage visible.
+            These models power both the Diagnostic outputs and the Payments Franchise Index scoring. Built from repeated exposure to the same pattern. Fragmented data translated into clear economic signals. The Diagnostic makes it visible. The Index measures it. These models explain it.
           </div>
+          <p className="fi-hero-sub" style={{borderLeft:'3px solid #b7882c',paddingLeft:'16px',marginTop:'16px',fontStyle:'normal'}}><strong>Revenue becomes visible. Then measured. Then explained. Then actionable.</strong></p>
 
           <div className="fi-margin-callout">
             <div className="fi-margin-callout-label">How leakage is measured</div>
@@ -419,16 +432,22 @@ export default function FrameworkIndex() {
 
         <div className="fi-section-block">
           <div className="fi-section-label">The Six Models</div>
-          <div className="fi-grid">
-            {MODELS.map((m,i) => (
-              <Link key={i} to={m.route} className="fi-model-card">
-                <div className="fi-model-num">{m.num}</div>
-                <div className="fi-model-layer">{m.layer}</div>
-                <div className="fi-model-name">{m.name}</div>
-                <div className="fi-model-desc">{m.desc}</div>
-              </Link>
-            ))}
-          </div>
+          {['Revenue Layer', 'Cost & Processing Layer', 'Balance Sheet Layer', 'Optimization Layer'].map(group => (
+            <div key={group} style={{marginBottom: '32px'}}>
+              <div style={{fontFamily:'Georgia,serif',fontSize:'11px',fontWeight:'bold',letterSpacing:'0.1em',textTransform:'uppercase',color:'#b7882c',marginBottom:'12px',paddingBottom:'8px',borderBottom:'1px solid #e2e8f0'}}>{group}</div>
+              <div className="fi-grid">
+                {MODELS.filter(m => m.group === group).map((m,i) => (
+                  <Link key={i} to={m.route} className="fi-model-card">
+                    <div className="fi-model-num">{m.num}</div>
+                    <div className="fi-model-layer">{m.layer}</div>
+                    <div className="fi-model-name">{m.name}</div>
+                    <div className="fi-model-desc">{m.desc}</div>
+                    <div style={{marginTop:'12px',paddingTop:'10px',borderTop:'1px solid #e2e8f0',fontFamily:'Georgia,serif',fontSize:'11px',color:'#b7882c',letterSpacing:'0.02em'}}>Used in: {m.usedIn}</div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
 
         <div className="fi-section-block">
@@ -439,11 +458,15 @@ export default function FrameworkIndex() {
 
         <div className="fi-section-block">
           <div className="fi-section-label">About This Work</div>
-          <p className="fi-p">This exists to make revenue leakage visible and directly actionable.</p>
-          <p className="fi-p">The Payments Portfolio Diagnostic provides the qualitative entry point. This quantifies it.</p>
+          <p className="fi-p">This is the analytical engine behind the system.</p>
+          <p className="fi-p">The Diagnostic makes it visible. The Index measures it. These models explain it. The output defines what to do next.</p>
+          <div className="fi-system-statement" style={{marginTop:'20px'}}>
+            The Diagnostic makes it visible. The Index measures it. These models explain it. The output defines what to do next.
+          </div>
           <div className="fi-links">
             <a href="https://carlosurena.com">&#8592; carlosurena.com</a>
-            <a href="https://carlosurena.com/pfi.html">Payments Portfolio Diagnostic &#8599;</a>
+            <a href="https://carlosurena.com/consulting.html">Diagnostic &#8599;</a>
+            <a href="https://carlosurena.com/pfi.html">Payments Franchise Index &#8599;</a>
             <a href="https://www.linkedin.com/in/carlosurena/" target="_blank" rel="noreferrer">LinkedIn &#8599;</a>
           </div>
         </div>
