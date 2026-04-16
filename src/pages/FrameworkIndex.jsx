@@ -474,7 +474,6 @@ export default function FrameworkIndex() {
             The Diagnostic makes it visible. The Index measures it. These models explain it. The output defines what to do next.
           </div>
           <div className="fi-links">
-            <a href="https://carlosurena.com">&#8592; carlosurena.com</a>
             <a href="https://carlosurena.com/consulting.html">Diagnostic &#8599;</a>
             <a href="https://carlosurena.com/pfi.html">Payments Franchise Index &#8599;</a>
             <a href="https://www.linkedin.com/in/carlosurena/" target="_blank" rel="noreferrer">LinkedIn &#8599;</a>
