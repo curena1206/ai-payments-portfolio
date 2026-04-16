@@ -51,14 +51,14 @@ const PHI_DIMENSIONS = [
     levers: ['Systematic exception review and approval workflow', 'Annual repricing cycle for all Standard tier clients', 'Peer benchmark alert at >15% gap'],
   },
   {
-    id: 'corridor',
-    label: 'Corridor Economics',
+    id: 'flow',
+    label: 'Flow Economics',
     score: 71,
     weight: 0.20,
     color: T.teal,
-    description: 'Net margin by corridor, cost structure efficiency, Grow / Defend / Optimize / Exit classification',
-    issues: ['2 corridors below 10% net margin (DE-PRIORITIZE / EXIT)', 'US→BR and US→NG exception rates 3x portfolio average', 'Nostro funding cost elevated on 3 emerging market corridors'],
-    levers: ['Restructure pricing on loss-making corridors within 90 days', 'Exception root cause analysis on US→BR and US→NG', 'Nostro optimization on NG, IN, BR corridors'],
+    description: 'Net margin by flow type and structure, cost structure efficiency, Grow / Defend / Optimize / Exit classification',
+    issues: ['2 flows below 10% net margin (DE-PRIORITIZE / EXIT)', 'US→BR and US→NG exception rates 3x portfolio average', 'Liquidity cost funding cost elevated on 3 emerging market flows'],
+    levers: ['Restructure pricing on loss-making flows within 90 days', 'Exception root cause analysis on US→BR and US→NG', 'Liquidity cost optimization on NG, IN, BR flows'],
   },
   {
     id: 'rail',
@@ -86,9 +86,9 @@ const PHI_DIMENSIONS = [
     score: 55,
     weight: 0.15,
     color: T.purple,
-    description: 'Revenue distribution across clients, corridors, and rails — concentration and diversification risk',
-    issues: ['Top 3 clients = 44% of total revenue', 'US→EU corridor = 28% of corridor revenue', 'Single-rail clients represent 31% of volume'],
-    levers: ['New client acquisition target: 20% revenue from new logos in 18 months', 'Corridor diversification: grow APAC to 25% of revenue', 'Multi-rail product packaging to reduce single-rail concentration'],
+    description: 'Revenue distribution across clients, flows, and rails — concentration and diversification risk',
+    issues: ['Top 3 clients = 44% of total revenue', 'US→EU flow = 28% of flow revenue', 'Single-rail clients represent 31% of volume'],
+    levers: ['New client acquisition target: 20% revenue from new logos in 18 months', 'Flow diversification: grow APAC to 25% of revenue', 'Multi-rail product packaging to reduce single-rail concentration'],
   },
   {
     id: 'operational',
@@ -97,8 +97,8 @@ const PHI_DIMENSIONS = [
     weight: 0.10,
     description: 'Exception rate, repair cost, STP performance — operational cost eroding margin silently',
     color: T.gold,
-    issues: ['Exception costs represent 6.2% of gross revenue', 'Manual repair rate on SWIFT corridors: 8.8%', 'October exception spike pattern repeating — not resolved'],
-    levers: ['STP improvement program: target 97.5% across all SWIFT corridors', 'Exception root cause database — tag and track by corridor', 'Operational cost allocation by corridor to surface true drag'],
+    issues: ['Exception costs represent 6.2% of gross revenue', 'Manual repair rate on SWIFT flows: 8.8%', 'October exception spike pattern repeating — not resolved'],
+    levers: ['STP improvement program: target 97.5% across all SWIFT flows', 'Exception root cause database — tag and track by flow', 'Operational cost allocation by flow to surface true drag'],
   },
 ];
 
@@ -116,7 +116,7 @@ const SCENARIOS = {
     phiProjected: [PHI_SCORE, 61, 59, 57, 55, 53],
     revenueProjected: [16.2, 16.0, 15.7, 15.3, 14.8, 14.2],
     marginProjected: [31.2, 30.8, 30.1, 29.4, 28.5, 27.4],
-    keyRisk: 'Pricing exceptions compound. Migration clients lost. Corridor economics deteriorate without intervention.',
+    keyRisk: 'Pricing exceptions compound. Migration clients lost. Flow economics deteriorate without intervention.',
   },
   optimized: {
     label: 'Priority Interventions',
@@ -125,16 +125,16 @@ const SCENARIOS = {
     phiProjected: [PHI_SCORE, 66, 71, 75, 78, 81],
     revenueProjected: [16.2, 17.1, 18.4, 19.6, 20.8, 22.1],
     marginProjected: [31.2, 33.4, 35.8, 37.2, 38.6, 40.1],
-    keyRisk: 'Execution risk on repricing conversations. Corridor restructuring requires internal alignment.',
+    keyRisk: 'Execution risk on repricing conversations. Flow restructuring requires internal alignment.',
   },
   stress: {
     label: 'Stress Case',
-    description: 'Two major clients migrate. Key corridor margin compression.',
+    description: 'Two major clients migrate. Key flow margin compression.',
     color: T.red,
     phiProjected: [PHI_SCORE, 56, 50, 44, 40, 37],
     revenueProjected: [16.2, 14.8, 13.1, 11.8, 10.9, 10.2],
     marginProjected: [31.2, 28.4, 25.1, 22.8, 21.0, 19.6],
-    keyRisk: 'Meridian and Zenith volume fully migrates. US→BR corridor exits. Rail cost inflation continues.',
+    keyRisk: 'Meridian and Zenith volume fully migrates. US→BR flow exits. Rail cost inflation continues.',
   },
 };
 
@@ -180,14 +180,14 @@ const ACTIONS = [
   },
   {
     rank: 4,
-    category: 'Corridor',
-    action: 'US→BR and US→NG corridor restructuring',
+    category: 'Flow',
+    action: 'US→BR and US→NG flow restructuring',
     detail: 'Both below 10% net margin after full cost allocation. Exception rates 3x portfolio average. Reprice or de-prioritize within 90 days.',
     revenueUplift: 180000,
     timeToImpact: '60–90 days',
     complexity: 'HIGH',
-    dimension: 'corridor',
-    owner: 'Corridor Strategy + Finance',
+    dimension: 'flow',
+    owner: 'Flow Strategy + Finance',
     status: 'IN PROGRESS',
   },
   {
@@ -229,7 +229,7 @@ const ACTIONS = [
   {
     rank: 8,
     category: 'Revenue',
-    action: 'Apex Global Trade — US→SG corridor expansion',
+    action: 'Apex Global Trade — US→SG flow expansion',
     detail: 'Client has Singapore subsidiary. Not currently routing through the bank. Estimated incremental revenue $180K annually at current ticket size.',
     revenueUplift: 180000,
     timeToImpact: '45–90 days',
@@ -695,7 +695,7 @@ export default function PaymentsPortfolioDecisionEngine() {
 
             {/* Trade-off analysis */}
             <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-              <SectionHead title="Trade-Off Analysis" sub="What moves if we fix pricing vs corridor mix vs rail economics — sequencing matters" />
+              <SectionHead title="Trade-Off Analysis" sub="What moves if we fix pricing vs flow mix vs rail economics — sequencing matters" />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
                 {[
                   {
@@ -707,12 +707,12 @@ export default function PaymentsPortfolioDecisionEngine() {
                     sequence: 'Start here. Highest ROI, lowest complexity. Creates budget for operational investments.',
                   },
                   {
-                    label: 'If we fix Corridors first',
+                    label: 'If we fix Flows first',
                     color: T.teal,
                     phi: '+5 pts in 90 days',
                     revenue: '+$180K annually',
                     tradeoff: 'Requires Finance alignment and potentially difficult client conversations on US→BR and US→NG. Slower to impact PHI but removes structural drag.',
-                    sequence: 'Second priority. Removes the floor from corridor economics before volume grows further.',
+                    sequence: 'Second priority. Removes the floor from flow economics before volume grows further.',
                   },
                   {
                     label: 'If we fix Rail Mix first',
@@ -720,7 +720,7 @@ export default function PaymentsPortfolioDecisionEngine() {
                     phi: '+4 pts in 120 days',
                     revenue: '+$118K annually',
                     tradeoff: 'Requires technology and product investment. Longer time to impact. Client incentive program needed to shift rail behavior.',
-                    sequence: 'Third priority. Important for long-term unit economics but not the most urgent. Build alongside pricing and corridor work.',
+                    sequence: 'Third priority. Important for long-term unit economics but not the most urgent. Build alongside pricing and flow work.',
                   },
                 ].map((t, i) => (
                   <div key={i} style={{ background: T.surface, borderRadius: 6, padding: 18, borderTop: `2px solid ${t.color}` }}>
@@ -755,7 +755,7 @@ export default function PaymentsPortfolioDecisionEngine() {
                 sub={`Total revenue opportunity: ${fmt(totalUplift)} · Executives do not fund diagnostics. They fund ranked interventions with clear economic outcomes.`} />
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <span style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim }}>CATEGORY:</span>
-                {['all', 'Client', 'Pricing', 'Corridor', 'Rail', 'Operational', 'Revenue'].map(f => (
+                {['all', 'Client', 'Pricing', 'Flow', 'Rail', 'Operational', 'Revenue'].map(f => (
                   <button key={f} className={`filter-btn ${filterCategory === f ? 'active' : ''}`}
                     onClick={() => setFilterCategory(f)}>
                     {f.toUpperCase()}
@@ -860,7 +860,7 @@ export default function PaymentsPortfolioDecisionEngine() {
               {[
                 { model: 'MODEL 01', label: 'Profitability Engine', color: T.blue, desc: 'Pricing governance and margin waterfall inputs. Exception cost data feeding operational drag score.' },
                 { model: 'MODEL 02', label: 'Rail Economics', color: T.teal, desc: 'Rail mix efficiency and STP rate inputs. Instant rail migration opportunity quantified here.' },
-                { model: 'MODEL 03', label: 'Corridor Analyzer', color: T.gold, desc: 'Corridor classification and margin data. DE-PRIORITIZE / EXIT corridors reflected in corridor dimension score.' },
+                { model: 'MODEL 03', label: 'Flow Analyzer', color: T.gold, desc: 'Flow classification and margin data. DE-PRIORITIZE / EXIT flows reflected in flow dimension score.' },
                 { model: 'MODEL 04', label: 'Behavior Engine', color: T.purple, desc: 'Client migration signals and monetization gaps. Revenue at risk and RM action items feed client retention score.' },
               ].map(m => (
                 <div key={m.model} style={{ padding: '12px 14px', background: `${m.color}08`, borderRadius: 8, border: `1px solid ${m.color}22` }}>
