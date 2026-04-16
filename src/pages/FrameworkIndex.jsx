@@ -214,15 +214,15 @@ const css = `
   }
   .fi-model-desc { font-size: 13.5px; color: #4a5568; line-height: 1.65; margin-bottom: 10px; }
   .fi-model-min-data {
-    font-size: 12px;
-    color: #6b7280;
+    font-size: 11.5px;
+    color: #9ca3af;
     line-height: 1.6;
     margin-bottom: 12px;
-    padding: 8px 12px;
-    background: #f7f9fc;
-    border-left: 2px solid #e2e8f0;
+    padding: 6px 10px;
+    background: #fafbfc;
+    border-left: 1px solid #e2e8f0;
   }
-  .fi-model-min-data strong { color: #4a5568; }
+  .fi-model-min-data strong { color: #6b7280; }
   .fi-maturity-row {
     margin-bottom: 6px;
     font-size: 12.5px;
@@ -327,7 +327,8 @@ const MODELS = [
     layer: 'Layer 1 — Economic Core',
     name: 'Payment Profitability Engine',
     route: '/models/01-profitability',
-    desc: 'Identifies where revenue is generated and where it is lost across clients, rails, and flows. Quantifies pricing leakage and under-monetization at the transaction level.',
+    desc: 'Tracks how pricing diverges from actual transaction economics across clients, rails, and corridors over time.',
+    reveals: 'Where revenue appears stable but margin has already deteriorated.',
     usedIn: 'Diagnostic outputs · PFI scoring',
   },
   {
@@ -336,7 +337,8 @@ const MODELS = [
     layer: 'Layer 2 — Infrastructure Intelligence',
     name: 'Rail Economics Analyzer',
     route: '/models/02-rail-optimizer',
-    desc: 'Exposes where the rail mix is suboptimal and what it costs. Identifies where pricing or migration changes would improve margin contribution by rail.',
+    desc: 'Maps how transactions move across rails, including routing decisions, cost layers, and execution patterns by volume and corridor.',
+    reveals: 'Which rails generate margin and which dilute it once fully costed.',
     usedIn: 'Diagnostic outputs · PFI scoring',
   },
   {
@@ -345,7 +347,8 @@ const MODELS = [
     layer: 'Layer 3 — Flow Intelligence',
     name: 'Payment Flow Analyzer',
     route: '/models/03-corridor-analyzer',
-    desc: 'Maps the economics of each payment flow. Surfaces which flows are margin-positive and which are loss-making once the full cost stack is applied — even using estimated costs.',
+    desc: 'Applies the full cost stack to each payment flow, including network, funding, compliance, and operational layers, to surface true net margin by corridor.',
+    reveals: 'Which flows are margin-positive and which are loss-making once the economics are fully applied.',
     usedIn: 'Diagnostic outputs',
   },
   {
@@ -354,7 +357,8 @@ const MODELS = [
     layer: 'Layer 4 — Behavioral Intelligence',
     name: 'Client Payment Behavior Engine',
     route: '/models/04-client-behavior',
-    desc: 'Identifies where client behavior is driving pricing leakage, margin risk, or revenue opportunity. Quantifies under-monetization by comparing clients on the same flow and rail.',
+    desc: 'Analyzes how client behavior, including volume patterns, rail usage, and pricing compliance, drives margin outcomes across the portfolio.',
+    reveals: 'Where under-monetization is structural and where it is behavioral.',
     usedIn: 'PFI scoring · Prioritization logic',
   },
   {
@@ -363,7 +367,8 @@ const MODELS = [
     layer: 'Layer 5 — Executive Decision Layer',
     name: 'Payments Portfolio Decision Engine',
     route: '/models/05-portfolio-scorecard',
-    desc: 'Synthesizes all upstream outputs into a ranked list of interventions with estimated revenue impact. Where analysis becomes prioritized action.',
+    desc: 'Synthesizes outputs from all upstream models into a ranked intervention list with estimated margin impact per action.',
+    reveals: 'Where intervention creates the most recoverable impact, sequenced for execution.',
     usedIn: 'Prioritization logic · 90-day roadmap',
   },
   {
@@ -372,7 +377,8 @@ const MODELS = [
     layer: 'Layer 6 — Strategic Positioning Layer',
     name: 'Network Participation Economics',
     route: '/models/06-money-movement',
-    desc: 'Evaluates whether each payment network the bank participates in justifies its infrastructure investment. Classifies each as a profit driver, strategic enabler, defensive necessity, or value drain.',
+    desc: 'Evaluates whether each payment network justifies its infrastructure investment against actual margin contribution.',
+    reveals: 'Which network relationships are profit drivers and which are value drains.',
     usedIn: 'Diagnostic outputs · Prioritization logic',
   },
 ]
@@ -397,12 +403,12 @@ export default function FrameworkIndex() {
 
         <div className="fi-hero">
           <div className="fi-eyebrow">Payments Strategy Analytics</div>
-          <h1 className="fi-h1">The analytical engine behind the system.</h1>
-          <p className="fi-hero-sub">Revenue is lost in the flow and rarely visible in standard reporting.</p>
+          <h1 className="fi-h1">Payments economics are not explained by a single model. They are explained by how multiple layers interact.</h1>
+          <p className="fi-hero-sub">Each model isolates one part of the system. Together, they explain how margin is created, diluted, or lost.</p>
           <div className="fi-system-statement">
-            These models power both the Diagnostic outputs and the Payments Franchise Index scoring. Built from repeated exposure to the same pattern. Fragmented data translated into clear economic signals. The Diagnostic makes it visible. The Index measures it. These models explain it.
+            No single model explains payments economics. Each captures a different layer: pricing, flow behavior, cost structure, infrastructure. The interaction between them is where margin is determined. These models power both the Diagnostic outputs and the Payments Franchise Index scoring.
           </div>
-          <p className="fi-hero-sub" style={{borderLeft:'3px solid #b7882c',paddingLeft:'16px',marginTop:'16px',fontStyle:'normal'}}><strong>Revenue becomes visible. Then measured. Then explained. Then actionable.</strong></p>
+          <p className="fi-hero-sub" style={{borderLeft:'3px solid #b7882c',paddingLeft:'16px',marginTop:'16px',fontStyle:'normal'}}><strong>Revenue becomes visible. Margin becomes measurable. Action becomes clear.</strong></p>
 
           <div className="fi-margin-callout">
             <div className="fi-margin-callout-label">How leakage is measured</div>
@@ -439,10 +445,14 @@ export default function FrameworkIndex() {
                 {MODELS.filter(m => m.group === group).map((m,i) => (
                   <Link key={i} to={m.route} className="fi-model-card">
                     <div className="fi-model-num">{m.num}</div>
-                    <div className="fi-model-layer">{m.layer}</div>
+                    <div className="fi-model-layer" style={{fontSize:'10.5px',color:'#9ca3af',letterSpacing:'0.03em'}}>{m.layer}</div>
                     <div className="fi-model-name">{m.name}</div>
                     <div className="fi-model-desc">{m.desc}</div>
-                    <div style={{marginTop:'12px',paddingTop:'10px',borderTop:'1px solid #e2e8f0',fontFamily:'Georgia,serif',fontSize:'11px',color:'#b7882c',letterSpacing:'0.02em'}}>Used in: {m.usedIn}</div>
+                    <div style={{marginTop:'10px',paddingTop:'10px',borderTop:'1px solid #e2e8f0'}}>
+                      <div style={{fontFamily:'Georgia,serif',fontSize:'10px',fontWeight:'bold',letterSpacing:'0.08em',textTransform:'uppercase',color:'#b7882c',marginBottom:'4px'}}>Reveals</div>
+                      <div style={{fontFamily:'Georgia,serif',fontSize:'13px',color:'#4a5568',lineHeight:'1.55'}}>{m.reveals}</div>
+                    </div>
+                    <div style={{marginTop:'10px',paddingTop:'8px',borderTop:'1px solid #f3f4f6',fontFamily:'Georgia,serif',fontSize:'10.5px',color:'#9ca3af',letterSpacing:'0.02em'}}>Used in: {m.usedIn}</div>
                   </Link>
                 ))}
               </div>
@@ -458,8 +468,8 @@ export default function FrameworkIndex() {
 
         <div className="fi-section-block">
           <div className="fi-section-label">About This Work</div>
-          <p className="fi-p">This is the analytical engine behind the system.</p>
-          <p className="fi-p">The Diagnostic makes it visible. The Index measures it. These models explain it. The output defines what to do next.</p>
+          <p className="fi-p">This is how payments economics are decomposed, not described.</p>
+          <p className="fi-p">The Diagnostic makes the economics visible. The Index measures them structurally. These models explain where margin is created and where it is lost. The output defines what to do next.</p>
           <div className="fi-system-statement" style={{marginTop:'20px'}}>
             The Diagnostic makes it visible. The Index measures it. These models explain it. The output defines what to do next.
           </div>
