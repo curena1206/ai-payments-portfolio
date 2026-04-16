@@ -38,12 +38,12 @@ const T = {
 
 // ── SYNTHETIC CLIENT DATA ──────────────────────────────────────────────────
 // 12 clients with 24 months of behavioral data
-// Revenue per payment benchmarked internally by segment + corridor
+// Revenue per payment benchmarked internally by segment + flow
 const CLIENTS = [
   {
     id: 'C01', name: 'Meridian Industries', segment: 'Corporate',
     relationship: 'Core', rm: 'Sarah Chen',
-    rails: ['Wire', 'ACH'], corridors: ['US→EU', 'US→UK'],
+    rails: ['Wire', 'ACH'], flows: ['US→EU', 'US→UK'],
     avgRevenuePerPmt: 158, segmentPeerAvg: 142,
     monthlyVolume:  [18,19,20,21,22,21,23,24,22,20,19,18, 17,16,15,14,13,12,11,10,10,9,9,8],
     monthlyRevenue: [2840,2960,3100,3240,3380,3220,3540,3680,3380,3080,2960,2840, 2680,2520,2340,2180,2020,1880,1720,1580,1560,1420,1400,1280],
@@ -60,7 +60,7 @@ const CLIENTS = [
   {
     id: 'C02', name: 'Apex Global Trade', segment: 'Corporate',
     relationship: 'Strategic', rm: 'Marcus Williams',
-    rails: ['SWIFT', 'Wire'], corridors: ['US→AE', 'US→IN', 'US→HK'],
+    rails: ['SWIFT', 'Wire'], flows: ['US→AE', 'US→IN', 'US→HK'],
     avgRevenuePerPmt: 339, segmentPeerAvg: 298,
     monthlyVolume:  [9,10,11,12,13,14,15,16,17,18,19,20, 21,22,23,24,25,26,27,28,29,30,31,32],
     monthlyRevenue: [3050,3380,3720,4060,4390,4720,5060,5390,5720,6060,6390,6720, 7060,7390,7720,8060,8390,8720,9060,9390,9720,10060,10390,10720],
@@ -70,14 +70,14 @@ const CLIENTS = [
     signal: 'DEEPENING',
     signalStrength: 'HIGH',
     revenueAtRisk: 0,
-    insight: 'Consistent volume growth 24 months. New corridors added Q3. Revenue per payment 14% above segment peer average — strong pricing position. Expansion opportunity in US→SG.',
+    insight: 'Consistent volume growth 24 months. New flows added Q3. Revenue per payment 14% above segment peer average — strong pricing position. Expansion opportunity in US→SG.',
     action: 'EXPAND',
-    actionDetail: 'Propose US→SG corridor activation. Client has Singapore subsidiary. Estimated incremental revenue $180K annually at current ticket size.',
+    actionDetail: 'Propose US→SG flow activation. Client has Singapore subsidiary. Estimated incremental revenue $180K annually at current ticket size.',
   },
   {
     id: 'C03', name: 'Northgate Capital', segment: 'FI',
     relationship: 'Core', rm: 'Jennifer Park',
-    rails: ['Wire', 'SWIFT'], corridors: ['US→EU', 'US→CH'],
+    rails: ['Wire', 'SWIFT'], flows: ['US→EU', 'US→CH'],
     avgRevenuePerPmt: 382, segmentPeerAvg: 401,
     monthlyVolume:  [5,5,5,5,5,6,6,6,6,6,6,6, 6,6,6,6,5,5,5,5,5,5,5,5],
     monthlyRevenue: [1890,1910,1930,1950,1970,2280,2290,2300,2310,2320,2330,2340, 2340,2350,2350,2350,1960,1950,1940,1940,1930,1930,1920,1910],
@@ -94,7 +94,7 @@ const CLIENTS = [
   {
     id: 'C04', name: 'Solara Payments', segment: 'Fintech',
     relationship: 'Growth', rm: 'David Okafor',
-    rails: ['RTP', 'ACH', 'FedNow'], corridors: ['US DOM'],
+    rails: ['RTP', 'ACH', 'FedNow'], flows: ['US DOM'],
     avgRevenuePerPmt: 0.48, segmentPeerAvg: 0.52,
     monthlyVolume:  [142,158,174,190,210,228,248,268,290,312,336,360, 385,412,440,468,498,530,562,596,632,668,706,746],
     monthlyRevenue: [68,76,84,91,101,110,119,129,139,150,162,173, 185,198,212,225,240,255,270,286,304,321,340,358],
@@ -111,7 +111,7 @@ const CLIENTS = [
   {
     id: 'C05', name: 'Crescent Logistics', segment: 'Mid-Market',
     relationship: 'Standard', rm: 'Amy Torres',
-    rails: ['ACH', 'Wire'], corridors: ['US→MX', 'US→BR'],
+    rails: ['ACH', 'Wire'], flows: ['US→MX', 'US→BR'],
     avgRevenuePerPmt: 88, segmentPeerAvg: 76,
     monthlyVolume:  [8,8,8,8,7,7,7,7,7,7,8,8, 8,7,7,7,6,6,6,6,6,5,5,5],
     monthlyRevenue: [700,702,705,702,618,620,621,618,622,624,704,706, 705,620,619,618,531,530,529,531,530,443,442,441],
@@ -121,14 +121,14 @@ const CLIENTS = [
     signal: 'MIGRATION_RISK',
     signalStrength: 'MEDIUM',
     revenueAtRisk: 124000,
-    insight: 'Volume declining 6 months. US→BR corridor showing elevated exception rates. Revenue per payment above peer average — pricing not the issue. Operational friction likely driving migration.',
+    insight: 'Volume declining 6 months. US→BR flow showing elevated exception rates. Revenue per payment above peer average — pricing not the issue. Operational friction likely driving migration.',
     action: 'RETAIN',
-    actionDetail: 'Escalate US→BR exception issues to operations. Schedule RM touchpoint. Exception rate of 9.4% on Brazil corridor is double portfolio average — fix this before repricing.',
+    actionDetail: 'Escalate US→BR exception issues to operations. Schedule RM touchpoint. Exception rate of 9.4% on Brazil flow is double portfolio average — fix this before repricing.',
   },
   {
     id: 'C06', name: 'Atlas Commodities', segment: 'Corporate',
     relationship: 'Core', rm: 'Sarah Chen',
-    rails: ['SWIFT'], corridors: ['US→NG', 'US→ZA', 'US→IN'],
+    rails: ['SWIFT'], flows: ['US→NG', 'US→ZA', 'US→IN'],
     avgRevenuePerPmt: 565, segmentPeerAvg: 298,
     monthlyVolume:  [4,4,4,3,3,4,4,4,4,4,3,3, 3,3,4,4,4,4,4,4,4,4,4,4],
     monthlyRevenue: [2240,2250,2240,1680,1680,2260,2260,2250,2260,2260,1680,1680, 1680,1680,2260,2260,2260,2260,2250,2260,2260,2250,2260,2260],
@@ -138,14 +138,14 @@ const CLIENTS = [
     signal: 'STABLE',
     signalStrength: 'LOW',
     revenueAtRisk: 0,
-    insight: 'Revenue per payment 90% above corporate peer average — driven by complex emerging market corridors. Volume stable. Single-rail dependency is a concentration risk worth monitoring.',
+    insight: 'Revenue per payment 90% above corporate peer average — driven by complex emerging market flows. Volume stable. Single-rail dependency is a concentration risk worth monitoring.',
     action: 'MONITOR',
     actionDetail: 'No action required. Strong pricing position. Consider introducing wire as backup rail to reduce SWIFT dependency and protect against network disruption.',
   },
   {
     id: 'C07', name: 'Veritas Healthcare', segment: 'Mid-Market',
     relationship: 'Standard', rm: 'Amy Torres',
-    rails: ['ACH'], corridors: ['US DOM'],
+    rails: ['ACH'], flows: ['US DOM'],
     avgRevenuePerPmt: 0.62, segmentPeerAvg: 0.76,
     monthlyVolume:  [48,49,50,51,52,52,53,54,54,55,56,57, 58,59,60,61,62,63,64,65,66,67,68,69],
     monthlyRevenue: [30,30,31,32,32,32,33,33,33,34,35,35, 36,37,37,38,38,39,40,40,41,42,42,43],
@@ -162,7 +162,7 @@ const CLIENTS = [
   {
     id: 'C08', name: 'Pinnacle Asset Mgmt', segment: 'FI',
     relationship: 'Core', rm: 'Jennifer Park',
-    rails: ['Wire', 'SWIFT'], corridors: ['US→EU', 'US→JP', 'US→UK'],
+    rails: ['Wire', 'SWIFT'], flows: ['US→EU', 'US→JP', 'US→UK'],
     avgRevenuePerPmt: 400, segmentPeerAvg: 401,
     monthlyVolume:  [4,4,5,5,5,5,5,5,5,5,5,5, 5,5,5,5,5,5,6,6,6,6,6,6],
     monthlyRevenue: [1600,1600,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000, 2000,2000,2000,2000,2000,2000,2400,2400,2400,2400,2400,2400],
@@ -172,14 +172,14 @@ const CLIENTS = [
     signal: 'STABLE',
     signalStrength: 'LOW',
     revenueAtRisk: 0,
-    insight: 'Revenue per payment exactly at FI segment peer average. Volume gradually increasing. New corridor (US→JP) added Q4. Well-positioned relationship — no immediate action needed.',
+    insight: 'Revenue per payment exactly at FI segment peer average. Volume gradually increasing. New flow (US→JP) added Q4. Well-positioned relationship — no immediate action needed.',
     action: 'MONITOR',
     actionDetail: 'Relationship performing to benchmark. Review at next QBR. Watch US→JP volumes for growth — if they scale, pricing review may be warranted.',
   },
   {
     id: 'C09', name: 'TerraFin Services', segment: 'Fintech',
     relationship: 'Growth', rm: 'David Okafor',
-    rails: ['FedNow', 'RTP'], corridors: ['US DOM'],
+    rails: ['FedNow', 'RTP'], flows: ['US DOM'],
     avgRevenuePerPmt: 0.51, segmentPeerAvg: 0.52,
     monthlyVolume:  [210,224,238,254,270,288,306,326,348,370,394,420, 448,478,508,540,574,610,648,688,730,774,820,868],
     monthlyRevenue: [107,114,121,129,138,147,156,166,177,189,201,214, 228,244,259,275,293,311,330,350,372,395,418,443],
@@ -196,7 +196,7 @@ const CLIENTS = [
   {
     id: 'C10', name: 'Orion Energy Corp', segment: 'Corporate',
     relationship: 'Core', rm: 'Marcus Williams',
-    rails: ['SWIFT', 'Wire'], corridors: ['US→NO', 'US→SA', 'US→QA'],
+    rails: ['SWIFT', 'Wire'], flows: ['US→NO', 'US→SA', 'US→QA'],
     avgRevenuePerPmt: 310, segmentPeerAvg: 298,
     monthlyVolume:  [6,6,6,7,7,7,7,7,6,6,6,6, 6,7,7,7,7,7,7,6,6,6,6,6],
     monthlyRevenue: [1860,1860,1860,2170,2170,2170,2170,2170,1860,1860,1860,1860, 1860,2170,2170,2170,2170,2170,2170,1860,1860,1860,1860,1860],
@@ -206,14 +206,14 @@ const CLIENTS = [
     signal: 'STABLE',
     signalStrength: 'LOW',
     revenueAtRisk: 0,
-    insight: 'Revenue per payment 4% above corporate peer average. Volume driven by energy cycle — Q2/Q3 seasonal uplift consistent. Stable relationship. Nordic and Gulf corridors performing well.',
+    insight: 'Revenue per payment 4% above corporate peer average. Volume driven by energy cycle — Q2/Q3 seasonal uplift consistent. Stable relationship. Nordic and Gulf flows performing well.',
     action: 'MONITOR',
-    actionDetail: 'No action required. Consider pricing review at next contract renewal in Q3 2025 — opportunity to move from Standard to Premium tier given corridor complexity.',
+    actionDetail: 'No action required. Consider pricing review at next contract renewal in Q3 2025 — opportunity to move from Standard to Premium tier given flow complexity.',
   },
   {
     id: 'C11', name: 'Pacific Trade Finance', segment: 'FI',
     relationship: 'Growth', rm: 'Jennifer Park',
-    rails: ['SWIFT', 'Wire'], corridors: ['US→SG', 'US→HK', 'US→JP'],
+    rails: ['SWIFT', 'Wire'], flows: ['US→SG', 'US→HK', 'US→JP'],
     avgRevenuePerPmt: 285, segmentPeerAvg: 401,
     monthlyVolume:  [2,2,3,3,3,4,4,4,4,5,5,5, 5,5,6,6,6,6,7,7,7,7,8,8],
     monthlyRevenue: [570,570,855,855,855,1140,1140,1140,1140,1425,1425,1425, 1425,1425,1710,1710,1710,1710,1995,1995,1995,1995,2280,2280],
@@ -230,7 +230,7 @@ const CLIENTS = [
   {
     id: 'C12', name: 'Zenith Manufacturing', segment: 'Mid-Market',
     relationship: 'Standard', rm: 'Amy Torres',
-    rails: ['ACH', 'Wire'], corridors: ['US→MX'],
+    rails: ['ACH', 'Wire'], flows: ['US→MX'],
     avgRevenuePerPmt: 52, segmentPeerAvg: 76,
     monthlyVolume:  [12,12,11,11,11,10,10,10,9,9,9,8, 8,8,7,7,7,6,6,6,5,5,5,4],
     monthlyRevenue: [620,624,572,572,572,520,520,520,468,468,468,416, 416,416,364,364,364,312,312,312,260,260,260,208],
@@ -566,7 +566,7 @@ export default function ClientPaymentBehaviorEngine() {
 
             {/* Monetization gap summary */}
             <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-              <SectionHead title="Internal Peer Benchmark — Revenue Per Payment vs Segment Average" sub="No external benchmarks required — comparison uses internal client portfolio by segment and corridor" />
+              <SectionHead title="Internal Peer Benchmark — Revenue Per Payment vs Segment Average" sub="No external benchmarks required — comparison uses internal client portfolio by segment and flow" />
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
@@ -603,7 +603,7 @@ export default function ClientPaymentBehaviorEngine() {
               <div style={{ marginTop: 12, padding: '10px 14px', background: T.goldSoft, borderRadius: 6, border: `1px solid ${T.gold}22` }}>
                 <span style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, fontWeight: 600 }}>NOTE: </span>
                 <span style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid }}>
-                  Peer averages are calculated from internal portfolio data — clients in the same segment transacting on the same corridors. No external market data required.
+                  Peer averages are calculated from internal portfolio data — clients in the same segment transacting on the same flows. No external market data required.
                   The model surfaces where to look and what the revenue implication is. That context comes from the relationship.
                 </span>
               </div>
@@ -652,7 +652,7 @@ export default function ClientPaymentBehaviorEngine() {
                         <td style={{ padding: '10px 12px', fontFamily: T.mono, fontSize: 10, color: T.textDim }}>{String(i + 1).padStart(2, '0')}</td>
                         <td style={{ padding: '10px 12px' }}>
                           <div style={{ fontFamily: T.sans, fontSize: 13, color: T.text, fontWeight: 500 }}>{c.name}</div>
-                          <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, marginTop: 2 }}>{c.corridors.join(' · ')}</div>
+                          <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textDim, marginTop: 2 }}>{c.flows.join(' · ')}</div>
                         </td>
                         <td style={{ padding: '10px 12px' }}><Tag label={c.segment} color={T.blue} small /></td>
                         <td style={{ padding: '10px 12px', fontFamily: T.sans, fontSize: 11, color: T.textMid }}>{c.rm}</td>
@@ -694,7 +694,7 @@ export default function ClientPaymentBehaviorEngine() {
                     <Tag label={selectedClient.relationship} color={T.teal} small />
                     <Tag label={`RM: ${selectedClient.rm}`} color={T.textMid} small />
                     <span style={{ fontFamily: T.mono, fontSize: 10, color: T.textDim }}>
-                      {selectedClient.corridors.join(' · ')} · {selectedClient.rails.join(' + ')}
+                      {selectedClient.flows.join(' · ')} · {selectedClient.rails.join(' + ')}
                     </span>
                   </div>
                 </div>
@@ -906,7 +906,7 @@ export default function ClientPaymentBehaviorEngine() {
                 <span style={{ fontSize: 14, color: T.teal, flexShrink: 0 }}>⟵</span>
                 <div>
                   <span style={{ fontFamily: T.mono, fontSize: 10, color: T.teal, fontWeight: 700 }}>MODEL 03 CONNECTION: </span>
-                  <span style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid }}>Corridor classification from the Corridor Analyzer elevates migration risk signals. Clients concentrated in DE-PRIORITIZE / EXIT corridors receive higher signal strength ratings.</span>
+                  <span style={{ fontFamily: T.sans, fontSize: 11, color: T.textMid }}>Flow classification from the Flow Analyzer elevates migration risk signals. Clients concentrated in DE-PRIORITIZE / EXIT flows receive higher signal strength ratings.</span>
                 </div>
               </div>
             </div>
