@@ -5,29 +5,29 @@ import { ModelBackBar } from '../pages/FrameworkIndex'
 // ── SYNTHETIC DATA ──────────────────────────────────────────────────────────
 
 const CLIENTS = [
-  { id: "C01", name: "Meridian Industries", segment: "Corporate", rail: "Wire+ACH", grossRevenue: 2840000, railCost: 312000, fxMargin: 410000, liquidityDrag: 185000, exceptions: 48000, supportCost: 62000, volume: 18400, corridors: ["US→EU","US→UK","US→SG"] },
-  { id: "C02", name: "Apex Global Trade", segment: "Corporate", rail: "SWIFT+Wire", grossRevenue: 3120000, railCost: 498000, fxMargin: 580000, liquidityDrag: 290000, exceptions: 94000, supportCost: 88000, volume: 9200, corridors: ["US→AE","US→IN","US→HK"] },
-  { id: "C03", name: "Northgate Capital", segment: "FI", rail: "Wire", grossRevenue: 1950000, railCost: 180000, fxMargin: 95000, liquidityDrag: 72000, exceptions: 22000, supportCost: 41000, volume: 5100, corridors: ["US→EU","US→CH"] },
-  { id: "C04", name: "Solara Payments", segment: "Fintech", rail: "RTP+ACH", grossRevenue: 890000, railCost: 44000, fxMargin: 12000, liquidityDrag: 18000, exceptions: 8000, supportCost: 29000, volume: 142000, corridors: ["US DOM"] },
-  { id: "C05", name: "Crescent Logistics", segment: "Mid-Market", rail: "ACH+Wire", grossRevenue: 620000, railCost: 88000, fxMargin: 72000, liquidityDrag: 55000, exceptions: 31000, supportCost: 38000, volume: 7800, corridors: ["US→MX","US→BR"] },
-  { id: "C06", name: "Atlas Commodities", segment: "Corporate", rail: "SWIFT", grossRevenue: 2210000, railCost: 420000, fxMargin: 310000, liquidityDrag: 248000, exceptions: 118000, supportCost: 71000, volume: 3900, corridors: ["US→NG","US→ZA","US→IN"] },
-  { id: "C07", name: "Veritas Healthcare", segment: "Mid-Market", rail: "ACH", grossRevenue: 310000, railCost: 18000, fxMargin: 0, liquidityDrag: 8000, exceptions: 4000, supportCost: 22000, volume: 48000, corridors: ["US DOM"] },
-  { id: "C08", name: "Pinnacle Asset Mgmt", segment: "FI", rail: "Wire+SWIFT", grossRevenue: 1680000, railCost: 210000, fxMargin: 240000, liquidityDrag: 135000, exceptions: 29000, supportCost: 48000, volume: 4200, corridors: ["US→EU","US→JP","US→UK"] },
-  { id: "C09", name: "TerraFin Services", segment: "Fintech", rail: "FedNow+RTP", grossRevenue: 540000, railCost: 28000, fxMargin: 0, liquidityDrag: 11000, exceptions: 6000, supportCost: 31000, volume: 210000, corridors: ["US DOM"] },
-  { id: "C10", name: "Orion Energy Corp", segment: "Corporate", rail: "SWIFT+Wire", grossRevenue: 1890000, railCost: 355000, fxMargin: 220000, liquidityDrag: 198000, exceptions: 88000, supportCost: 55000, volume: 6100, corridors: ["US→NO","US→SA","US→QA"] },
+  { id: "C01", name: "Meridian Industries", segment: "Corporate", rail: "Wire+ACH", grossRevenue: 2840000, railCost: 312000, conversionRevenue: 410000, liquidityDrag: 185000, exceptions: 48000, supportCost: 62000, volume: 18400, corridors: ["US→EU","US→UK","US→SG"] },
+  { id: "C02", name: "Apex Global Trade", segment: "Corporate", rail: "SWIFT+Wire", grossRevenue: 3120000, railCost: 498000, conversionRevenue: 580000, liquidityDrag: 290000, exceptions: 94000, supportCost: 88000, volume: 9200, corridors: ["US→AE","US→IN","US→HK"] },
+  { id: "C03", name: "Northgate Capital", segment: "FI", rail: "Wire", grossRevenue: 1950000, railCost: 180000, conversionRevenue: 95000, liquidityDrag: 72000, exceptions: 22000, supportCost: 41000, volume: 5100, corridors: ["US→EU","US→CH"] },
+  { id: "C04", name: "Solara Payments", segment: "Fintech", rail: "RTP+ACH", grossRevenue: 890000, railCost: 44000, conversionRevenue: 12000, liquidityDrag: 18000, exceptions: 8000, supportCost: 29000, volume: 142000, corridors: ["US DOM"] },
+  { id: "C05", name: "Crescent Logistics", segment: "Mid-Market", rail: "ACH+Wire", grossRevenue: 620000, railCost: 88000, conversionRevenue: 72000, liquidityDrag: 55000, exceptions: 31000, supportCost: 38000, volume: 7800, corridors: ["US→MX","US→BR"] },
+  { id: "C06", name: "Atlas Commodities", segment: "Corporate", rail: "SWIFT", grossRevenue: 2210000, railCost: 420000, conversionRevenue: 310000, liquidityDrag: 248000, exceptions: 118000, supportCost: 71000, volume: 3900, corridors: ["US→NG","US→ZA","US→IN"] },
+  { id: "C07", name: "Veritas Healthcare", segment: "Mid-Market", rail: "ACH", grossRevenue: 310000, railCost: 18000, conversionRevenue: 0, liquidityDrag: 8000, exceptions: 4000, supportCost: 22000, volume: 48000, corridors: ["US DOM"] },
+  { id: "C08", name: "Pinnacle Asset Mgmt", segment: "FI", rail: "Wire+SWIFT", grossRevenue: 1680000, railCost: 210000, conversionRevenue: 240000, liquidityDrag: 135000, exceptions: 29000, supportCost: 48000, volume: 4200, corridors: ["US→EU","US→JP","US→UK"] },
+  { id: "C09", name: "TerraFin Services", segment: "Fintech", rail: "FedNow+RTP", grossRevenue: 540000, railCost: 28000, conversionRevenue: 0, liquidityDrag: 11000, exceptions: 6000, supportCost: 31000, volume: 210000, corridors: ["US DOM"] },
+  { id: "C10", name: "Orion Energy Corp", segment: "Corporate", rail: "SWIFT+Wire", grossRevenue: 1890000, railCost: 355000, conversionRevenue: 220000, liquidityDrag: 198000, exceptions: 88000, supportCost: 55000, volume: 6100, corridors: ["US→NO","US→SA","US→QA"] },
 ];
 
 const CORRIDORS = [
-  { corridor: "US → EU", volume: 14200, grossRev: 1840000, railCost: 198000, fxMargin: 420000, nostro: 145000, compliance: 38000, exceptions: 42000 },
-  { corridor: "US → UK", volume: 8900, grossRev: 1120000, railCost: 148000, fxMargin: 280000, nostro: 98000, compliance: 29000, exceptions: 28000 },
-  { corridor: "US → SG", volume: 4100, grossRev: 710000, railCost: 108000, fxMargin: 195000, nostro: 88000, compliance: 42000, exceptions: 31000 },
-  { corridor: "US → IN", volume: 3800, grossRev: 480000, railCost: 118000, fxMargin: 92000, nostro: 112000, compliance: 58000, exceptions: 64000 },
-  { corridor: "US → AE", volume: 2900, grossRev: 620000, railCost: 98000, fxMargin: 148000, nostro: 95000, compliance: 48000, exceptions: 38000 },
-  { corridor: "US → MX", volume: 6200, grossRev: 390000, railCost: 68000, fxMargin: 58000, nostro: 42000, compliance: 28000, exceptions: 22000 },
-  { corridor: "US → JP", volume: 2100, grossRev: 580000, railCost: 88000, fxMargin: 168000, nostro: 78000, compliance: 35000, exceptions: 18000 },
-  { corridor: "US → HK", volume: 1800, grossRev: 490000, railCost: 78000, fxMargin: 145000, nostro: 72000, compliance: 38000, exceptions: 14000 },
-  { corridor: "US → BR", volume: 2400, grossRev: 310000, railCost: 88000, fxMargin: 42000, nostro: 95000, compliance: 68000, exceptions: 72000 },
-  { corridor: "US → NG", volume: 820, grossRev: 290000, railCost: 78000, fxMargin: 48000, nostro: 112000, compliance: 88000, exceptions: 98000 },
+  { corridor: "US → EU", volume: 14200, grossRev: 1840000, railCost: 198000, conversionRevenue: 420000, nostro: 145000, compliance: 38000, exceptions: 42000 },
+  { corridor: "US → UK", volume: 8900, grossRev: 1120000, railCost: 148000, conversionRevenue: 280000, nostro: 98000, compliance: 29000, exceptions: 28000 },
+  { corridor: "US → SG", volume: 4100, grossRev: 710000, railCost: 108000, conversionRevenue: 195000, nostro: 88000, compliance: 42000, exceptions: 31000 },
+  { corridor: "US → IN", volume: 3800, grossRev: 480000, railCost: 118000, conversionRevenue: 92000, nostro: 112000, compliance: 58000, exceptions: 64000 },
+  { corridor: "US → AE", volume: 2900, grossRev: 620000, railCost: 98000, conversionRevenue: 148000, nostro: 95000, compliance: 48000, exceptions: 38000 },
+  { corridor: "US → MX", volume: 6200, grossRev: 390000, railCost: 68000, conversionRevenue: 58000, nostro: 42000, compliance: 28000, exceptions: 22000 },
+  { corridor: "US → JP", volume: 2100, grossRev: 580000, railCost: 88000, conversionRevenue: 168000, nostro: 78000, compliance: 35000, exceptions: 18000 },
+  { corridor: "US → HK", volume: 1800, grossRev: 490000, railCost: 78000, conversionRevenue: 145000, nostro: 72000, compliance: 38000, exceptions: 14000 },
+  { corridor: "US → BR", volume: 2400, grossRev: 310000, railCost: 88000, conversionRevenue: 42000, nostro: 95000, compliance: 68000, exceptions: 72000 },
+  { corridor: "US → NG", volume: 820, grossRev: 290000, railCost: 78000, conversionRevenue: 48000, nostro: 112000, compliance: 88000, exceptions: 98000 },
 ];
 
 const RAIL_DATA = [
@@ -64,10 +64,10 @@ const fmt = (n, decimals = 0) =>
 const pct = (n, d) => d === 0 ? "0%" : `${((n / d) * 100).toFixed(1)}%`;
 
 const netMargin = (c) =>
-  c.grossRevenue + c.fxMargin - c.railCost - c.liquidityDrag - c.exceptions - c.supportCost;
+  c.grossRevenue + c.conversionRevenue - c.railCost - c.liquidityDrag - c.exceptions - c.supportCost;
 
 const netContribution = (c) =>
-  c.grossRev + c.fxMargin - c.railCost - c.nostro - c.compliance - c.exceptions;
+  c.grossRev + c.conversionRevenue - c.railCost - c.nostro - c.compliance - c.exceptions;
 
 // ── COLOUR SYSTEM ────────────────────────────────────────────────────────────
 
@@ -151,20 +151,20 @@ export default function PaymentProfitabilityEngine() {
     const totals = CLIENTS.reduce((acc, c) => ({
       grossRevenue: acc.grossRevenue + c.grossRevenue,
       railCost: acc.railCost + c.railCost,
-      fxMargin: acc.fxMargin + c.fxMargin,
+      conversionRevenue: acc.conversionRevenue + c.conversionRevenue,
       liquidityDrag: acc.liquidityDrag + c.liquidityDrag,
       exceptions: acc.exceptions + c.exceptions,
       supportCost: acc.supportCost + c.supportCost,
       volume: acc.volume + c.volume,
-    }), { grossRevenue: 0, railCost: 0, fxMargin: 0, liquidityDrag: 0, exceptions: 0, supportCost: 0, volume: 0 });
-    totals.net = totals.grossRevenue + totals.fxMargin - totals.railCost - totals.liquidityDrag - totals.exceptions - totals.supportCost;
-    totals.netMarginPct = (totals.net / (totals.grossRevenue + totals.fxMargin)) * 100;
+    }), { grossRevenue: 0, railCost: 0, conversionRevenue: 0, liquidityDrag: 0, exceptions: 0, supportCost: 0, volume: 0 });
+    totals.net = totals.grossRevenue + totals.conversionRevenue - totals.railCost - totals.liquidityDrag - totals.exceptions - totals.supportCost;
+    totals.netMarginPct = (totals.net / (totals.grossRevenue + totals.conversionRevenue)) * 100;
     return totals;
   }, []);
 
   // Sorted clients
   const sortedClients = useMemo(() => {
-    const withNet = CLIENTS.map(c => ({ ...c, net: netMargin(c), netPct: (netMargin(c) / (c.grossRevenue + c.fxMargin)) * 100 }));
+    const withNet = CLIENTS.map(c => ({ ...c, net: netMargin(c), netPct: (netMargin(c) / (c.grossRevenue + c.conversionRevenue)) * 100 }));
     return [...withNet].sort((a, b) => sortBy === "net" ? b.net - a.net : sortBy === "pct" ? b.netPct - a.netPct : b.grossRevenue - a.grossRevenue);
   }, [sortBy]);
 
@@ -172,12 +172,12 @@ export default function PaymentProfitabilityEngine() {
   const corridorData = useMemo(() => CORRIDORS.map(c => ({
     ...c,
     net: netContribution(c),
-    netPct: (netContribution(c) / (c.grossRev + c.fxMargin)) * 100,
-    costRatio: (c.railCost + c.nostro + c.compliance + c.exceptions) / (c.grossRev + c.fxMargin),
+    netPct: (netContribution(c) / (c.grossRev + c.conversionRevenue)) * 100,
+    costRatio: (c.railCost + c.nostro + c.compliance + c.exceptions) / (c.grossRev + c.conversionRevenue),
   })).sort((a, b) => b.net - a.net), []);
 
   // Waterfall for portfolio
-  const waterfallTotal = portfolio.grossRevenue + portfolio.fxMargin;
+  const waterfallTotal = portfolio.grossRevenue + portfolio.conversionRevenue;
 
   const tabs = ["overview", "clients", "corridors", "rails", "trends"];
 
@@ -238,10 +238,10 @@ return (
           <div className="fade-in">
             {/* KPI row */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 16, marginBottom: 28 }}>
-              <MetricCard label="Gross Revenue" value={fmt(portfolio.grossRevenue + portfolio.fxMargin)} sub="Fees + FX margin" accent={C.accent} />
+              <MetricCard label="Gross Revenue" value={fmt(portfolio.grossRevenue + portfolio.conversionRevenue)} sub="Fees + FX margin" accent={C.accent} />
               <MetricCard label="Net Contribution" value={fmt(portfolio.net)} sub={`${portfolio.netMarginPct.toFixed(1)}% net margin`} accent={C.green} />
-              <MetricCard label="Rail Cost" value={fmt(portfolio.railCost)} sub={pct(portfolio.railCost, portfolio.grossRevenue + portfolio.fxMargin) + " of revenue"} accent={C.amber} />
-              <MetricCard label="Liquidity Drag" value={fmt(portfolio.liquidityDrag)} sub="Nostro + prefund" accent={C.amber} />
+              <MetricCard label="Rail cost" value={fmt(portfolio.railCost)} sub={pct(portfolio.railCost, portfolio.grossRevenue + portfolio.conversionRevenue) + " of revenue"} accent={C.amber} />
+              <MetricCard label="Liquidity Drag" value={fmt(portfolio.liquidityDrag)} sub="Prefunding & liquidity" accent={C.amber} />
               <MetricCard label="Exception Cost" value={fmt(portfolio.exceptions)} sub={`${(portfolio.exceptions / portfolio.volume * 100).toFixed(2)}¢ per txn`} accent={C.red} />
             </div>
 
@@ -250,17 +250,17 @@ return (
               <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24 }}>
                 <SectionHead title="Portfolio Margin Waterfall" sub="Gross revenue to net contribution" />
                 <WaterfallBar label="Fee Revenue" value={portfolio.grossRevenue} isPositive total={waterfallTotal} />
-                <WaterfallBar label="+ FX Margin" value={portfolio.fxMargin} isPositive total={waterfallTotal} />
+                <WaterfallBar label="+ Conversion & spread revenue" value={portfolio.conversionRevenue} isPositive total={waterfallTotal} />
                 <div style={{ borderTop: `1px dashed ${C.border}`, margin: "10px 0" }} />
                 <WaterfallBar label="− Network & Scheme Fees" value={-portfolio.railCost} total={waterfallTotal} />
-                <WaterfallBar label="− Correspondent & Liquidity Cost" value={-portfolio.liquidityDrag} total={waterfallTotal} />
+                <WaterfallBar label="− Liquidity & intermediary cost" value={-portfolio.liquidityDrag} total={waterfallTotal} />
                 <WaterfallBar label="− Operational & Exception Cost" value={-portfolio.exceptions} total={waterfallTotal} />
                 <WaterfallBar label="− Other Cost Allocation" value={-portfolio.supportCost} total={waterfallTotal} />
                 <div style={{ borderTop: `1px solid ${C.accent}44`, margin: "10px 0" }} />
                 <WaterfallBar label="NET CONTRIBUTION" value={portfolio.net} isNet total={waterfallTotal} />
                 <div style={{ marginTop: 16, padding: "10px 14px", background: `${C.accent}0a`, borderRadius: 8, border: `1px solid ${C.accent}22` }}>
                   <span style={{ fontSize: 11, color: C.muted, fontFamily: "'DM Mono', monospace" }}>AI INSIGHT: </span>
-                  <span style={{ fontSize: 11, color: C.text }}>Liquidity drag represents <strong style={{ color: C.amber }}>{pct(portfolio.liquidityDrag, portfolio.grossRevenue + portfolio.fxMargin)}</strong> of gross revenue — the single largest margin compression driver after rail costs. Corridor prefunding optimization could recover <strong style={{ color: C.green }}>{fmt(portfolio.liquidityDrag * 0.22)}</strong> annually.</span>
+                  <span style={{ fontSize: 11, color: C.text }}>Liquidity drag represents <strong style={{ color: C.amber }}>{pct(portfolio.liquidityDrag, portfolio.grossRevenue + portfolio.conversionRevenue)}</strong> of gross revenue — the single largest margin compression driver after rail costs. Corridor prefunding optimization could recover <strong style={{ color: C.green }}>{fmt(portfolio.liquidityDrag * 0.22)}</strong> annually.</span>
                 </div>
               </div>
 
@@ -268,7 +268,7 @@ return (
               <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24 }}>
                 <SectionHead title="Client Revenue Concentration" sub="Top 10 by gross contribution" />
                 <ResponsiveContainer width="100%" height={280}>
-                  <BarChart data={sortedClients.slice(0, 8).map(c => ({ name: c.name.split(" ")[0], net: Math.round(c.net / 1000), gross: Math.round((c.grossRevenue + c.fxMargin) / 1000) }))} barGap={2}>
+                  <BarChart data={sortedClients.slice(0, 8).map(c => ({ name: c.name.split(" ")[0], net: Math.round(c.net / 1000), gross: Math.round((c.grossRevenue + c.conversionRevenue) / 1000) }))} barGap={2}>
                     <CartesianGrid strokeDasharray="3 3" stroke={C.gridLine} />
                     <XAxis dataKey="name" tick={{ fill: C.muted, fontSize: 10, fontFamily: "'DM Mono', monospace" }} />
                     <YAxis tick={{ fill: C.muted, fontSize: 10, fontFamily: "'DM Mono', monospace" }} tickFormatter={v => `$${v}K`} />
@@ -282,7 +282,7 @@ return (
 
             {/* Rail cost efficiency */}
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24 }}>
-              <SectionHead title="Rail Cost Efficiency Matrix" sub="Unit cost vs. volume vs. STP rate" />
+              <SectionHead title="Rail cost Efficiency Matrix" sub="Unit cost vs. volume vs. STP rate" />
               <div style={{ display: "grid", gridTemplateColumns: "repeat(6,1fr)", gap: 12 }}>
                 {RAIL_DATA.map(r => {
                   const efficiency = r.stpRate / (r.unitCost * 10 + 1);
@@ -322,7 +322,7 @@ return (
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ background: C.surface }}>
-                    {["#", "Client", "Segment", "Rail Mix", "Gross Rev", "Rail Cost", "FX Margin", "Liq. Drag", "Exceptions", "Net Margin", "Margin %", "Status"].map(h => (
+                    {["#", "Client", "Segment", "Rail Mix", "Gross Rev", "Rail cost", "Conversion & spread revenue", "Liq. Drag", "Exceptions", "Net Margin", "Margin %", "Status"].map(h => (
                       <th key={h} style={{ padding: "10px 14px", textAlign: "left", fontSize: 10, color: C.muted, fontFamily: "'DM Mono', monospace", letterSpacing: "0.08em", borderBottom: `1px solid ${C.border}` }}>{h}</th>
                     ))}
                   </tr>
@@ -344,7 +344,7 @@ return (
                         <td style={{ padding: "12px 14px", fontSize: 11, color: C.muted, fontFamily: "'DM Mono', monospace" }}>{c.rail}</td>
                         <td style={{ padding: "12px 14px", fontSize: 12, color: C.text, fontFamily: "'DM Mono', monospace" }}>{fmt(c.grossRevenue)}</td>
                         <td style={{ padding: "12px 14px", fontSize: 12, color: C.red, fontFamily: "'DM Mono', monospace" }}>−{fmt(c.railCost)}</td>
-                        <td style={{ padding: "12px 14px", fontSize: 12, color: C.green, fontFamily: "'DM Mono', monospace" }}>+{fmt(c.fxMargin)}</td>
+                        <td style={{ padding: "12px 14px", fontSize: 12, color: C.green, fontFamily: "'DM Mono', monospace" }}>+{fmt(c.conversionRevenue)}</td>
                         <td style={{ padding: "12px 14px", fontSize: 12, color: C.amber, fontFamily: "'DM Mono', monospace" }}>−{fmt(c.liquidityDrag)}</td>
                         <td style={{ padding: "12px 14px", fontSize: 12, color: C.red, fontFamily: "'DM Mono', monospace" }}>−{fmt(c.exceptions)}</td>
                         <td style={{ padding: "12px 14px", fontSize: 13, fontWeight: 600, color: c.net > 0 ? C.green : C.red, fontFamily: "'Syne', sans-serif" }}>{fmt(c.net)}</td>
@@ -375,8 +375,8 @@ return (
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12 }}>
                   {[
                     { label: "Fee Revenue", value: selectedClient.grossRevenue, color: C.accent },
-                    { label: "FX Margin", value: selectedClient.fxMargin, color: C.green },
-                    { label: "Rail Cost", value: -selectedClient.railCost, color: C.red },
+                    { label: "Conversion & spread revenue", value: selectedClient.conversionRevenue, color: C.green },
+                    { label: "Rail cost", value: -selectedClient.railCost, color: C.red },
                     { label: "Liquidity Drag", value: -selectedClient.liquidityDrag, color: C.amber },
                     { label: "Exceptions", value: -selectedClient.exceptions, color: C.red },
                     { label: "Support", value: -selectedClient.supportCost, color: C.amber },
@@ -392,8 +392,8 @@ return (
                   <span style={{ fontSize: 11, color: C.text }}>
                     {selectedClient.exceptions / selectedClient.grossRevenue > 0.04
                       ? `Exception cost ratio of ${pct(selectedClient.exceptions, selectedClient.grossRevenue)} is above portfolio average. Primary driver is likely ${selectedClient.corridors[selectedClient.corridors.length - 1]} corridor complexity. Operational review recommended.`
-                      : selectedClient.fxMargin / selectedClient.grossRevenue > 0.15
-                      ? `FX margin contribution of ${pct(selectedClient.fxMargin, selectedClient.grossRevenue)} is a key value driver. Protect pricing in next renewal — this client has cross-border dependency and limited rate sensitivity.`
+                      : selectedClient.conversionRevenue / selectedClient.grossRevenue > 0.15
+                      ? `FX margin contribution of ${pct(selectedClient.conversionRevenue, selectedClient.grossRevenue)} is a key value driver. Protect pricing in next renewal — this client has payment flow dependency and limited rate sensitivity.`
                       : `Net margin of ${selectedClient.netPct?.toFixed(1)}% is within portfolio range. Primary optimization lever is rail cost — evaluate eligibility for ACH or RTP migration on domestic flows.`}
                   </span>
                 </div>
@@ -405,7 +405,7 @@ return (
         {/* ── CORRIDORS TAB ── */}
         {activeTab === "corridors" && (
           <div className="fade-in">
-            <SectionHead title="Corridor Economics" sub="Net contribution by currency corridor — growth, defend, optimize, exit classification" />
+            <SectionHead title="Flow Economics" sub="Net contribution by currency corridor — growth, defend, optimize, exit classification" />
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 16, marginBottom: 24 }}>
               {corridorData.map((c) => {
                 const netPct = c.netPct;
@@ -416,13 +416,13 @@ return (
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                       <div>
                         <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Syne', sans-serif", color: C.text }}>{c.corridor}</div>
-                        <div style={{ fontSize: 10, color: C.muted, fontFamily: "'DM Mono', monospace", marginTop: 2 }}>{c.volume.toLocaleString()} txns · avg {fmt(Math.round((c.grossRev + c.fxMargin) / c.volume))} / txn</div>
+                        <div style={{ fontSize: 10, color: C.muted, fontFamily: "'DM Mono', monospace", marginTop: 2 }}>{c.volume.toLocaleString()} txns · avg {fmt(Math.round((c.grossRev + c.conversionRevenue) / c.volume))} / txn</div>
                       </div>
                       <Tag label={quadrant.label} color={quadrant.color} />
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8, marginBottom: 12 }}>
                       {[
-                        { l: "Gross Rev", v: fmt(c.grossRev + c.fxMargin), c: C.accent },
+                        { l: "Gross Rev", v: fmt(c.grossRev + c.conversionRevenue), c: C.accent },
                         { l: "Rail + Nostro", v: fmt(c.railCost + c.nostro), c: C.red },
                         { l: "Compliance", v: fmt(c.compliance + c.exceptions), c: C.amber },
                         { l: "Net", v: fmt(c.net), c: c.net > 0 ? C.green : C.red },
@@ -471,7 +471,7 @@ return (
         {/* ── RAILS TAB ── */}
         {activeTab === "rails" && (
           <div className="fade-in">
-            <SectionHead title="Rail Cost & Performance Analysis" sub="Multi-rail infrastructure economics" />
+            <SectionHead title="Rail cost & Performance Analysis" sub="Multi-rail infrastructure economics" />
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24, marginBottom: 24 }}>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={RAIL_DATA} barGap={6}>
