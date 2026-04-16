@@ -34,123 +34,123 @@ const T = {
 };
 
 // ─── CORRIDOR DATA ──────────────────────────────────────────────────────────
-// Full economics per corridor — built on Model 01 corridor P&L foundation
+// Full economics per flow — built on Model 01 flow economics foundation
 const CORRIDORS = [
   {
     id: "US-EU", from: "United States", to: "Eurozone", flag_from: "🇺🇸", flag_to: "🇪🇺",
     currency: "USD/EUR", fxPair: "EURUSD",
     volume: 14200, avgTicket: 129577, grossFee: 1840000, fxMargin: 420000,
-    railCost: 198000, nostro: 145000, correspondent: 68000, compliance: 38000, exceptions: 42000,
+    railCost: 198000, liquidityCost: 145000, intermediaryCost: 68000, compliance: 38000, exceptions: 42000,
     fxVolatility: 7.2, competitorCount: 8, marketSharePct: 12.4,
     growthRate: 14.2, regulatoryRisk: "Low", corridorMaturity: "Mature",
     keyDrivers: ["EUR trade flows", "Intra-company transfers", "EU payroll"],
-    fxSpreadBps: 18, nostroTurnDays: 1.8, exceptionRatePct: 2.1,
+    fxSpreadBps: 18, liquidityTurnDays: 1.8, exceptionRatePct: 2.1,
     trend: [380,410,395,428,442,460,448,471,490,512,498,420],
   },
   {
     id: "US-UK", from: "United States", to: "United Kingdom", flag_from: "🇺🇸", flag_to: "🇬🇧",
     currency: "USD/GBP", fxPair: "GBPUSD",
     volume: 8900, avgTicket: 125843, grossFee: 1120000, fxMargin: 280000,
-    railCost: 148000, nostro: 98000, correspondent: 44000, compliance: 29000, exceptions: 28000,
+    railCost: 148000, liquidityCost: 98000, intermediaryCost: 44000, compliance: 29000, exceptions: 28000,
     fxVolatility: 8.8, competitorCount: 10, marketSharePct: 9.8,
     growthRate: 8.4, regulatoryRisk: "Medium", corridorMaturity: "Mature",
     keyDrivers: ["Post-Brexit trade", "Financial services", "Real estate"],
-    fxSpreadBps: 15, nostroTurnDays: 1.2, exceptionRatePct: 1.8,
+    fxSpreadBps: 15, liquidityTurnDays: 1.2, exceptionRatePct: 1.8,
     trend: [210,224,218,235,242,251,238,261,270,284,268,253],
   },
   {
     id: "US-SG", from: "United States", to: "Singapore", flag_from: "🇺🇸", flag_to: "🇸🇬",
     currency: "USD/SGD", fxPair: "USDSGD",
     volume: 4100, avgTicket: 173170, grossFee: 710000, fxMargin: 195000,
-    railCost: 108000, nostro: 88000, correspondent: 52000, compliance: 42000, exceptions: 31000,
+    railCost: 108000, liquidityCost: 88000, intermediaryCost: 52000, compliance: 42000, exceptions: 31000,
     fxVolatility: 4.2, competitorCount: 6, marketSharePct: 14.2,
     growthRate: 22.8, regulatoryRisk: "Low", corridorMaturity: "Growing",
     keyDrivers: ["APAC treasury hubs", "Tech sector", "Private wealth"],
-    fxSpreadBps: 22, nostroTurnDays: 2.1, exceptionRatePct: 2.8,
+    fxSpreadBps: 22, liquidityTurnDays: 2.1, exceptionRatePct: 2.8,
     trend: [98,105,112,118,128,136,142,151,162,174,180,195],
   },
   {
     id: "US-IN", from: "United States", to: "India", flag_from: "🇺🇸", flag_to: "🇮🇳",
     currency: "USD/INR", fxPair: "USDINR",
     volume: 3800, avgTicket: 126315, grossFee: 480000, fxMargin: 92000,
-    railCost: 118000, nostro: 112000, correspondent: 78000, compliance: 58000, exceptions: 64000,
+    railCost: 118000, liquidityCost: 112000, intermediaryCost: 78000, compliance: 58000, exceptions: 64000,
     fxVolatility: 6.8, competitorCount: 14, marketSharePct: 4.2,
     growthRate: 18.4, regulatoryRisk: "High", corridorMaturity: "Growing",
     keyDrivers: ["IT services", "Remittance", "Shared service centers"],
-    fxSpreadBps: 28, nostroTurnDays: 3.4, exceptionRatePct: 7.8,
+    fxSpreadBps: 28, liquidityTurnDays: 3.4, exceptionRatePct: 7.8,
     trend: [62,68,72,78,82,88,84,92,96,98,102,104],
   },
   {
     id: "US-AE", from: "United States", to: "UAE", flag_from: "🇺🇸", flag_to: "🇦🇪",
     currency: "USD/AED", fxPair: "USDAED",
     volume: 2900, avgTicket: 213793, grossFee: 620000, fxMargin: 148000,
-    railCost: 98000, nostro: 95000, correspondent: 48000, compliance: 48000, exceptions: 38000,
+    railCost: 98000, liquidityCost: 95000, intermediaryCost: 48000, compliance: 48000, exceptions: 38000,
     fxVolatility: 0.8, competitorCount: 7, marketSharePct: 11.2,
     growthRate: 28.4, regulatoryRisk: "Medium", corridorMaturity: "Growing",
     keyDrivers: ["Energy sector", "Real estate", "Trade finance"],
-    fxSpreadBps: 12, nostroTurnDays: 1.4, exceptionRatePct: 3.8,
+    fxSpreadBps: 12, liquidityTurnDays: 1.4, exceptionRatePct: 3.8,
     trend: [88,95,102,110,118,124,132,140,148,158,164,174],
   },
   {
     id: "US-MX", from: "United States", to: "Mexico", flag_from: "🇺🇸", flag_to: "🇲🇽",
     currency: "USD/MXN", fxPair: "USDMXN",
     volume: 6200, avgTicket: 62903, grossFee: 390000, fxMargin: 58000,
-    railCost: 68000, nostro: 42000, correspondent: 28000, compliance: 28000, exceptions: 22000,
+    railCost: 68000, liquidityCost: 42000, intermediaryCost: 28000, compliance: 28000, exceptions: 22000,
     fxVolatility: 14.8, competitorCount: 18, marketSharePct: 5.8,
     growthRate: 6.2, regulatoryRisk: "Medium", corridorMaturity: "Mature",
     keyDrivers: ["USMCA trade", "Manufacturing payroll", "Nearshoring"],
-    fxSpreadBps: 35, nostroTurnDays: 1.1, exceptionRatePct: 2.2,
+    fxSpreadBps: 35, liquidityTurnDays: 1.1, exceptionRatePct: 2.2,
     trend: [58,62,60,64,66,68,65,70,72,68,71,73],
   },
   {
     id: "US-JP", from: "United States", to: "Japan", flag_from: "🇺🇸", flag_to: "🇯🇵",
     currency: "USD/JPY", fxPair: "USDJPY",
     volume: 2100, avgTicket: 276190, grossFee: 580000, fxMargin: 168000,
-    railCost: 88000, nostro: 78000, correspondent: 42000, compliance: 35000, exceptions: 18000,
+    railCost: 88000, liquidityCost: 78000, intermediaryCost: 42000, compliance: 35000, exceptions: 18000,
     fxVolatility: 11.2, competitorCount: 5, marketSharePct: 16.8,
     growthRate: 4.8, regulatoryRisk: "Low", corridorMaturity: "Mature",
     keyDrivers: ["Automotive supply chain", "Electronics", "Investment flows"],
-    fxSpreadBps: 14, nostroTurnDays: 1.6, exceptionRatePct: 1.2,
+    fxSpreadBps: 14, liquidityTurnDays: 1.6, exceptionRatePct: 1.2,
     trend: [118,124,130,136,142,148,144,150,156,162,158,154],
   },
   {
     id: "US-HK", from: "United States", to: "Hong Kong", flag_from: "🇺🇸", flag_to: "🇭🇰",
     currency: "USD/HKD", fxPair: "USDHKD",
     volume: 1800, avgTicket: 272222, grossFee: 490000, fxMargin: 145000,
-    railCost: 78000, nostro: 72000, correspondent: 38000, compliance: 38000, exceptions: 14000,
+    railCost: 78000, liquidityCost: 72000, intermediaryCost: 38000, compliance: 38000, exceptions: 14000,
     fxVolatility: 0.5, competitorCount: 6, marketSharePct: 18.4,
     growthRate: 3.2, regulatoryRisk: "Medium", corridorMaturity: "Mature",
     keyDrivers: ["Capital markets", "Private banking", "Trade finance"],
-    fxSpreadBps: 8, nostroTurnDays: 1.2, exceptionRatePct: 1.0,
+    fxSpreadBps: 8, liquidityTurnDays: 1.2, exceptionRatePct: 1.0,
     trend: [108,112,116,120,124,128,122,128,132,135,132,130],
   },
   {
     id: "US-BR", from: "United States", to: "Brazil", flag_from: "🇺🇸", flag_to: "🇧🇷",
     currency: "USD/BRL", fxPair: "USDBRL",
     volume: 2400, avgTicket: 129166, grossFee: 310000, fxMargin: 42000,
-    railCost: 88000, nostro: 95000, correspondent: 62000, compliance: 68000, exceptions: 72000,
+    railCost: 88000, liquidityCost: 95000, intermediaryCost: 62000, compliance: 68000, exceptions: 72000,
     fxVolatility: 18.4, competitorCount: 12, marketSharePct: 3.8,
     growthRate: 9.8, regulatoryRisk: "High", corridorMaturity: "Developing",
     keyDrivers: ["Commodities", "Consumer goods", "Agribusiness"],
-    fxSpreadBps: 48, nostroTurnDays: 4.2, exceptionRatePct: 9.4,
+    fxSpreadBps: 48, liquidityTurnDays: 4.2, exceptionRatePct: 9.4,
     trend: [38,40,42,44,48,46,50,52,48,54,52,56],
   },
   {
     id: "US-NG", from: "United States", to: "Nigeria", flag_from: "🇺🇸", flag_to: "🇳🇬",
     currency: "USD/NGN", fxPair: "USDNGN",
     volume: 820, avgTicket: 353658, grossFee: 290000, fxMargin: 48000,
-    railCost: 78000, nostro: 112000, correspondent: 88000, compliance: 88000, exceptions: 98000,
+    railCost: 78000, liquidityCost: 112000, intermediaryCost: 88000, compliance: 88000, exceptions: 98000,
     fxVolatility: 32.8, competitorCount: 4, marketSharePct: 8.2,
     growthRate: 14.8, regulatoryRisk: "Very High", corridorMaturity: "Developing",
     keyDrivers: ["Energy sector", "Trade finance", "Diaspora flows"],
-    fxSpreadBps: 68, nostroTurnDays: 6.8, exceptionRatePct: 14.2,
+    fxSpreadBps: 68, liquidityTurnDays: 6.8, exceptionRatePct: 14.2,
     trend: [28,30,32,34,36,34,38,36,40,38,42,44],
   },
 ];
 
 // ─── DERIVED ANALYTICS ──────────────────────────────────────────────────────
 const withAnalytics = CORRIDORS.map(c => {
-  const totalCost = c.railCost + c.nostro + c.correspondent + c.compliance + c.exceptions;
+  const totalCost = c.railCost + c.liquidityCost + c.intermediaryCost + c.compliance + c.exceptions;
   const grossRevenue = c.grossFee + c.fxMargin;
   const net = grossRevenue - totalCost;
   const netMarginPct = (net / grossRevenue) * 100;
@@ -291,8 +291,8 @@ export default function CorridorEconomicsAnalyzer() {
   // Cost breakdown chart data for selected corridor
   const costBreakdown = selectedCorridor ? [
     { name: "Rail Cost",     value: selectedCorridor.railCost,       color: T.red   },
-    { name: "Nostro Funding",value: selectedCorridor.nostro,         color: T.amber },
-    { name: "Correspondent", value: selectedCorridor.correspondent,  color: T.blue  },
+    { name: "Liquidity cost",value: selectedCorridor.liquidityCost,         color: T.amber },
+    { name: "Correspondent", value: selectedCorridor.intermediaryCost,  color: T.blue  },
     { name: "Compliance",    value: selectedCorridor.compliance,     color: "#A78BFA"},
     { name: "Exceptions",    value: selectedCorridor.exceptions,     color: T.red   },
   ] : [];
@@ -332,8 +332,8 @@ export default function CorridorEconomicsAnalyzer() {
               <span style={{ fontSize: 14 }}>🌐</span>
             </div>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 600, fontFamily: "'Space Mono', monospace", color: T.gold, letterSpacing: "0.06em" }}>CORRIDOR ECONOMICS ANALYZER</div>
-              <div style={{ fontSize: 9, color: T.textFaint, fontFamily: "'Space Mono', monospace", letterSpacing: "0.12em" }}>MODEL 03 — NETWORK INTELLIGENCE · LAYER 3</div>
+              <div style={{ fontSize: 14, fontWeight: 600, fontFamily: "'Space Mono', monospace", color: T.gold, letterSpacing: "0.06em" }}>PAYMENT FLOW ANALYZER</div>
+              <div style={{ fontSize: 9, color: T.textFaint, fontFamily: "'Space Mono', monospace", letterSpacing: "0.12em" }}>MODEL 03 — FLOW INTELLIGENCE · LAYER 3</div>
             </div>
           </div>
           <div style={{ display: "flex", gap: 28 }}>
@@ -373,8 +373,8 @@ export default function CorridorEconomicsAnalyzer() {
             {/* KPI strip */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, marginBottom: 24 }}>
               <KpiCard label="Gross Revenue" value={fmt(portfolio.grossRevenue)} sub="Fees + FX margin" accent={T.gold} />
-              <KpiCard label="FX Margin" value={fmt(portfolio.fxMargin)} sub={fmtPct(portfolio.fxMargin/portfolio.grossRevenue*100) + " of gross revenue"} accent={T.teal} />
-              <KpiCard label="Total Cost Base" value={fmt(portfolio.totalCost)} sub="Rail + nostro + compliance + exceptions" accent={T.red} />
+              <KpiCard label="Conversion & spread revenue" value={fmt(portfolio.fxMargin)} sub={fmtPct(portfolio.fxMargin/portfolio.grossRevenue*100) + " of gross revenue"} accent={T.teal} />
+              <KpiCard label="Total Cost Base" value={fmt(portfolio.totalCost)} sub="Rail + liquidity + compliance + exceptions" accent={T.red} />
               <KpiCard label="Net Contribution" value={fmt(portfolio.net)} sub={fmtPct(portfolio.netMarginPct) + " net margin"} accent={T.green} />
               <KpiCard label="Total Volume" value={`${(portfolio.volume/1000).toFixed(1)}K`} sub="Transactions across all corridors" accent={T.blue} />
             </div>
@@ -448,8 +448,8 @@ export default function CorridorEconomicsAnalyzer() {
               <WaterfallRow label="+ FX Margin" value={portfolio.fxMargin} isPositive base={portfolio.grossRevenue} />
               <div style={{ borderTop: `1px dashed ${T.border}`, margin: "10px 0" }} />
               <WaterfallRow label="− Rail Costs" value={-withAnalytics.reduce((s,c)=>s+c.railCost,0)} base={portfolio.grossRevenue} />
-              <WaterfallRow label="− Nostro Funding" value={-withAnalytics.reduce((s,c)=>s+c.nostro,0)} base={portfolio.grossRevenue} />
-              <WaterfallRow label="− Correspondent Charges" value={-withAnalytics.reduce((s,c)=>s+c.correspondent,0)} base={portfolio.grossRevenue} />
+              <WaterfallRow label="− Liquidity cost" value={-withAnalytics.reduce((s,c)=>s+c.liquidityCost,0)} base={portfolio.grossRevenue} />
+              <WaterfallRow label="− Intermediary cost" value={-withAnalytics.reduce((s,c)=>s+c.intermediaryCost,0)} base={portfolio.grossRevenue} />
               <WaterfallRow label="− Compliance Costs" value={-withAnalytics.reduce((s,c)=>s+c.compliance,0)} base={portfolio.grossRevenue} />
               <WaterfallRow label="− Exception Costs" value={-withAnalytics.reduce((s,c)=>s+c.exceptions,0)} base={portfolio.grossRevenue} />
               <div style={{ borderTop: `1px solid ${T.gold}44`, margin: "10px 0" }} />
@@ -462,7 +462,7 @@ export default function CorridorEconomicsAnalyzer() {
         {activeTab === "corridors" && (
           <div className="fade-up">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
-              <SectionTitle>Corridor P&L Rankings</SectionTitle>
+              <SectionTitle>Flow Economics Rankings</SectionTitle>
               <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                 <span style={{ fontSize: 9, color: T.textFaint, fontFamily: "'Space Mono', monospace" }}>FILTER:</span>
                 {["all","GROW","DEFEND","OPTIMIZE","DE-PRIORITIZE / EXIT"].map(f => (
@@ -482,7 +482,7 @@ export default function CorridorEconomicsAnalyzer() {
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ background: "#0A0E14" }}>
-                    {["#","Corridor","Currency","Volume","Gross Rev","FX Margin","Total Cost","Net","Margin %","Growth","FX Volatility","Classification","Trend"].map(h=>(
+                    {["#","Corridor","Currency","Volume","Gross Rev","Conversion & spread revenue","Total Cost","Net","Margin %","Growth","FX Volatility","Classification","Trend"].map(h=>(
                       <th key={h} style={{ padding:"9px 12px", textAlign:"left", fontSize:8, color:T.textFaint, fontFamily:"'Space Mono', monospace", letterSpacing:"0.1em", borderBottom:`1px solid ${T.border}`, whiteSpace:"nowrap" }}>{h}</th>
                     ))}
                   </tr>
@@ -547,7 +547,7 @@ export default function CorridorEconomicsAnalyzer() {
                   { l:"Avg Ticket", v:fmt(selectedCorridor.avgTicket) },
                   { l:"FX Spread", v:`${selectedCorridor.fxSpreadBps} bps` },
                   { l:"FX Volatility", v:`σ ${selectedCorridor.fxVolatility}%` },
-                  { l:"Nostro Turn Days", v:`${selectedCorridor.nostroTurnDays}d` },
+                  { l:"Liquidity Turn Days", v:`${selectedCorridor.liquidityTurnDays}d` },
                   { l:"Exception Rate", v:`${selectedCorridor.exceptionRatePct}%` },
                 ].map(m=>(
                   <div key={m.l} style={{ background:T.card, borderRadius:6, padding:"10px 12px" }}>
@@ -566,8 +566,8 @@ export default function CorridorEconomicsAnalyzer() {
                 <WaterfallRow label="+ FX Margin" value={selectedCorridor.fxMargin} isPositive base={selectedCorridor.grossRevenue} />
                 <div style={{ borderTop:`1px dashed ${T.border}`, margin:"8px 0" }} />
                 <WaterfallRow label="− Rail Costs" value={-selectedCorridor.railCost} base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="− Nostro Funding" value={-selectedCorridor.nostro} base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="− Correspondent" value={-selectedCorridor.correspondent} base={selectedCorridor.grossRevenue} />
+                <WaterfallRow label="− Liquidity cost" value={-selectedCorridor.liquidityCost} base={selectedCorridor.grossRevenue} />
+                <WaterfallRow label="− Intermediary cost" value={-selectedCorridor.intermediaryCost} base={selectedCorridor.grossRevenue} />
                 <WaterfallRow label="− Compliance" value={-selectedCorridor.compliance} base={selectedCorridor.grossRevenue} />
                 <WaterfallRow label="− Exceptions" value={-selectedCorridor.exceptions} base={selectedCorridor.grossRevenue} />
                 <div style={{ borderTop:`1px solid ${T.gold}44`, margin:"8px 0" }} />
@@ -622,9 +622,9 @@ export default function CorridorEconomicsAnalyzer() {
                     color: T.amber,
                     icon: "◈",
                     body: (() => {
-                      const costs = { "Nostro Funding": selectedCorridor.nostro, "Exceptions": selectedCorridor.exceptions, "Correspondent Charges": selectedCorridor.correspondent, "Compliance": selectedCorridor.compliance };
+                      const costs = { "Liquidity cost": selectedCorridor.liquidityCost, "Exceptions": selectedCorridor.exceptions, "Intermediary cost": selectedCorridor.intermediaryCost, "Compliance": selectedCorridor.compliance };
                       const top = Object.entries(costs).sort((a,b)=>b[1]-a[1])[0];
-                      return `${top[0]} is the primary cost driver at ${fmt(top[1])} — ${fmtPct(top[1]/selectedCorridor.grossRevenue*100)} of gross revenue. ${top[0]==="Nostro Funding"?`Nostro turn days of ${selectedCorridor.nostroTurnDays}d suggest prefunding optimisation opportunity. A 20% reduction in nostro balance requirement would save ${fmt(selectedCorridor.nostro*0.20)} annually.`:top[0]==="Exceptions"?`Exception rate of ${selectedCorridor.exceptionRatePct}% is above portfolio average. Root cause is likely data quality in payment instructions. Structured remediation could recover ${fmt(selectedCorridor.exceptions*0.40)}.`:`Renegotiate correspondent banking terms at next renewal cycle.`}`;
+                      return `${top[0]} is the primary cost driver at ${fmt(top[1])} — ${fmtPct(top[1]/selectedCorridor.grossRevenue*100)} of gross revenue. ${top[0]==="Liquidity cost"?`Liquidity turn days of ${selectedCorridor.liquidityTurnDays}d suggest prefunding optimisation opportunity. A 20% reduction in liquidity balance requirement would save ${fmt(selectedCorridor.liquidityCost*0.20)} annually.`:top[0]==="Exceptions"?`Exception rate of ${selectedCorridor.exceptionRatePct}% is above portfolio average. Root cause is likely data quality in payment instructions. Structured remediation could recover ${fmt(selectedCorridor.exceptions*0.40)}.`:`Renegotiate intermediary banking terms at next renewal cycle.`}`;
                     })()
                   },
                   {
@@ -659,14 +659,14 @@ export default function CorridorEconomicsAnalyzer() {
         {/* ══ STRATEGY MATRIX ════════════════════════════════════════════ */}
         {activeTab === "matrix" && (
           <div className="fade-up">
-            <SectionTitle sub="AI-generated investment priorities and action plan for each corridor classification">Portfolio Strategy Matrix — Investment Allocation Framework</SectionTitle>
+            <SectionTitle sub="AI-generated investment priorities and action plan for each flow classification">Portfolio Strategy Matrix — Investment Allocation Framework</SectionTitle>
 
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20, marginBottom:20 }}>
               {[
                 {
                   cls:"GROW", color:T.green, icon:"↗",
                   corridors: withAnalytics.filter(c=>c.classification==="GROW"),
-                  actions: ["Increase sales coverage and volume targets","Maintain competitive pricing — do not discount","Invest in corridor STP automation to scale without proportional cost growth","Consider dedicated nostro optimisation for high-volume routes"],
+                  actions: ["Increase sales coverage and volume targets","Maintain competitive pricing — do not discount","Invest in flow STP automation to scale without proportional cost growth","Consider dedicated liquidity optimisation for high-volume flows"],
                   metric: "Target: 20%+ volume growth YoY"
                 },
                 {
@@ -678,13 +678,13 @@ export default function CorridorEconomicsAnalyzer() {
                 {
                   cls:"OPTIMIZE", color:T.amber, icon:"⚙",
                   corridors: withAnalytics.filter(c=>c.classification==="OPTIMIZE"),
-                  actions: ["Conduct full cost audit: nostro, correspondent, compliance, exceptions","Renegotiate correspondent banking terms at next renewal","Set STP improvement targets — reduce exception rate by 30%","Evaluate whether FX spread is adequately capturing risk"],
+                  actions: ["Conduct full cost audit: liquidity, intermediary, compliance, exceptions","Renegotiate intermediary banking terms at next renewal","Set STP improvement targets — reduce exception rate by 30%","Evaluate whether FX spread is adequately capturing risk"],
                   metric: "Target: Lift net margin by 8–12pp in 12 months"
                 },
                 {
                   cls:"DE-PRIORITIZE / EXIT", color:T.red, icon:"⚠",
                   corridors: withAnalytics.filter(c=>c.classification==="DE-PRIORITIZE / EXIT"),
-                  actions: ["Prepare restructuring case: repricing or volume minimum commitments","Engage clients on new pricing terms within 60 days","If restructuring fails, begin managed wind-down — no new volume acquisition","Reassign nostro and correspondent capacity to GROW corridors"],
+                  actions: ["Prepare restructuring case: repricing or volume minimum commitments","Engage clients on new pricing terms within 60 days","If restructuring fails, begin managed wind-down — no new volume acquisition","Reassign liquidity and intermediary capacity to GROW flows"],
                   metric: "Decision point: 90 days"
                 },
               ].map(q=>(
@@ -731,7 +731,7 @@ export default function CorridorEconomicsAnalyzer() {
                 <span style={{ fontSize:14, color:T.blue, flexShrink:0 }}>⟵</span>
                 <div>
                   <span style={{ fontSize:10, color:T.blue, fontFamily:"'Space Mono', monospace", fontWeight:700 }}>MODEL 01 CONNECTION: </span>
-                  <span style={{ fontSize:11, color:T.textMid }}>Corridor P&L builds on the Model 01 margin waterfall. Gross revenue, rail cost, and exception data are sourced from the Profitability Engine baseline, ensuring consistent economic accounting across the framework.</span>
+                  <span style={{ fontSize:11, color:T.textMid }}>Flow Economics builds on the Model 01 margin waterfall. Gross revenue, rail cost, and exception data are sourced from the Profitability Engine baseline, ensuring consistent economic accounting across the framework.</span>
                 </div>
               </div>
               <div style={{ padding:"12px 16px", background:`${T.teal}10`, borderRadius:8, border:`1px solid ${T.teal}22`, display:"flex", gap:12, alignItems:"flex-start" }}>
@@ -748,8 +748,8 @@ export default function CorridorEconomicsAnalyzer() {
 
       {/* FOOTER */}
       <div style={{ borderTop:`1px solid ${T.border}`, padding:"14px 32px", display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:20 }}>
-        <span style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace", letterSpacing:"0.1em" }}>CORRIDOR ECONOMICS ANALYZER · MODEL 03 · NETWORK INTELLIGENCE · CARLOS UREÑA PAYMENTS STRATEGY</span>
-        <span style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>PROTOTYPE · SYNTHETIC DATA · 10 CORRIDORS · Q1 2025</span>
+        <span style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace", letterSpacing:"0.1em" }}>PAYMENT FLOW ANALYZER · MODEL 03 · FLOW INTELLIGENCE · CARLOS UREÑA PAYMENTS STRATEGY</span>
+        <span style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>PROTOTYPE · SYNTHETIC DATA · 10 FLOWS · Q1 2025</span>
       </div>
     </div>
   );
