@@ -18,16 +18,16 @@ const CLIENTS = [
 ];
 
 const CORRIDORS = [
-  { corridor: "US → EU", volume: 14200, grossRev: 1840000, railCost: 198000, conversionRevenue: 420000, nostro: 145000, compliance: 38000, exceptions: 42000 },
-  { corridor: "US → UK", volume: 8900, grossRev: 1120000, railCost: 148000, conversionRevenue: 280000, nostro: 98000, compliance: 29000, exceptions: 28000 },
-  { corridor: "US → SG", volume: 4100, grossRev: 710000, railCost: 108000, conversionRevenue: 195000, nostro: 88000, compliance: 42000, exceptions: 31000 },
-  { corridor: "US → IN", volume: 3800, grossRev: 480000, railCost: 118000, conversionRevenue: 92000, nostro: 112000, compliance: 58000, exceptions: 64000 },
-  { corridor: "US → AE", volume: 2900, grossRev: 620000, railCost: 98000, conversionRevenue: 148000, nostro: 95000, compliance: 48000, exceptions: 38000 },
-  { corridor: "US → MX", volume: 6200, grossRev: 390000, railCost: 68000, conversionRevenue: 58000, nostro: 42000, compliance: 28000, exceptions: 22000 },
-  { corridor: "US → JP", volume: 2100, grossRev: 580000, railCost: 88000, conversionRevenue: 168000, nostro: 78000, compliance: 35000, exceptions: 18000 },
-  { corridor: "US → HK", volume: 1800, grossRev: 490000, railCost: 78000, conversionRevenue: 145000, nostro: 72000, compliance: 38000, exceptions: 14000 },
-  { corridor: "US → BR", volume: 2400, grossRev: 310000, railCost: 88000, conversionRevenue: 42000, nostro: 95000, compliance: 68000, exceptions: 72000 },
-  { corridor: "US → NG", volume: 820, grossRev: 290000, railCost: 78000, conversionRevenue: 48000, nostro: 112000, compliance: 88000, exceptions: 98000 },
+  { flow: "US → EU", volume: 14200, grossRev: 1840000, railCost: 198000, conversionRevenue: 420000, liquidityCost: 145000, compliance: 38000, exceptions: 42000 },
+  { flow: "US → UK", volume: 8900, grossRev: 1120000, railCost: 148000, conversionRevenue: 280000, liquidityCost: 98000, compliance: 29000, exceptions: 28000 },
+  { flow: "US → SG", volume: 4100, grossRev: 710000, railCost: 108000, conversionRevenue: 195000, liquidityCost: 88000, compliance: 42000, exceptions: 31000 },
+  { flow: "US → IN", volume: 3800, grossRev: 480000, railCost: 118000, conversionRevenue: 92000, liquidityCost: 112000, compliance: 58000, exceptions: 64000 },
+  { flow: "US → AE", volume: 2900, grossRev: 620000, railCost: 98000, conversionRevenue: 148000, liquidityCost: 95000, compliance: 48000, exceptions: 38000 },
+  { flow: "US → MX", volume: 6200, grossRev: 390000, railCost: 68000, conversionRevenue: 58000, liquidityCost: 42000, compliance: 28000, exceptions: 22000 },
+  { flow: "US → JP", volume: 2100, grossRev: 580000, railCost: 88000, conversionRevenue: 168000, liquidityCost: 78000, compliance: 35000, exceptions: 18000 },
+  { flow: "US → HK", volume: 1800, grossRev: 490000, railCost: 78000, conversionRevenue: 145000, liquidityCost: 72000, compliance: 38000, exceptions: 14000 },
+  { flow: "US → BR", volume: 2400, grossRev: 310000, railCost: 88000, conversionRevenue: 42000, liquidityCost: 95000, compliance: 68000, exceptions: 72000 },
+  { flow: "US → NG", volume: 820, grossRev: 290000, railCost: 78000, conversionRevenue: 48000, liquidityCost: 112000, compliance: 88000, exceptions: 98000 },
 ];
 
 const RAIL_DATA = [
@@ -67,7 +67,7 @@ const netMargin = (c) =>
   c.grossRevenue + c.conversionRevenue - c.railCost - c.liquidityDrag - c.exceptions - c.supportCost;
 
 const netContribution = (c) =>
-  c.grossRev + c.conversionRevenue - c.railCost - c.nostro - c.compliance - c.exceptions;
+  c.grossRev + c.conversionRevenue - c.railCost - c.liquidityCost - c.compliance - c.exceptions;
 
 // ── COLOUR SYSTEM ────────────────────────────────────────────────────────────
 
@@ -144,7 +144,7 @@ export default function PaymentProfitabilityEngine() {
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedClient, setSelectedClient] = useState(null);
   const [sortBy, setSortBy] = useState("net");
-  const [hoveredCorridor, setHoveredCorridor] = useState(null);
+  const [hoveredFlow, setHoveredFlow] = useState(null);
 
   // Portfolio aggregates
   const portfolio = useMemo(() => {
@@ -173,13 +173,13 @@ export default function PaymentProfitabilityEngine() {
     ...c,
     net: netContribution(c),
     netPct: (netContribution(c) / (c.grossRev + c.conversionRevenue)) * 100,
-    costRatio: (c.railCost + c.nostro + c.compliance + c.exceptions) / (c.grossRev + c.conversionRevenue),
+    costRatio: (c.railCost + c.liquidityCost + c.compliance + c.exceptions) / (c.grossRev + c.conversionRevenue),
   })).sort((a, b) => b.net - a.net), []);
 
   // Waterfall for portfolio
   const waterfallTotal = portfolio.grossRevenue + portfolio.conversionRevenue;
 
-  const tabs = ["overview", "clients", "corridors", "rails", "trends"];
+  const tabs = ["overview", "clients", "flows", "rails", "trends"];
 
 return (
     <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "'DM Sans', sans-serif", color: C.text }}>
@@ -213,7 +213,7 @@ return (
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.green }} />
-            <span style={{ fontSize: 11, color: C.muted, fontFamily: "'DM Mono', monospace" }}>LIVE · Q1 2025 · 10 CLIENTS · {CORRIDORS.length} CORRIDORS</span>
+            <span style={{ fontSize: 11, color: C.muted, fontFamily: "'DM Mono', monospace" }}>LIVE · Q1 2025 · 10 CLIENTS · {CORRIDORS.length} FLOWS</span>
           </div>
         </div>
       </div>
@@ -260,7 +260,7 @@ return (
                 <WaterfallBar label="NET CONTRIBUTION" value={portfolio.net} isNet total={waterfallTotal} />
                 <div style={{ marginTop: 16, padding: "10px 14px", background: `${C.accent}0a`, borderRadius: 8, border: `1px solid ${C.accent}22` }}>
                   <span style={{ fontSize: 11, color: C.muted, fontFamily: "'DM Mono', monospace" }}>AI INSIGHT: </span>
-                  <span style={{ fontSize: 11, color: C.text }}>Liquidity drag represents <strong style={{ color: C.amber }}>{pct(portfolio.liquidityDrag, portfolio.grossRevenue + portfolio.conversionRevenue)}</strong> of gross revenue — the single largest margin compression driver after rail costs. Corridor prefunding optimization could recover <strong style={{ color: C.green }}>{fmt(portfolio.liquidityDrag * 0.22)}</strong> annually.</span>
+                  <span style={{ fontSize: 11, color: C.text }}>Liquidity drag represents <strong style={{ color: C.amber }}>{pct(portfolio.liquidityDrag, portfolio.grossRevenue + portfolio.conversionRevenue)}</strong> of gross revenue — the single largest margin compression driver after rail costs. Flow prefunding optimization could recover <strong style={{ color: C.green }}>{fmt(portfolio.liquidityDrag * 0.22)}</strong> annually.</span>
                 </div>
               </div>
 
@@ -391,7 +391,7 @@ return (
                   <span style={{ fontSize: 11, color: C.muted, fontFamily: "'DM Mono', monospace" }}>AI INSIGHT: </span>
                   <span style={{ fontSize: 11, color: C.text }}>
                     {selectedClient.exceptions / selectedClient.grossRevenue > 0.04
-                      ? `Exception cost ratio of ${pct(selectedClient.exceptions, selectedClient.grossRevenue)} is above portfolio average. Primary driver is likely ${selectedClient.corridors[selectedClient.corridors.length - 1]} corridor complexity. Operational review recommended.`
+                      ? `Exception cost ratio of ${pct(selectedClient.exceptions, selectedClient.grossRevenue)} is above portfolio average. Primary driver is likely ${selectedClient.corridors[selectedClient.corridors.length - 1]} flow complexity. Operational review recommended.`
                       : selectedClient.conversionRevenue / selectedClient.grossRevenue > 0.15
                       ? `FX margin contribution of ${pct(selectedClient.conversionRevenue, selectedClient.grossRevenue)} is a key value driver. Protect pricing in next renewal — this client has payment flow dependency and limited rate sensitivity.`
                       : `Net margin of ${selectedClient.netPct?.toFixed(1)}% is within portfolio range. Primary optimization lever is rail cost — evaluate eligibility for ACH or RTP migration on domestic flows.`}
@@ -402,20 +402,20 @@ return (
           </div>
         )}
 
-        {/* ── CORRIDORS TAB ── */}
-        {activeTab === "corridors" && (
+        {/* ── FLOWS TAB ── */}
+        {activeTab === "flows" && (
           <div className="fade-in">
-            <SectionHead title="Flow Economics" sub="Net contribution by currency corridor — growth, defend, optimize, exit classification" />
+            <SectionHead title="Flow Economics" sub="Net contribution by flow type — grow, defend, optimize, exit classification" />
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 16, marginBottom: 24 }}>
               {corridorData.map((c) => {
                 const netPct = c.netPct;
                 const quadrant = netPct > 40 ? { label: "GROW", color: C.green } : netPct > 25 ? { label: "DEFEND", color: C.accent } : netPct > 10 ? { label: "OPTIMIZE", color: C.amber } : { label: "DE-PRIORITIZE / EXIT", color: C.red };
                 const barFill = (c.net / corridorData[0].net) * 100;
                 return (
-                  <div key={c.corridor} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: 18, borderLeft: `3px solid ${quadrant.color}` }}>
+                  <div key={c.flow} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: 18, borderLeft: `3px solid ${quadrant.color}` }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                       <div>
-                        <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Syne', sans-serif", color: C.text }}>{c.corridor}</div>
+                        <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Syne', sans-serif", color: C.text }}>{c.flow}</div>
                         <div style={{ fontSize: 10, color: C.muted, fontFamily: "'DM Mono', monospace", marginTop: 2 }}>{c.volume.toLocaleString()} txns · avg {fmt(Math.round((c.grossRev + c.conversionRevenue) / c.volume))} / txn</div>
                       </div>
                       <Tag label={quadrant.label} color={quadrant.color} />
@@ -423,7 +423,7 @@ return (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8, marginBottom: 12 }}>
                       {[
                         { l: "Gross Rev", v: fmt(c.grossRev + c.conversionRevenue), c: C.accent },
-                        { l: "Rail + Nostro", v: fmt(c.railCost + c.nostro), c: C.red },
+                        { l: "Rail + Liquidity", v: fmt(c.railCost + c.liquidityCost), c: C.red },
                         { l: "Compliance", v: fmt(c.compliance + c.exceptions), c: C.amber },
                         { l: "Net", v: fmt(c.net), c: c.net > 0 ? C.green : C.red },
                       ].map(m => (
@@ -446,13 +446,13 @@ return (
 
             {/* Strategy matrix summary */}
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20 }}>
-              <SectionHead title="Portfolio Strategy Matrix" sub="AI-generated corridor investment recommendations" />
+              <SectionHead title="Portfolio Strategy Matrix" sub="AI-generated flow investment recommendations" />
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
                 {[
-                  { label: "GROW", color: C.green, items: corridorData.filter(c => c.netPct > 40).map(c => c.corridor), desc: "High margin, invest in volume growth" },
-                  { label: "DEFEND", color: C.accent, items: corridorData.filter(c => c.netPct > 25 && c.netPct <= 40).map(c => c.corridor), desc: "Solid economics, protect pricing" },
-                  { label: "OPTIMIZE", color: C.amber, items: corridorData.filter(c => c.netPct > 10 && c.netPct <= 25).map(c => c.corridor), desc: "Margin pressure — review costs" },
-                  { label: "EXIT", color: C.red, items: corridorData.filter(c => c.netPct <= 10).map(c => c.corridor), desc: "Below threshold — de-prioritize or exit" },
+                  { label: "GROW", color: C.green, items: corridorData.filter(c => c.netPct > 40).map(c => c.flow), desc: "High margin, invest in volume growth" },
+                  { label: "DEFEND", color: C.accent, items: corridorData.filter(c => c.netPct > 25 && c.netPct <= 40).map(c => c.flow), desc: "Solid economics, protect pricing" },
+                  { label: "OPTIMIZE", color: C.amber, items: corridorData.filter(c => c.netPct > 10 && c.netPct <= 25).map(c => c.flow), desc: "Margin pressure — review costs" },
+                  { label: "EXIT", color: C.red, items: corridorData.filter(c => c.netPct <= 10).map(c => c.flow), desc: "Below threshold — de-prioritize or exit" },
                 ].map(q => (
                   <div key={q.label} style={{ background: C.surface, borderRadius: 8, padding: 16, border: `1px solid ${q.color}33` }}>
                     <Tag label={q.label} color={q.color} />
@@ -548,7 +548,7 @@ return (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
                 {[
                   { icon: "↗", color: C.green, title: "Revenue Momentum", body: "Gross revenue grew 62.0% over the 12-month period with net margin compressing from 22.0% to 21.8% — slight margin pressure despite strong volume growth, consistent with rail cost inflation on SWIFT MX flows." },
-                  { icon: "⚠", color: C.amber, title: "Margin Compression Risk", body: "October exception spike of $61K correlates with new corridor onboarding. Exception costs have since trended down 49% — structural improvement, not seasonal. Recommend STP target of 97.5% for SWIFT corridors." },
+                  { icon: "⚠", color: C.amber, title: "Margin Compression Risk", body: "October exception spike of $61K correlates with new flow onboarding. Exception costs have since trended down 49% — structural improvement, not seasonal. Recommend STP target of 97.5% for SWIFT flows." },
                   { icon: "◎", color: C.accent, title: "Optimization Opportunity", body: "FedNow and RTP adoption remain underweight relative to eligible volume. Migrating 20% of low-value wire volume to instant rails would reduce rail cost by an estimated $118K annually at current volumes." },
                 ].map(n => (
                   <div key={n.title} style={{ background: C.surface, borderRadius: 8, padding: 16, border: `1px solid ${n.color}33` }}>
