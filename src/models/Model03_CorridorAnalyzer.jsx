@@ -35,14 +35,14 @@ const T = {
 
 // ─── CORRIDOR DATA ──────────────────────────────────────────────────────────
 // Full economics per flow — built on Model 01 flow economics foundation
-const CORRIDORS = [
+const FLOWS = [
   {
     id: "US-EU", from: "United States", to: "Eurozone", flag_from: "🇺🇸", flag_to: "🇪🇺",
     currency: "USD/EUR", fxPair: "EURUSD",
-    volume: 14200, avgTicket: 129577, grossFee: 1840000, fxMargin: 420000,
+    volume: 14200, avgTicket: 129577, grossFee: 1840000, conversionRevenue: 420000,
     railCost: 198000, liquidityCost: 145000, intermediaryCost: 68000, compliance: 38000, exceptions: 42000,
     fxVolatility: 7.2, competitorCount: 8, marketSharePct: 12.4,
-    growthRate: 14.2, regulatoryRisk: "Low", corridorMaturity: "Mature",
+    growthRate: 14.2, regulatoryRisk: "Low", flowMaturity: "Established",
     keyDrivers: ["EUR trade flows", "Intra-company transfers", "EU payroll"],
     fxSpreadBps: 18, liquidityTurnDays: 1.8, exceptionRatePct: 2.1,
     trend: [380,410,395,428,442,460,448,471,490,512,498,420],
@@ -50,10 +50,10 @@ const CORRIDORS = [
   {
     id: "US-UK", from: "United States", to: "United Kingdom", flag_from: "🇺🇸", flag_to: "🇬🇧",
     currency: "USD/GBP", fxPair: "GBPUSD",
-    volume: 8900, avgTicket: 125843, grossFee: 1120000, fxMargin: 280000,
+    volume: 8900, avgTicket: 125843, grossFee: 1120000, conversionRevenue: 280000,
     railCost: 148000, liquidityCost: 98000, intermediaryCost: 44000, compliance: 29000, exceptions: 28000,
     fxVolatility: 8.8, competitorCount: 10, marketSharePct: 9.8,
-    growthRate: 8.4, regulatoryRisk: "Medium", corridorMaturity: "Mature",
+    growthRate: 8.4, regulatoryRisk: "Medium", flowMaturity: "Established",
     keyDrivers: ["Post-Brexit trade", "Financial services", "Real estate"],
     fxSpreadBps: 15, liquidityTurnDays: 1.2, exceptionRatePct: 1.8,
     trend: [210,224,218,235,242,251,238,261,270,284,268,253],
@@ -61,10 +61,10 @@ const CORRIDORS = [
   {
     id: "US-SG", from: "United States", to: "Singapore", flag_from: "🇺🇸", flag_to: "🇸🇬",
     currency: "USD/SGD", fxPair: "USDSGD",
-    volume: 4100, avgTicket: 173170, grossFee: 710000, fxMargin: 195000,
+    volume: 4100, avgTicket: 173170, grossFee: 710000, conversionRevenue: 195000,
     railCost: 108000, liquidityCost: 88000, intermediaryCost: 52000, compliance: 42000, exceptions: 31000,
     fxVolatility: 4.2, competitorCount: 6, marketSharePct: 14.2,
-    growthRate: 22.8, regulatoryRisk: "Low", corridorMaturity: "Growing",
+    growthRate: 22.8, regulatoryRisk: "Low", flowMaturity: "Expanding",
     keyDrivers: ["APAC treasury hubs", "Tech sector", "Private wealth"],
     fxSpreadBps: 22, liquidityTurnDays: 2.1, exceptionRatePct: 2.8,
     trend: [98,105,112,118,128,136,142,151,162,174,180,195],
@@ -72,10 +72,10 @@ const CORRIDORS = [
   {
     id: "US-IN", from: "United States", to: "India", flag_from: "🇺🇸", flag_to: "🇮🇳",
     currency: "USD/INR", fxPair: "USDINR",
-    volume: 3800, avgTicket: 126315, grossFee: 480000, fxMargin: 92000,
+    volume: 3800, avgTicket: 126315, grossFee: 480000, conversionRevenue: 92000,
     railCost: 118000, liquidityCost: 112000, intermediaryCost: 78000, compliance: 58000, exceptions: 64000,
     fxVolatility: 6.8, competitorCount: 14, marketSharePct: 4.2,
-    growthRate: 18.4, regulatoryRisk: "High", corridorMaturity: "Growing",
+    growthRate: 18.4, regulatoryRisk: "High", flowMaturity: "Expanding",
     keyDrivers: ["IT services", "Remittance", "Shared service centers"],
     fxSpreadBps: 28, liquidityTurnDays: 3.4, exceptionRatePct: 7.8,
     trend: [62,68,72,78,82,88,84,92,96,98,102,104],
@@ -83,10 +83,10 @@ const CORRIDORS = [
   {
     id: "US-AE", from: "United States", to: "UAE", flag_from: "🇺🇸", flag_to: "🇦🇪",
     currency: "USD/AED", fxPair: "USDAED",
-    volume: 2900, avgTicket: 213793, grossFee: 620000, fxMargin: 148000,
+    volume: 2900, avgTicket: 213793, grossFee: 620000, conversionRevenue: 148000,
     railCost: 98000, liquidityCost: 95000, intermediaryCost: 48000, compliance: 48000, exceptions: 38000,
     fxVolatility: 0.8, competitorCount: 7, marketSharePct: 11.2,
-    growthRate: 28.4, regulatoryRisk: "Medium", corridorMaturity: "Growing",
+    growthRate: 28.4, regulatoryRisk: "Medium", flowMaturity: "Expanding",
     keyDrivers: ["Energy sector", "Real estate", "Trade finance"],
     fxSpreadBps: 12, liquidityTurnDays: 1.4, exceptionRatePct: 3.8,
     trend: [88,95,102,110,118,124,132,140,148,158,164,174],
@@ -94,10 +94,10 @@ const CORRIDORS = [
   {
     id: "US-MX", from: "United States", to: "Mexico", flag_from: "🇺🇸", flag_to: "🇲🇽",
     currency: "USD/MXN", fxPair: "USDMXN",
-    volume: 6200, avgTicket: 62903, grossFee: 390000, fxMargin: 58000,
+    volume: 6200, avgTicket: 62903, grossFee: 390000, conversionRevenue: 58000,
     railCost: 68000, liquidityCost: 42000, intermediaryCost: 28000, compliance: 28000, exceptions: 22000,
     fxVolatility: 14.8, competitorCount: 18, marketSharePct: 5.8,
-    growthRate: 6.2, regulatoryRisk: "Medium", corridorMaturity: "Mature",
+    growthRate: 6.2, regulatoryRisk: "Medium", flowMaturity: "Established",
     keyDrivers: ["USMCA trade", "Manufacturing payroll", "Nearshoring"],
     fxSpreadBps: 35, liquidityTurnDays: 1.1, exceptionRatePct: 2.2,
     trend: [58,62,60,64,66,68,65,70,72,68,71,73],
@@ -105,10 +105,10 @@ const CORRIDORS = [
   {
     id: "US-JP", from: "United States", to: "Japan", flag_from: "🇺🇸", flag_to: "🇯🇵",
     currency: "USD/JPY", fxPair: "USDJPY",
-    volume: 2100, avgTicket: 276190, grossFee: 580000, fxMargin: 168000,
+    volume: 2100, avgTicket: 276190, grossFee: 580000, conversionRevenue: 168000,
     railCost: 88000, liquidityCost: 78000, intermediaryCost: 42000, compliance: 35000, exceptions: 18000,
     fxVolatility: 11.2, competitorCount: 5, marketSharePct: 16.8,
-    growthRate: 4.8, regulatoryRisk: "Low", corridorMaturity: "Mature",
+    growthRate: 4.8, regulatoryRisk: "Low", flowMaturity: "Established",
     keyDrivers: ["Automotive supply chain", "Electronics", "Investment flows"],
     fxSpreadBps: 14, liquidityTurnDays: 1.6, exceptionRatePct: 1.2,
     trend: [118,124,130,136,142,148,144,150,156,162,158,154],
@@ -116,10 +116,10 @@ const CORRIDORS = [
   {
     id: "US-HK", from: "United States", to: "Hong Kong", flag_from: "🇺🇸", flag_to: "🇭🇰",
     currency: "USD/HKD", fxPair: "USDHKD",
-    volume: 1800, avgTicket: 272222, grossFee: 490000, fxMargin: 145000,
+    volume: 1800, avgTicket: 272222, grossFee: 490000, conversionRevenue: 145000,
     railCost: 78000, liquidityCost: 72000, intermediaryCost: 38000, compliance: 38000, exceptions: 14000,
     fxVolatility: 0.5, competitorCount: 6, marketSharePct: 18.4,
-    growthRate: 3.2, regulatoryRisk: "Medium", corridorMaturity: "Mature",
+    growthRate: 3.2, regulatoryRisk: "Medium", flowMaturity: "Established",
     keyDrivers: ["Capital markets", "Private banking", "Trade finance"],
     fxSpreadBps: 8, liquidityTurnDays: 1.2, exceptionRatePct: 1.0,
     trend: [108,112,116,120,124,128,122,128,132,135,132,130],
@@ -127,10 +127,10 @@ const CORRIDORS = [
   {
     id: "US-BR", from: "United States", to: "Brazil", flag_from: "🇺🇸", flag_to: "🇧🇷",
     currency: "USD/BRL", fxPair: "USDBRL",
-    volume: 2400, avgTicket: 129166, grossFee: 310000, fxMargin: 42000,
+    volume: 2400, avgTicket: 129166, grossFee: 310000, conversionRevenue: 42000,
     railCost: 88000, liquidityCost: 95000, intermediaryCost: 62000, compliance: 68000, exceptions: 72000,
     fxVolatility: 18.4, competitorCount: 12, marketSharePct: 3.8,
-    growthRate: 9.8, regulatoryRisk: "High", corridorMaturity: "Developing",
+    growthRate: 9.8, regulatoryRisk: "High", flowMaturity: "Emerging",
     keyDrivers: ["Commodities", "Consumer goods", "Agribusiness"],
     fxSpreadBps: 48, liquidityTurnDays: 4.2, exceptionRatePct: 9.4,
     trend: [38,40,42,44,48,46,50,52,48,54,52,56],
@@ -138,10 +138,10 @@ const CORRIDORS = [
   {
     id: "US-NG", from: "United States", to: "Nigeria", flag_from: "🇺🇸", flag_to: "🇳🇬",
     currency: "USD/NGN", fxPair: "USDNGN",
-    volume: 820, avgTicket: 353658, grossFee: 290000, fxMargin: 48000,
+    volume: 820, avgTicket: 353658, grossFee: 290000, conversionRevenue: 48000,
     railCost: 78000, liquidityCost: 112000, intermediaryCost: 88000, compliance: 88000, exceptions: 98000,
     fxVolatility: 32.8, competitorCount: 4, marketSharePct: 8.2,
-    growthRate: 14.8, regulatoryRisk: "Very High", corridorMaturity: "Developing",
+    growthRate: 14.8, regulatoryRisk: "Very High", flowMaturity: "Emerging",
     keyDrivers: ["Energy sector", "Trade finance", "Diaspora flows"],
     fxSpreadBps: 68, liquidityTurnDays: 6.8, exceptionRatePct: 14.2,
     trend: [28,30,32,34,36,34,38,36,40,38,42,44],
@@ -149,9 +149,9 @@ const CORRIDORS = [
 ];
 
 // ─── DERIVED ANALYTICS ──────────────────────────────────────────────────────
-const withAnalytics = CORRIDORS.map(c => {
+const withAnalytics = FLOWS.map(c => {
   const totalCost = c.railCost + c.liquidityCost + c.intermediaryCost + c.compliance + c.exceptions;
-  const grossRevenue = c.grossFee + c.fxMargin;
+  const grossRevenue = c.grossFee + c.conversionRevenue;
   const net = grossRevenue - totalCost;
   const netMarginPct = (net / grossRevenue) * 100;
   const costRatioPct = (totalCost / grossRevenue) * 100;
@@ -169,7 +169,7 @@ const withAnalytics = CORRIDORS.map(c => {
     classDesc = "High margin, mature — protect pricing and share";
   } else if (netMarginPct > 20 && c.growthRate > 10) {
     classification = "OPTIMIZE"; classColor = T.amber;
-    classDesc = "Growth corridor — improve cost structure to unlock margin";
+    classDesc = "Growth flow — improve cost structure to unlock margin";
   } else if (netMarginPct > 20) {
     classification = "OPTIMIZE"; classColor = T.amber;
     classDesc = "Adequate margin — operational efficiency opportunity";
@@ -187,8 +187,8 @@ const portfolio = withAnalytics.reduce((acc, c) => ({
   totalCost: acc.totalCost + c.totalCost,
   net: acc.net + c.net,
   volume: acc.volume + c.volume,
-  fxMargin: acc.fxMargin + c.fxMargin,
-}), { grossRevenue: 0, totalCost: 0, net: 0, volume: 0, fxMargin: 0 });
+  conversionRevenue: acc.conversionRevenue + c.conversionRevenue,
+}), { grossRevenue: 0, totalCost: 0, net: 0, volume: 0, conversionRevenue: 0 });
 portfolio.netMarginPct = (portfolio.net / portfolio.grossRevenue) * 100;
 
 // Classification counts
@@ -256,7 +256,7 @@ const Sparkline = ({ data, color }) => {
 };
 
 // Custom scatter tooltip
-const CorridorTooltip = ({ active, payload }) => {
+const FlowTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null;
   const d = payload[0]?.payload;
   if (!d) return null;
@@ -272,9 +272,9 @@ const CorridorTooltip = ({ active, payload }) => {
 };
 
 // ─── MAIN ───────────────────────────────────────────────────────────────────
-export default function CorridorEconomicsAnalyzer() {
+export default function PaymentFlowAnalyzer() {
   const [activeTab, setActiveTab] = useState("overview");
-  const [selectedCorridor, setSelectedCorridor] = useState(withAnalytics[0]);
+  const [selectedFlow, setSelectedFlow] = useState(withAnalytics[0]);
   const [sortBy, setSortBy] = useState("net");
   const [filterClass, setFilterClass] = useState("all");
 
@@ -289,12 +289,12 @@ export default function CorridorEconomicsAnalyzer() {
   }, [sortBy, filterClass]);
 
   // Cost breakdown chart data for selected corridor
-  const costBreakdown = selectedCorridor ? [
-    { name: "Rail Cost",     value: selectedCorridor.railCost,       color: T.red   },
-    { name: "Liquidity cost",value: selectedCorridor.liquidityCost,         color: T.amber },
-    { name: "Correspondent", value: selectedCorridor.intermediaryCost,  color: T.blue  },
-    { name: "Compliance",    value: selectedCorridor.compliance,     color: "#A78BFA"},
-    { name: "Exceptions",    value: selectedCorridor.exceptions,     color: T.red   },
+  const costBreakdown = selectedFlow ? [
+    { name: "Rail Cost",     value: selectedFlow.railCost,       color: T.red   },
+    { name: "Liquidity cost",value: selectedFlow.liquidityCost,         color: T.amber },
+    { name: "Intermediary cost", value: selectedFlow.intermediaryCost,  color: T.blue  },
+    { name: "Compliance",    value: selectedFlow.compliance,     color: "#A78BFA"},
+    { name: "Exceptions",    value: selectedFlow.exceptions,     color: T.red   },
   ] : [];
 
   // Scatter data: x=growthRate, y=netMarginPct, z=volume
@@ -302,7 +302,7 @@ export default function CorridorEconomicsAnalyzer() {
     ...c, x: c.growthRate, y: c.netMarginPct, z: c.volume / 200
   }));
 
-  const tabs = ["overview", "corridors", "deep-dive", "matrix"];
+  const tabs = ["overview", "flows", "deep-dive", "matrix"];
 
  return (
     <div style={{ minHeight: "100vh", background: T.bg, fontFamily: "'DM Sans', sans-serif", color: T.text }}>
@@ -338,7 +338,7 @@ export default function CorridorEconomicsAnalyzer() {
           </div>
           <div style={{ display: "flex", gap: 28 }}>
             {[
-              { l: "CORRIDORS", v: CORRIDORS.length },
+              { l: "FLOWS", v: FLOWS.length },
               { l: "TOTAL VOLUME", v: `${(portfolio.volume/1000).toFixed(0)}K txns` },
               { l: "PORTFOLIO NET", v: fmt(portfolio.net) },
               { l: "AVG NET MARGIN", v: fmtPct(portfolio.netMarginPct) },
@@ -358,7 +358,7 @@ export default function CorridorEconomicsAnalyzer() {
           {tabs.map(t => (
             <button key={t} className="tab-btn" onClick={() => setActiveTab(t)}
               style={{ color: activeTab === t ? T.gold : T.textFaint, borderBottomColor: activeTab === t ? T.gold : "transparent", fontWeight: activeTab === t ? 700 : 400 }}>
-              {t === "overview" ? "Portfolio Overview" : t === "corridors" ? "Corridor Rankings" : t === "deep-dive" ? "Corridor Deep Dive" : "Strategy Matrix"}
+              {t === "overview" ? "Portfolio Overview" : t === "flows" ? "Flow Rankings" : t === "deep-dive" ? "Flow Deep Dive" : "Strategy Matrix"}
             </button>
           ))}
         </div>
@@ -373,16 +373,16 @@ export default function CorridorEconomicsAnalyzer() {
             {/* KPI strip */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, marginBottom: 24 }}>
               <KpiCard label="Gross Revenue" value={fmt(portfolio.grossRevenue)} sub="Fees + FX margin" accent={T.gold} />
-              <KpiCard label="Conversion & spread revenue" value={fmt(portfolio.fxMargin)} sub={fmtPct(portfolio.fxMargin/portfolio.grossRevenue*100) + " of gross revenue"} accent={T.teal} />
+              <KpiCard label="Conversion & spread revenue" value={fmt(portfolio.conversionRevenue)} sub={fmtPct(portfolio.conversionRevenue/portfolio.grossRevenue*100) + " of gross revenue"} accent={T.teal} />
               <KpiCard label="Total Cost Base" value={fmt(portfolio.totalCost)} sub="Rail + liquidity + compliance + exceptions" accent={T.red} />
               <KpiCard label="Net Contribution" value={fmt(portfolio.net)} sub={fmtPct(portfolio.netMarginPct) + " net margin"} accent={T.green} />
-              <KpiCard label="Total Volume" value={`${(portfolio.volume/1000).toFixed(1)}K`} sub="Transactions across all corridors" accent={T.blue} />
+              <KpiCard label="Total Volume" value={`${(portfolio.volume/1000).toFixed(1)}K`} sub="Transactions across all flows" accent={T.blue} />
             </div>
 
             {/* Growth vs margin scatter + classification counts */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20, marginBottom: 20 }}>
               <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 24 }}>
-                <SectionTitle sub="Bubble size = transaction volume">Growth Rate vs. Net Margin — Corridor Positioning</SectionTitle>
+                <SectionTitle sub="Bubble size = transaction volume">Growth Rate vs. Net Margin — Flow Positioning</SectionTitle>
                 <ResponsiveContainer width="100%" height={320}>
                   <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke={T.grid} />
@@ -393,7 +393,7 @@ export default function CorridorEconomicsAnalyzer() {
                       tick={{ fill: T.textFaint, fontSize: 10, fontFamily: "'Space Mono', monospace" }}
                       label={{ value: "Net Margin (%)", angle: -90, position: "insideLeft", style: { fill: T.textFaint, fontSize: 10, fontFamily: "'Space Mono', monospace" } }} />
                     <ZAxis dataKey="z" range={[40, 400]} />
-                    <Tooltip content={<CorridorTooltip />} />
+                    <Tooltip content={<FlowTooltip />} />
                     {/* Quadrant lines */}
                     <Scatter data={scatterData} shape={(props) => {
                       const { cx, cy, payload } = props;
@@ -420,19 +420,19 @@ export default function CorridorEconomicsAnalyzer() {
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 <SectionTitle>Strategy Classification</SectionTitle>
                 {[
-                  { cls: "GROW", color: T.green, corridors: withAnalytics.filter(c=>c.classification==="GROW"), desc: "High margin + high growth — invest" },
-                  { cls: "DEFEND", color: T.teal, corridors: withAnalytics.filter(c=>c.classification==="DEFEND"), desc: "Mature + profitable — protect" },
-                  { cls: "OPTIMIZE", color: T.amber, corridors: withAnalytics.filter(c=>c.classification==="OPTIMIZE"), desc: "Margin pressure — restructure costs" },
-                  { cls: "DE-PRIORITIZE / EXIT", color: T.red, corridors: withAnalytics.filter(c=>c.classification==="DE-PRIORITIZE / EXIT"), desc: "Below threshold — act now" },
+                  { cls: "GROW", color: T.green, flows: withAnalytics.filter(c=>c.classification==="GROW"), desc: "High margin + high growth — invest" },
+                  { cls: "DEFEND", color: T.teal, flows: withAnalytics.filter(c=>c.classification==="DEFEND"), desc: "Mature + profitable — protect" },
+                  { cls: "OPTIMIZE", color: T.amber, flows: withAnalytics.filter(c=>c.classification==="OPTIMIZE"), desc: "Margin pressure — restructure costs" },
+                  { cls: "DE-PRIORITIZE / EXIT", color: T.red, flows: withAnalytics.filter(c=>c.classification==="DE-PRIORITIZE / EXIT"), desc: "Below threshold — act now" },
                 ].map(q => (
                   <div key={q.cls} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: "14px 16px", borderLeft: `3px solid ${q.color}` }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                       <ClassBadge label={q.cls} color={q.color} />
-                      <span style={{ fontSize: 18, fontWeight: 700, color: q.color, fontFamily: "'Cormorant Garamond', serif" }}>{q.corridors.length}</span>
+                      <span style={{ fontSize: 18, fontWeight: 700, color: q.color, fontFamily: "'Cormorant Garamond', serif" }}>{q.flows.length}</span>
                     </div>
                     <div style={{ fontSize: 10, color: T.textFaint, fontFamily: "'Space Mono', monospace", marginBottom: 6 }}>{q.desc}</div>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                      {q.corridors.map(c => (
+                      {q.flows.map(c => (
                         <span key={c.id} style={{ fontSize: 10, color: T.textMid }}>{c.flag_from}→{c.flag_to}</span>
                       ))}
                     </div>
@@ -443,9 +443,9 @@ export default function CorridorEconomicsAnalyzer() {
 
             {/* Portfolio waterfall */}
             <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 24 }}>
-              <SectionTitle>Portfolio Corridor Margin Waterfall</SectionTitle>
+              <SectionTitle>Portfolio Flow Margin Waterfall</SectionTitle>
               <WaterfallRow label="Gross Fee Revenue" value={withAnalytics.reduce((s,c)=>s+c.grossFee,0)} isPositive base={portfolio.grossRevenue} />
-              <WaterfallRow label="+ FX Margin" value={portfolio.fxMargin} isPositive base={portfolio.grossRevenue} />
+              <WaterfallRow label="+ Conversion & spread revenue (where applicable)" value={portfolio.conversionRevenue} isPositive base={portfolio.grossRevenue} />
               <div style={{ borderTop: `1px dashed ${T.border}`, margin: "10px 0" }} />
               <WaterfallRow label="− Rail Costs" value={-withAnalytics.reduce((s,c)=>s+c.railCost,0)} base={portfolio.grossRevenue} />
               <WaterfallRow label="− Liquidity cost" value={-withAnalytics.reduce((s,c)=>s+c.liquidityCost,0)} base={portfolio.grossRevenue} />
@@ -458,8 +458,8 @@ export default function CorridorEconomicsAnalyzer() {
           </div>
         )}
 
-        {/* ══ CORRIDOR RANKINGS ══════════════════════════════════════════ */}
-        {activeTab === "corridors" && (
+        {/* ══ FLOW RANKINGS ══════════════════════════════════════════ */}
+        {activeTab === "flows" && (
           <div className="fade-up">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
               <SectionTitle>Flow Economics Rankings</SectionTitle>
@@ -482,7 +482,7 @@ export default function CorridorEconomicsAnalyzer() {
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ background: "#0A0E14" }}>
-                    {["#","Corridor","Currency","Volume","Gross Rev","Conversion & spread revenue","Total Cost","Net","Margin %","Growth","FX Volatility","Classification","Trend"].map(h=>(
+                    {["#","Flow","Currency","Volume","Gross Rev","Conversion & spread revenue","Total Cost","Net","Margin %","Growth","FX Volatility","Classification","Trend"].map(h=>(
                       <th key={h} style={{ padding:"9px 12px", textAlign:"left", fontSize:8, color:T.textFaint, fontFamily:"'Space Mono', monospace", letterSpacing:"0.1em", borderBottom:`1px solid ${T.border}`, whiteSpace:"nowrap" }}>{h}</th>
                     ))}
                   </tr>
@@ -490,8 +490,8 @@ export default function CorridorEconomicsAnalyzer() {
                 <tbody>
                   {sorted.map((c, i) => (
                     <tr key={c.id} className="corr-row"
-                      onClick={() => { setSelectedCorridor(c); setActiveTab("deep-dive"); }}
-                      style={{ background: selectedCorridor?.id===c.id ? `${T.gold}08` : i%2===0 ? T.card : T.surface, borderBottom:`1px solid ${T.grid}`, borderLeft: selectedCorridor?.id===c.id ? `3px solid ${T.gold}` : "3px solid transparent" }}>
+                      onClick={() => { setSelectedFlow(c); setActiveTab("deep-dive"); }}
+                      style={{ background: selectedFlow?.id===c.id ? `${T.gold}08` : i%2===0 ? T.card : T.surface, borderBottom:`1px solid ${T.grid}`, borderLeft: selectedFlow?.id===c.id ? `3px solid ${T.gold}` : "3px solid transparent" }}>
                       <td style={{ padding:"11px 12px", fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>{String(i+1).padStart(2,"0")}</td>
                       <td style={{ padding:"11px 12px" }}>
                         <div style={{ fontSize:13, fontWeight:500, color:T.text }}>{c.flag_from} → {c.flag_to}</div>
@@ -500,7 +500,7 @@ export default function CorridorEconomicsAnalyzer() {
                       <td style={{ padding:"11px 12px", fontSize:10, color:T.textMid, fontFamily:"'Space Mono', monospace" }}>{c.currency}</td>
                       <td style={{ padding:"11px 12px", fontSize:10, color:T.text, fontFamily:"'Space Mono', monospace" }}>{c.volume.toLocaleString()}</td>
                       <td style={{ padding:"11px 12px", fontSize:11, color:T.text, fontFamily:"'Space Mono', monospace" }}>{fmt(c.grossRevenue)}</td>
-                      <td style={{ padding:"11px 12px", fontSize:11, color:T.teal, fontFamily:"'Space Mono', monospace" }}>{fmt(c.fxMargin)}</td>
+                      <td style={{ padding:"11px 12px", fontSize:11, color:T.teal, fontFamily:"'Space Mono', monospace" }}>{fmt(c.conversionRevenue)}</td>
                       <td style={{ padding:"11px 12px", fontSize:11, color:T.red, fontFamily:"'Space Mono', monospace" }}>{fmt(c.totalCost)}</td>
                       <td style={{ padding:"11px 12px", fontSize:12, fontWeight:700, color:c.net>0?T.green:T.red, fontFamily:"'Cormorant Garamond', serif" }}>{fmt(c.net)}</td>
                       <td style={{ padding:"11px 12px", fontSize:11, color:c.netMarginPct>35?T.green:c.netMarginPct>20?T.amber:T.red, fontFamily:"'Space Mono', monospace" }}>{fmtPct(c.netMarginPct)}</td>
@@ -515,40 +515,40 @@ export default function CorridorEconomicsAnalyzer() {
                 </tbody>
               </table>
             </div>
-            <div style={{ marginTop:12, fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>Click any corridor to open the Deep Dive analysis →</div>
+            <div style={{ marginTop:12, fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>Click any flow to open the Deep Dive analysis →</div>
           </div>
         )}
 
         {/* ══ DEEP DIVE ══════════════════════════════════════════════════ */}
-        {activeTab === "deep-dive" && selectedCorridor && (
+        {activeTab === "deep-dive" && selectedFlow && (
           <div className="fade-up">
-            {/* Corridor header */}
+            {/* Flow header */
             <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 24, marginBottom: 20 }}>
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:16 }}>
                 <div>
                   <div style={{ fontSize:28, fontWeight:700, fontFamily:"'Cormorant Garamond', serif", color:T.text, marginBottom:4 }}>
-                    {selectedCorridor.flag_from} {selectedCorridor.from} → {selectedCorridor.flag_to} {selectedCorridor.to}
+                    {selectedFlow.flag_from} {selectedFlow.from} → {selectedFlow.flag_to} {selectedFlow.to}
                   </div>
                   <div style={{ display:"flex", gap:8, alignItems:"center" }}>
-                    <span style={{ fontSize:11, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>{selectedCorridor.currency} · {selectedCorridor.fxPair} · {selectedCorridor.corridorMaturity}</span>
-                    <ClassBadge label={selectedCorridor.classification} color={selectedCorridor.classColor} />
-                    <span style={{ fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>Regulatory Risk: <span style={{ color: selectedCorridor.regulatoryRisk==="Low"?T.green:selectedCorridor.regulatoryRisk==="Medium"?T.amber:T.red }}>{selectedCorridor.regulatoryRisk}</span></span>
+                    <span style={{ fontSize:11, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>{selectedFlow.currency} · {selectedFlow.fxPair} · {selectedFlow.flowMaturity}</span>
+                    <ClassBadge label={selectedFlow.classification} color={selectedFlow.classColor} />
+                    <span style={{ fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>Regulatory Risk: <span style={{ color: selectedFlow.regulatoryRisk==="Low"?T.green:selectedFlow.regulatoryRisk==="Medium"?T.amber:T.red }}>{selectedFlow.regulatoryRisk}</span></span>
                   </div>
                 </div>
                 <div style={{ textAlign:"right" }}>
-                  <div style={{ fontSize:32, fontWeight:700, fontFamily:"'Cormorant Garamond', serif", color:selectedCorridor.net>0?T.green:T.red }}>{fmt(selectedCorridor.net)}</div>
-                  <div style={{ fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>net contribution · {fmtPct(selectedCorridor.netMarginPct)} margin</div>
+                  <div style={{ fontSize:32, fontWeight:700, fontFamily:"'Cormorant Garamond', serif", color:selectedFlow.net>0?T.green:T.red }}>{fmt(selectedFlow.net)}</div>
+                  <div style={{ fontSize:10, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>net contribution · {fmtPct(selectedFlow.netMarginPct)} margin</div>
                 </div>
               </div>
 
               <div style={{ display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:12 }}>
                 {[
-                  { l:"Volume", v:selectedCorridor.volume.toLocaleString() },
-                  { l:"Avg Ticket", v:fmt(selectedCorridor.avgTicket) },
-                  { l:"FX Spread", v:`${selectedCorridor.fxSpreadBps} bps` },
-                  { l:"FX Volatility", v:`σ ${selectedCorridor.fxVolatility}%` },
-                  { l:"Liquidity Turn Days", v:`${selectedCorridor.liquidityTurnDays}d` },
-                  { l:"Exception Rate", v:`${selectedCorridor.exceptionRatePct}%` },
+                  { l:"Volume", v:selectedFlow.volume.toLocaleString() },
+                  { l:"Avg Ticket", v:fmt(selectedFlow.avgTicket) },
+                  { l:"FX Spread", v:`${selectedFlow.fxSpreadBps} bps` },
+                  { l:"FX Volatility", v:`σ ${selectedFlow.fxVolatility}%` },
+                  { l:"Liquidity Turn Days", v:`${selectedFlow.liquidityTurnDays}d` },
+                  { l:"Exception Rate", v:`${selectedFlow.exceptionRatePct}%` },
                 ].map(m=>(
                   <div key={m.l} style={{ background:T.card, borderRadius:6, padding:"10px 12px" }}>
                     <div style={{ fontSize:9, color:T.textFaint, fontFamily:"'Space Mono', monospace", marginBottom:4 }}>{m.l}</div>
@@ -561,17 +561,17 @@ export default function CorridorEconomicsAnalyzer() {
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20, marginBottom:20 }}>
               {/* Cost waterfall */}
               <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:24 }}>
-                <SectionTitle>Corridor Margin Waterfall</SectionTitle>
-                <WaterfallRow label="Fee Revenue" value={selectedCorridor.grossFee} isPositive base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="+ FX Margin" value={selectedCorridor.fxMargin} isPositive base={selectedCorridor.grossRevenue} />
+                <SectionTitle>Flow Margin Waterfall</SectionTitle>
+                <WaterfallRow label="Fee Revenue" value={selectedFlow.grossFee} isPositive base={selectedFlow.grossRevenue} />
+                <WaterfallRow label="+ Conversion & spread revenue (where applicable)" value={selectedFlow.conversionRevenue} isPositive base={selectedFlow.grossRevenue} />
                 <div style={{ borderTop:`1px dashed ${T.border}`, margin:"8px 0" }} />
-                <WaterfallRow label="− Rail Costs" value={-selectedCorridor.railCost} base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="− Liquidity cost" value={-selectedCorridor.liquidityCost} base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="− Intermediary cost" value={-selectedCorridor.intermediaryCost} base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="− Compliance" value={-selectedCorridor.compliance} base={selectedCorridor.grossRevenue} />
-                <WaterfallRow label="− Exceptions" value={-selectedCorridor.exceptions} base={selectedCorridor.grossRevenue} />
+                <WaterfallRow label="− Rail Costs" value={-selectedFlow.railCost} base={selectedFlow.grossRevenue} />
+                <WaterfallRow label="− Liquidity cost" value={-selectedFlow.liquidityCost} base={selectedFlow.grossRevenue} />
+                <WaterfallRow label="− Intermediary cost" value={-selectedFlow.intermediaryCost} base={selectedFlow.grossRevenue} />
+                <WaterfallRow label="− Compliance" value={-selectedFlow.compliance} base={selectedFlow.grossRevenue} />
+                <WaterfallRow label="− Exceptions" value={-selectedFlow.exceptions} base={selectedFlow.grossRevenue} />
                 <div style={{ borderTop:`1px solid ${T.gold}44`, margin:"8px 0" }} />
-                <WaterfallRow label="NET CONTRIBUTION" value={selectedCorridor.net} isNet base={selectedCorridor.grossRevenue} />
+                <WaterfallRow label="NET CONTRIBUTION" value={selectedFlow.net} isNet base={selectedFlow.grossRevenue} />
               </div>
 
               {/* Cost mix + trend */}
@@ -594,12 +594,12 @@ export default function CorridorEconomicsAnalyzer() {
                 <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:24 }}>
                   <SectionTitle>12-Month Revenue Trend</SectionTitle>
                   <ResponsiveContainer width="100%" height={100}>
-                    <ComposedChart data={selectedCorridor.trend.map((v,i)=>({ month:["J","F","M","A","M","J","J","A","S","O","N","D"][i], value:v }))}>
+                    <ComposedChart data={selectedFlow.trend.map((v,i)=>({ month:["J","F","M","A","M","J","J","A","S","O","N","D"][i], value:v }))}>
                       <CartesianGrid strokeDasharray="3 3" stroke={T.grid} />
                       <XAxis dataKey="month" tick={{ fill:T.textFaint, fontSize:9, fontFamily:"'Space Mono', monospace" }} />
                       <YAxis tick={{ fill:T.textFaint, fontSize:9, fontFamily:"'Space Mono', monospace" }} tickFormatter={v=>`$${v}K`} />
                       <Tooltip contentStyle={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:6, fontFamily:"'Space Mono', monospace", fontSize:10 }} formatter={v=>[`$${v}K`]} />
-                      <Area type="monotone" dataKey="value" stroke={selectedCorridor.classColor} fill={`${selectedCorridor.classColor}18`} strokeWidth={2} />
+                      <Area type="monotone" dataKey="value" stroke={selectedFlow.classColor} fill={`${selectedFlow.classColor}18`} strokeWidth={2} />
                     </ComposedChart>
                   </ResponsiveContainer>
                 </div>
@@ -613,25 +613,25 @@ export default function CorridorEconomicsAnalyzer() {
                 {[
                   {
                     label:"Strategic Recommendation",
-                    color: selectedCorridor.classColor,
-                    icon: selectedCorridor.classification==="GROW"?"↗":selectedCorridor.classification==="DEFEND"?"◎":selectedCorridor.classification==="OPTIMIZE"?"⚙":"⚠",
-                    body: `${selectedCorridor.classDesc}. At ${fmtPct(selectedCorridor.netMarginPct)} net margin and ${fmtPct(selectedCorridor.growthRate)} annual growth, this corridor ${selectedCorridor.classification==="GROW"?"warrants incremental volume investment and competitive pricing discipline":selectedCorridor.classification==="DEFEND"?"is a core franchise asset — prioritise retention over new acquisition":selectedCorridor.classification==="OPTIMIZE"?"requires cost structure review before additional volume investment":"should be reviewed for restructuring or exit within 2 quarters"}.`
+                    color: selectedFlow.classColor,
+                    icon: selectedFlow.classification==="GROW"?"↗":selectedFlow.classification==="DEFEND"?"◎":selectedFlow.classification==="OPTIMIZE"?"⚙":"⚠",
+                    body: `${selectedFlow.classDesc}. At ${fmtPct(selectedFlow.netMarginPct)} net margin and ${fmtPct(selectedFlow.growthRate)} annual growth, this flow ${selectedFlow.classification==="GROW"?"warrants incremental volume investment and competitive pricing discipline":selectedFlow.classification==="DEFEND"?"is a core franchise asset — prioritise retention over new acquisition":selectedFlow.classification==="OPTIMIZE"?"requires cost structure review before additional volume investment":"should be reviewed for restructuring or exit within 2 quarters"}.`
                   },
                   {
                     label:"Largest Cost Lever",
                     color: T.amber,
                     icon: "◈",
                     body: (() => {
-                      const costs = { "Liquidity cost": selectedCorridor.liquidityCost, "Exceptions": selectedCorridor.exceptions, "Intermediary cost": selectedCorridor.intermediaryCost, "Compliance": selectedCorridor.compliance };
+                      const costs = { "Liquidity cost": selectedFlow.liquidityCost, "Exceptions": selectedFlow.exceptions, "Intermediary cost": selectedFlow.intermediaryCost, "Compliance": selectedFlow.compliance };
                       const top = Object.entries(costs).sort((a,b)=>b[1]-a[1])[0];
-                      return `${top[0]} is the primary cost driver at ${fmt(top[1])} — ${fmtPct(top[1]/selectedCorridor.grossRevenue*100)} of gross revenue. ${top[0]==="Liquidity cost"?`Liquidity turn days of ${selectedCorridor.liquidityTurnDays}d suggest prefunding optimisation opportunity. A 20% reduction in liquidity balance requirement would save ${fmt(selectedCorridor.liquidityCost*0.20)} annually.`:top[0]==="Exceptions"?`Exception rate of ${selectedCorridor.exceptionRatePct}% is above portfolio average. Root cause is likely data quality in payment instructions. Structured remediation could recover ${fmt(selectedCorridor.exceptions*0.40)}.`:`Renegotiate intermediary banking terms at next renewal cycle.`}`;
+                      return `${top[0]} is the primary cost driver at ${fmt(top[1])} — ${fmtPct(top[1]/selectedFlow.grossRevenue*100)} of gross revenue. ${top[0]==="Liquidity cost"?`Liquidity turn days of ${selectedFlow.liquidityTurnDays}d suggest prefunding optimisation opportunity. A 20% reduction in liquidity balance requirement would save ${fmt(selectedFlow.liquidityCost*0.20)} annually.`:top[0]==="Exceptions"?`Exception rate of ${selectedFlow.exceptionRatePct}% is above portfolio average. Root cause is likely data quality in payment instructions. Structured remediation could recover ${fmt(selectedFlow.exceptions*0.40)}.`:`Renegotiate intermediary banking terms at next renewal cycle.`}`;
                     })()
                   },
                   {
                     label:"FX & Risk Profile",
                     color: T.teal,
                     icon: "⇌",
-                    body: `FX volatility of σ ${selectedCorridor.fxVolatility}% is ${selectedCorridor.fxVolatility>15?"elevated — margin at risk in adverse rate scenarios. Consider dynamic FX spread floors to protect revenue":selectedCorridor.fxVolatility>8?"moderate. Current spread of "+selectedCorridor.fxSpreadBps+"bps is adequate but should be reviewed quarterly against rate movements":"low — the pegged or managed rate environment provides stable margin visibility. FX spread of "+selectedCorridor.fxSpreadBps+"bps can be maintained without dynamic adjustment"}. Regulatory risk is rated ${selectedCorridor.regulatoryRisk}.`
+                    body: `FX volatility of σ ${selectedFlow.fxVolatility}% is ${selectedFlow.fxVolatility>15?"elevated — margin at risk in adverse rate scenarios. Consider dynamic FX spread floors to protect revenue":selectedFlow.fxVolatility>8?"moderate. Current spread of "+selectedFlow.fxSpreadBps+"bps is adequate but should be reviewed quarterly against rate movements":"low — the pegged or managed rate environment provides stable margin visibility. FX spread of "+selectedFlow.fxSpreadBps+"bps can be maintained without dynamic adjustment"}. Regulatory risk is rated ${selectedFlow.regulatoryRisk}.`
                   },
                 ].map(n=>(
                   <div key={n.label} style={{ background:T.card, borderRadius:8, padding:18, borderTop:`3px solid ${n.color}` }}>
@@ -647,7 +647,7 @@ export default function CorridorEconomicsAnalyzer() {
               <div style={{ marginTop:14, padding:"10px 16px", background:`${T.gold}08`, borderRadius:8, border:`1px solid ${T.gold}22`, display:"flex", gap:12, alignItems:"center" }}>
                 <span style={{ fontSize:10, color:T.gold, fontFamily:"'Space Mono', monospace", fontWeight:700, flexShrink:0 }}>KEY FLOW DRIVERS:</span>
                 <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-                  {selectedCorridor.keyDrivers.map(d=>(
+                  {selectedFlow.keyDrivers.map(d=>(
                     <span key={d} style={{ fontSize:10, padding:"2px 10px", background:`${T.gold}18`, color:T.goldLt, borderRadius:3, fontFamily:"'Space Mono', monospace" }}>{d}</span>
                   ))}
                 </div>
@@ -665,25 +665,25 @@ export default function CorridorEconomicsAnalyzer() {
               {[
                 {
                   cls:"GROW", color:T.green, icon:"↗",
-                  corridors: withAnalytics.filter(c=>c.classification==="GROW"),
+                  flows: withAnalytics.filter(c=>c.classification==="GROW"),
                   actions: ["Increase sales coverage and volume targets","Maintain competitive pricing — do not discount","Invest in flow STP automation to scale without proportional cost growth","Consider dedicated liquidity optimisation for high-volume flows"],
                   metric: "Target: 20%+ volume growth YoY"
                 },
                 {
                   cls:"DEFEND", color:T.teal, icon:"◎",
-                  corridors: withAnalytics.filter(c=>c.classification==="DEFEND"),
-                  actions: ["Anchor pricing at current spread — resist client pressure to reduce","Focus on wallet share growth within existing client base","Monitor competitive entry — these corridors attract attention","Build switching costs through workflow integration and liquidity structures"],
+                  flows: withAnalytics.filter(c=>c.classification==="DEFEND"),
+                  actions: ["Anchor pricing at current spread — resist client pressure to reduce","Focus on wallet share growth within existing client base","Monitor competitive entry — these flows attract attention","Build switching costs through workflow integration and liquidity structures"],
                   metric: "Target: Hold margin within 2% of current"
                 },
                 {
                   cls:"OPTIMIZE", color:T.amber, icon:"⚙",
-                  corridors: withAnalytics.filter(c=>c.classification==="OPTIMIZE"),
+                  flows: withAnalytics.filter(c=>c.classification==="OPTIMIZE"),
                   actions: ["Conduct full cost audit: liquidity, intermediary, compliance, exceptions","Renegotiate intermediary banking terms at next renewal","Set STP improvement targets — reduce exception rate by 30%","Evaluate whether FX spread is adequately capturing risk"],
                   metric: "Target: Lift net margin by 8–12pp in 12 months"
                 },
                 {
                   cls:"DE-PRIORITIZE / EXIT", color:T.red, icon:"⚠",
-                  corridors: withAnalytics.filter(c=>c.classification==="DE-PRIORITIZE / EXIT"),
+                  flows: withAnalytics.filter(c=>c.classification==="DE-PRIORITIZE / EXIT"),
                   actions: ["Prepare restructuring case: repricing or volume minimum commitments","Engage clients on new pricing terms within 60 days","If restructuring fails, begin managed wind-down — no new volume acquisition","Reassign liquidity and intermediary capacity to GROW flows"],
                   metric: "Decision point: 90 days"
                 },
@@ -694,19 +694,19 @@ export default function CorridorEconomicsAnalyzer() {
                       <span style={{ fontSize:24, color:q.color }}>{q.icon}</span>
                       <ClassBadge label={q.cls} color={q.color} />
                     </div>
-                    <span style={{ fontSize:12, color:q.color, fontFamily:"'Space Mono', monospace", fontWeight:700 }}>{q.corridors.length} corridor{q.corridors.length!==1?"s":""}</span>
+                    <span style={{ fontSize:12, color:q.color, fontFamily:"'Space Mono', monospace", fontWeight:700 }}>{q.flows.length} flow{q.flows.length!==1?"s":""}</span>
                   </div>
 
-                  {/* Corridor tags */}
+                  {/* Flow tags */
                   <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:16 }}>
-                    {q.corridors.map(c=>(
+                    {q.flows.map(c=>(
                       <div key={c.id} style={{ background:T.card, borderRadius:6, padding:"6px 10px", border:`1px solid ${q.color}33`, cursor:"pointer" }}
-                        onClick={()=>{ setSelectedCorridor(c); setActiveTab("deep-dive"); }}>
+                        onClick={()=>{ setSelectedFlow(c); setActiveTab("deep-dive"); }}>
                         <div style={{ fontSize:12 }}>{c.flag_from}→{c.flag_to}</div>
                         <div style={{ fontSize:9, color:q.color, fontFamily:"'Space Mono', monospace" }}>{fmtPct(c.netMarginPct)} · +{fmtPct(c.growthRate)}</div>
                       </div>
                     ))}
-                    {q.corridors.length===0 && <span style={{ fontSize:11, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>None currently</span>}
+                    {q.flows.length===0 && <span style={{ fontSize:11, color:T.textFaint, fontFamily:"'Space Mono', monospace" }}>None currently</span>}
                   </div>
 
                   {/* Actions */}
@@ -738,7 +738,7 @@ export default function CorridorEconomicsAnalyzer() {
                 <span style={{ fontSize:14, color:T.teal, flexShrink:0 }}>⟶</span>
                 <div>
                   <span style={{ fontSize:10, color:T.teal, fontFamily:"'Space Mono', monospace", fontWeight:700 }}>MODEL 04 CONNECTION: </span>
-                  <span style={{ fontSize:11, color:T.textMid }}>Corridor growth rates and classification feed into the Client Behavior Engine (Model 04). Clients active in GROW corridors are flagged as expansion targets; clients concentrated in EXIT corridors are elevated as retention risks.</span>
+                  <span style={{ fontSize:11, color:T.textMid }}>Flow growth rates and classification feed into the Client Behavior Engine (Model 04). Clients active in GROW flows are flagged as expansion targets; clients concentrated in EXIT flows are elevated as retention risks.</span>
                 </div>
               </div>
             </div>
