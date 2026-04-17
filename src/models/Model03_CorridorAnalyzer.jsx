@@ -522,7 +522,7 @@ export default function PaymentFlowAnalyzer() {
         {/* ══ DEEP DIVE ══════════════════════════════════════════════════ */}
         {activeTab === "deep-dive" && selectedFlow && (
           <div className="fade-up">
-            {/* Flow header */
+            {/* Flow header */}
             <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 24, marginBottom: 20 }}>
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:16 }}>
                 <div>
@@ -697,7 +697,7 @@ export default function PaymentFlowAnalyzer() {
                     <span style={{ fontSize:12, color:q.color, fontFamily:"'Space Mono', monospace", fontWeight:700 }}>{q.flows.length} flow{q.flows.length!==1?"s":""}</span>
                   </div>
 
-                  {/* Flow tags */
+                  {/* Flow tags */}
                   <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:16 }}>
                     {q.flows.map(c=>(
                       <div key={c.id} style={{ background:T.card, borderRadius:6, padding:"6px 10px", border:`1px solid ${q.color}33`, cursor:"pointer" }}
