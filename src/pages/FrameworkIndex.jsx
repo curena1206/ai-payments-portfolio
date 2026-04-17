@@ -464,7 +464,6 @@ export default function FrameworkIndex() {
         <div className="fi-section-block">
           <div className="fi-section-label">About This Work</div>
           <p className="fi-p">This is how payments economics are decomposed, not described.</p>
-          <p className="fi-p">The Diagnostic makes the economics visible. The Index measures them structurally. These models explain where margin is created and where it is lost. The output defines what to do next.</p>
           <div className="fi-system-statement" style={{marginTop:'20px'}}>
             The Diagnostic makes it visible. The Index measures it. These models explain it. The output defines what to do next.
           </div>
