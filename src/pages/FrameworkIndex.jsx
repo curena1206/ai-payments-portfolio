@@ -327,7 +327,7 @@ const MODELS = [
     layer: 'Layer 1 — Economic Core',
     name: 'Payment Profitability Engine',
     route: '/models/01-profitability',
-    desc: 'Tracks how pricing diverges from actual transaction economics across clients, rails, and corridors over time.',
+    desc: 'Tracks how pricing diverges from actual transaction economics across clients, rails, and payment flows over time. Applies across domestic and cross-border payment flows.',
     reveals: 'Where revenue appears stable but margin has already deteriorated.',
     usedIn: 'Diagnostic outputs · PFI scoring',
   },
@@ -337,7 +337,7 @@ const MODELS = [
     layer: 'Layer 2 — Infrastructure Intelligence',
     name: 'Rail Economics Analyzer',
     route: '/models/02-rail-optimizer',
-    desc: 'Maps how transactions move across rails, including routing decisions, cost layers, and execution patterns by volume and corridor.',
+    desc: 'Maps how transactions move across rails, including routing decisions, cost layers, and execution patterns by volume and flow type. Optimizes routing decisions across all payment types (ACH, wires, RTP, cross-border).',
     reveals: 'Which rails generate margin and which dilute it once fully costed.',
     usedIn: 'Diagnostic outputs · PFI scoring',
   },
@@ -347,7 +347,7 @@ const MODELS = [
     layer: 'Layer 3 — Flow Intelligence',
     name: 'Payment Flow Analyzer',
     route: '/models/03-corridor-analyzer',
-    desc: 'Applies the full cost stack to each payment flow, including network, funding, compliance, and operational layers, to surface true net margin by corridor.',
+    desc: 'This model applies to all payment flows. Cross-border is one instance within a broader flow-level economic structure. Applies the full cost stack to each payment flow, including network, funding, compliance, and operational layers, to surface true net margin by flow type and structure.',
     reveals: 'Which flows are margin-positive and which are loss-making once the economics are fully applied.',
     usedIn: 'Diagnostic outputs',
   },
@@ -357,7 +357,7 @@ const MODELS = [
     layer: 'Layer 4 — Behavioral Intelligence',
     name: 'Client Payment Behavior Engine',
     route: '/models/04-client-behavior',
-    desc: 'Analyzes how client behavior, including volume patterns, rail usage, and pricing compliance, drives margin outcomes across the portfolio.',
+    desc: 'Analyzes how client behavior, including volume patterns, rail usage, and pricing compliance, drives margin outcomes across the portfolio. Applies across domestic, real-time, and cross-border payment flows.',
     reveals: 'Where under-monetization is structural and where it is behavioral.',
     usedIn: 'PFI scoring · Prioritization logic',
   },
@@ -367,7 +367,7 @@ const MODELS = [
     layer: 'Layer 5 — Executive Decision Layer',
     name: 'Payments Portfolio Decision Engine',
     route: '/models/05-portfolio-scorecard',
-    desc: 'Synthesizes outputs from all upstream models into a ranked intervention list with estimated margin impact per action.',
+    desc: 'Synthesizes outputs from all upstream models into a ranked intervention list with estimated margin impact per action. Applies across all payment types and flow structures.',
     reveals: 'Where intervention creates the most recoverable impact, sequenced for execution.',
     usedIn: 'Prioritization logic · 90-day roadmap',
   },
@@ -377,7 +377,7 @@ const MODELS = [
     layer: 'Layer 6 — Strategic Positioning Layer',
     name: 'Network Participation Economics',
     route: '/models/06-money-movement',
-    desc: 'Evaluates whether each payment network justifies its infrastructure investment against actual margin contribution.',
+    desc: 'Evaluates whether each payment network justifies its infrastructure investment against actual margin contribution. Analyzes revenue across all sources, rail cost, liquidity cost, operational cost, and conversion or pricing spread where applicable.',
     reveals: 'Which network relationships are profit drivers and which are value drains.',
     usedIn: 'Diagnostic outputs · Prioritization logic',
   },
@@ -443,7 +443,7 @@ export default function FrameworkIndex() {
               <div style={{fontFamily:'Georgia,serif',fontSize:'11px',fontWeight:'bold',letterSpacing:'0.1em',textTransform:'uppercase',color:'#b7882c',marginBottom:'12px',paddingBottom:'8px',borderBottom:'1px solid #e2e8f0'}}>{group}</div>
               <div className="fi-grid">
                 {MODELS.filter(m => m.group === group).map((m,i) => (
-                  <Link key={i} to={m.route} className="fi-model-card">
+                  <Link key={i} to={m.route} className="fi-model-card" style={MODELS.filter(m => m.group === group).length === 1 ? {maxWidth:'calc(50% - 6px)'} : {}}>
                     <div className="fi-model-num">{m.num}</div>
                     <div className="fi-model-layer" style={{fontSize:'10.5px',color:'#9ca3af',letterSpacing:'0.03em'}}>{m.layer}</div>
                     <div className="fi-model-name">{m.name}</div>
