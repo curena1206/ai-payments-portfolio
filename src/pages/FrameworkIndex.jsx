@@ -438,26 +438,21 @@ export default function FrameworkIndex() {
 
         <div className="fi-section-block">
           <div className="fi-section-label">The Six Models</div>
-          {['Revenue Layer', 'Cost & Processing Layer', 'Balance Sheet Layer', 'Optimization Layer'].map(group => (
-            <div key={group} style={{marginBottom: '32px'}}>
-              <div style={{fontFamily:'Georgia,serif',fontSize:'11px',fontWeight:'bold',letterSpacing:'0.1em',textTransform:'uppercase',color:'#b7882c',marginBottom:'12px',paddingBottom:'8px',borderBottom:'1px solid #e2e8f0'}}>{group}</div>
-              <div className="fi-grid">
-                {MODELS.filter(m => m.group === group).map((m,i) => (
-                  <Link key={i} to={m.route} className="fi-model-card" style={MODELS.filter(m => m.group === group).length === 1 ? {maxWidth:'calc(50% - 6px)'} : {}}>
-                    <div className="fi-model-num">{m.num}</div>
-                    <div className="fi-model-layer" style={{fontSize:'10.5px',color:'#9ca3af',letterSpacing:'0.03em'}}>{m.layer}</div>
-                    <div className="fi-model-name">{m.name}</div>
-                    <div className="fi-model-desc">{m.desc}</div>
-                    <div style={{marginTop:'10px',paddingTop:'10px',borderTop:'1px solid #e2e8f0'}}>
-                      <div style={{fontFamily:'Georgia,serif',fontSize:'10px',fontWeight:'bold',letterSpacing:'0.08em',textTransform:'uppercase',color:'#b7882c',marginBottom:'4px'}}>Reveals</div>
-                      <div style={{fontFamily:'Georgia,serif',fontSize:'13px',color:'#4a5568',lineHeight:'1.55'}}>{m.reveals}</div>
-                    </div>
-                    <div style={{marginTop:'10px',paddingTop:'8px',borderTop:'1px solid #f3f4f6',fontFamily:'Georgia,serif',fontSize:'10.5px',color:'#9ca3af',letterSpacing:'0.02em'}}>Used in: {m.usedIn}</div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
+          <div className="fi-grid">
+            {MODELS.map((m,i) => (
+              <Link key={i} to={m.route} className="fi-model-card">
+                <div className="fi-model-num">{m.num}</div>
+                <div className="fi-model-layer" style={{fontSize:'10.5px',color:'#9ca3af',letterSpacing:'0.03em'}}>{m.layer}</div>
+                <div className="fi-model-name">{m.name}</div>
+                <div className="fi-model-desc">{m.desc}</div>
+                <div style={{marginTop:'10px',paddingTop:'10px',borderTop:'1px solid #e2e8f0'}}>
+                  <div style={{fontFamily:'Georgia,serif',fontSize:'10px',fontWeight:'bold',letterSpacing:'0.08em',textTransform:'uppercase',color:'#b7882c',marginBottom:'4px'}}>Reveals</div>
+                  <div style={{fontFamily:'Georgia,serif',fontSize:'13px',color:'#4a5568',lineHeight:'1.55'}}>{m.reveals}</div>
+                </div>
+                <div style={{marginTop:'10px',paddingTop:'8px',borderTop:'1px solid #f3f4f6',fontFamily:'Georgia,serif',fontSize:'10.5px',color:'#9ca3af',letterSpacing:'0.02em'}}>Used in: {m.usedIn}</div>
+              </Link>
+            ))}
+          </div>
         </div>
 
         <div className="fi-section-block">
