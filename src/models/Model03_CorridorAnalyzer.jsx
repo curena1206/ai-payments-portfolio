@@ -482,7 +482,7 @@ export default function PaymentFlowAnalyzer() {
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ background: "#0A0E14" }}>
-                    {["#","Flow","Currency","Volume","Gross Rev","Conversion & spread revenue","Total Cost","Net","Margin %","Growth","FX Volatility","Classification","Trend"].map(h=>(
+                    {["#","Flow","Currency","Volume","Gross Rev","Conversion & spread revenue","Total Cost","Net","Margin %","Growth","Pricing Volatility","Classification","Trend"].map(h=>(
                       <th key={h} style={{ padding:"9px 12px", textAlign:"left", fontSize:8, color:T.textFaint, fontFamily:"'Space Mono', monospace", letterSpacing:"0.1em", borderBottom:`1px solid ${T.border}`, whiteSpace:"nowrap" }}>{h}</th>
                     ))}
                   </tr>
@@ -546,7 +546,7 @@ export default function PaymentFlowAnalyzer() {
                   { l:"Volume", v:selectedFlow.volume.toLocaleString() },
                   { l:"Avg Ticket", v:fmt(selectedFlow.avgTicket) },
                   { l:"FX Spread", v:`${selectedFlow.fxSpreadBps} bps` },
-                  { l:"FX Volatility", v:`σ ${selectedFlow.fxVolatility}%` },
+                  { l:"Pricing Volatility", v:`σ ${selectedFlow.fxVolatility}%` },
                   { l:"Liquidity Turn Days", v:`${selectedFlow.liquidityTurnDays}d` },
                   { l:"Exception Rate", v:`${selectedFlow.exceptionRatePct}%` },
                 ].map(m=>(
@@ -628,10 +628,10 @@ export default function PaymentFlowAnalyzer() {
                     })()
                   },
                   {
-                    label:"FX & Risk Profile",
+                    label:"Pricing & Risk Profile",
                     color: T.teal,
                     icon: "⇌",
-                    body: `FX volatility of σ ${selectedFlow.fxVolatility}% is ${selectedFlow.fxVolatility>15?"elevated — margin at risk in adverse rate scenarios. Consider dynamic FX spread floors to protect revenue":selectedFlow.fxVolatility>8?"moderate. Current spread of "+selectedFlow.fxSpreadBps+"bps is adequate but should be reviewed quarterly against rate movements":"low — the pegged or managed rate environment provides stable margin visibility. FX spread of "+selectedFlow.fxSpreadBps+"bps can be maintained without dynamic adjustment"}. Regulatory risk is rated ${selectedFlow.regulatoryRisk}.`
+                    body: `FX volatility of σ ${selectedFlow.fxVolatility}% is ${selectedFlow.fxVolatility>15?"elevated — margin at risk in adverse rate scenarios. Consider dynamic pricing floors to protect revenue":selectedFlow.fxVolatility>8?"moderate. Current spread of "+selectedFlow.fxSpreadBps+"bps is adequate but should be reviewed quarterly against rate movements":"low — the pegged or managed rate environment provides stable margin visibility. pricing spread of "+selectedFlow.fxSpreadBps+"bps can be maintained without dynamic adjustment"}. Regulatory risk is rated ${selectedFlow.regulatoryRisk}.`
                   },
                 ].map(n=>(
                   <div key={n.label} style={{ background:T.card, borderRadius:8, padding:18, borderTop:`3px solid ${n.color}` }}>
@@ -678,7 +678,7 @@ export default function PaymentFlowAnalyzer() {
                 {
                   cls:"OPTIMIZE", color:T.amber, icon:"⚙",
                   flows: withAnalytics.filter(c=>c.classification==="OPTIMIZE"),
-                  actions: ["Conduct full cost audit: liquidity, intermediary, compliance, exceptions","Renegotiate intermediary banking terms at next renewal","Set STP improvement targets — reduce exception rate by 30%","Evaluate whether FX spread is adequately capturing risk"],
+                  actions: ["Conduct full cost audit: liquidity, intermediary, compliance, exceptions","Renegotiate intermediary banking terms at next renewal","Set STP improvement targets — reduce exception rate by 30%","Evaluate whether pricing spread is adequately capturing risk"],
                   metric: "Target: Lift net margin by 8–12pp in 12 months"
                 },
                 {
