@@ -327,8 +327,8 @@ const MODELS = [
     layer: 'Layer 1 — Economic Core',
     name: 'Payment Profitability Engine',
     route: '/models/01-profitability',
-    desc: 'Tracks how pricing diverges from actual transaction economics across clients, rails, and corridors over time.',
-    reveals: 'Where revenue appears stable but margin has already deteriorated.',
+    desc: 'Evaluates how pricing structure and transaction economics evolve across clients, rails, and payment flows over time. Applies across domestic and cross-border payment activity.',
+    reveals: 'Where pricing discipline and transaction economics may no longer be evolving consistently across the portfolio.',
     usedIn: 'Diagnostic outputs · PFI scoring',
   },
   {
@@ -337,8 +337,8 @@ const MODELS = [
     layer: 'Layer 2 — Infrastructure Intelligence',
     name: 'Rail Economics Analyzer',
     route: '/models/02-rail-optimizer',
-    desc: 'Maps how transactions move across rails, including routing decisions, cost layers, and execution patterns by payment flow and client segment.',
-    reveals: 'Which rails generate margin and which dilute it once fully costed.',
+    desc: 'Maps how transactions move across rails, including routing decisions, cost layers, and execution patterns by volume and flow type. Optimizes routing decisions across all payment types (ACH, wires, RTP, cross-border).',
+    reveals: 'Which routing structures may be operationally efficient and which may warrant deeper economic or servicing review.',
     usedIn: 'Diagnostic outputs · PFI scoring',
   },
   {
@@ -346,9 +346,9 @@ const MODELS = [
     group: 'Cost & Processing Layer',
     layer: 'Layer 3 — Flow Intelligence',
     name: 'Payment Flow Analyzer',
-    route: '/models/03-payment-flow-economics',
-    desc: 'Applies the full cost stack to each payment flow, including network, funding, compliance, and operational layers, to surface true net margin by flow.',
-    reveals: 'Which flows are margin-positive and which are loss-making once the economics are fully applied.',
+    route: '/models/03-corridor-analyzer',
+    desc: 'This model applies to all payment flows. Cross-border is one instance within a broader flow-level operating structure. Evaluates how network, funding, compliance, servicing, and operational layers interact across payment flows and client structures.',
+    reveals: 'which payment flows may warrant deeper review once servicing structure, operational complexity, and flow characteristics are evaluated together.',
     usedIn: 'Diagnostic outputs',
   },
   {
@@ -357,8 +357,8 @@ const MODELS = [
     layer: 'Layer 4 — Behavioral Intelligence',
     name: 'Client Payment Behavior Engine',
     route: '/models/04-client-behavior',
-    desc: 'Analyzes how client behavior, including volume patterns, rail usage, and pricing compliance, drives margin outcomes across the portfolio.',
-    reveals: 'Where under-monetization is structural and where it is behavioral.',
+    desc: 'Analyzes how client behavior, including volume patterns, rail usage, and pricing compliance, drives margin outcomes across the portfolio. Applies across domestic, real-time, and cross-border payment flows.',
+    reveals: 'Where client behavior, pricing structure, or servicing patterns may be contributing to uneven portfolio conditions.',
     usedIn: 'PFI scoring · Prioritization logic',
   },
   {
@@ -367,8 +367,8 @@ const MODELS = [
     layer: 'Layer 5 — Executive Decision Layer',
     name: 'Payments Portfolio Decision Engine',
     route: '/models/05-portfolio-scorecard',
-    desc: 'Synthesizes outputs from all upstream models into a ranked intervention list with estimated margin impact per action.',
-    reveals: 'Where intervention creates the most recoverable impact, sequenced for execution.',
+    desc: 'Synthesizes outputs from all upstream models into a prioritized management review framework. Applies across payment types, servicing models, and flow structures.',
+    reveals: 'Which areas may warrant management attention first based on operating maturity, servicing complexity, and portfolio coordination.',
     usedIn: 'Prioritization logic · 90-day roadmap',
   },
   {
@@ -377,8 +377,8 @@ const MODELS = [
     layer: 'Layer 6 — Strategic Positioning Layer',
     name: 'Network Participation Economics',
     route: '/models/06-money-movement',
-    desc: 'Evaluates whether each payment network justifies its infrastructure investment against actual margin contribution.',
-    reveals: 'Which network relationships are profit drivers and which are value drains.',
+    desc: 'Evaluates how payment network participation aligns with servicing requirements, infrastructure complexity, liquidity structure, and portfolio strategy across the franchise.',
+    reveals: 'Which network relationships appear strategically aligned and which may warrant deeper operational or economic review.',
     usedIn: 'Diagnostic outputs · Prioritization logic',
   },
 ]
@@ -403,75 +403,69 @@ export default function FrameworkIndex() {
 
         <div className="fi-hero">
           <div className="fi-eyebrow">Payments Strategy Analytics</div>
-          <h1 className="fi-h1">Payments economics are not explained by a single model. They are explained by how multiple layers interact.</h1>
-          <p className="fi-hero-sub">Each model isolates one part of the system. Together, they explain how margin is created, diluted, or lost.</p>
+          <h1 className="fi-h1">Payment franchises cannot be understood through a single metric. They are shaped by how pricing, governance, servicing, liquidity, routing, and portfolio management interact over time.</h1>
+          <p className="fi-hero-sub">Each model evaluates a different dimension of the franchise. Together, they help explain how portfolio conditions evolve across flows, clients, rails, and servicing structures.</p>
           <div className="fi-system-statement">
-            No single model explains payments economics. Each captures a different layer: pricing, flow behavior, cost structure, infrastructure. The interaction between them is where margin is determined. These models power both the Diagnostic outputs and the Payments Franchise Index scoring.
+            No single model explains how a payments franchise operates. Each evaluates a different layer: pricing discipline, flow behavior, cost structure, infrastructure coordination, servicing complexity, and portfolio management. Together, they help interpret where operating maturity and portfolio alignment may require deeper review.
           </div>
-          <p className="fi-hero-sub" style={{borderLeft:'3px solid #b7882c',paddingLeft:'16px',marginTop:'16px',fontStyle:'normal'}}><strong>Revenue becomes visible. Margin becomes measurable. Action becomes clear.</strong></p>
+          <p className="fi-hero-sub" style={{borderLeft:'3px solid #b7882c',paddingLeft:'16px',marginTop:'16px',fontStyle:'normal'}}><strong>Operating patterns become easier to interpret. Areas of portfolio pressure become easier to evaluate before they compound.</strong></p>
 
           <div className="fi-margin-callout">
-            <div className="fi-margin-callout-label">How leakage is measured</div>
-            <p className="fi-margin-callout-intro">Revenue leakage is measured across three levels depending on how much of the cost structure is visible:</p>
+            <div className="fi-margin-callout-label">How portfolio conditions are evaluated</div>
+            <p className="fi-margin-callout-intro">Portfolio conditions can be evaluated at multiple levels depending on the depth and quality of operational, servicing, liquidity, and cost data available:</p>
             <div className="fi-margin-tier">
-              <div className="fi-margin-tier-label">Contribution margin</div>
-              <div className="fi-margin-tier-desc">Transaction-level economics including pricing, network, and processing cost</div>
+              <div className="fi-margin-tier-label">Transaction-level economics</div>
+              <div className="fi-margin-tier-desc">Directional evaluation of pricing structure, network cost, and processing economics at the transaction level</div>
             </div>
             <div className="fi-margin-tier">
               <div className="fi-margin-tier-label">Liquidity-adjusted margin</div>
-              <div className="fi-margin-tier-desc">Contribution margin plus balance sheet impact, including funding cost and NII contribution</div>
+              <div className="fi-margin-tier-desc">Evaluation of transaction economics alongside funding usage, liquidity structure, and balance sheet interaction where visibility exists</div>
             </div>
             <div className="fi-margin-tier">
               <div className="fi-margin-tier-label">Fully loaded margin</div>
-              <div className="fi-margin-tier-desc">Liquidity-adjusted margin plus operational and exception cost</div>
+              <div className="fi-margin-tier-desc">Broader operational view incorporating servicing complexity, exception intensity, and operational support structure</div>
             </div>
-            <div className="fi-margin-callout-footer">Leakage is surfaced at each level. Precision increases as cost and balance sheet data mature.</div>
+            <div className="fi-margin-callout-footer">Interpretive depth increases as operational visibility, servicing data, and balance sheet attribution become more mature.</div>
           </div>
         </div>
 
         <div className="fi-section-block">
           <div className="fi-section-label">How it works</div>
-          <p className="fi-p">The portfolio is evaluated across six dimensions of a payments franchise.</p>
-          <p className="fi-p">Each model isolates a different source of revenue leakage and quantifies the impact.</p>
-          <p className="fi-p">Outputs are synthesized into a single view with prioritized actions and estimated impact.</p>
+          <p className="fi-p">The franchise is evaluated across six interconnected operating dimensions.</p>
+          <p className="fi-p">Each model evaluates a different portfolio pattern, management condition, or servicing dynamic that may warrant deeper review.</p>
+          <p className="fi-p">Outputs are synthesized into a single portfolio view with prioritized management considerations and areas requiring further analysis.</p>
         </div>
 
         <div className="fi-section-block">
           <div className="fi-section-label">The Six Models</div>
-          {['Revenue Layer', 'Cost & Processing Layer', 'Balance Sheet Layer', 'Optimization Layer'].map(group => (
-            <div key={group} style={{marginBottom: '32px'}}>
-              <div style={{fontFamily:'Georgia,serif',fontSize:'11px',fontWeight:'bold',letterSpacing:'0.1em',textTransform:'uppercase',color:'#b7882c',marginBottom:'12px',paddingBottom:'8px',borderBottom:'1px solid #e2e8f0'}}>{group}</div>
-              <div className="fi-grid">
-                {MODELS.filter(m => m.group === group).map((m,i) => (
-                  <Link key={i} to={m.route} className="fi-model-card">
-                    <div className="fi-model-num">{m.num}</div>
-                    <div className="fi-model-layer" style={{fontSize:'10.5px',color:'#9ca3af',letterSpacing:'0.03em'}}>{m.layer}</div>
-                    <div className="fi-model-name">{m.name}</div>
-                    <div className="fi-model-desc">{m.desc}</div>
-                    <div style={{marginTop:'10px',paddingTop:'10px',borderTop:'1px solid #e2e8f0'}}>
-                      <div style={{fontFamily:'Georgia,serif',fontSize:'10px',fontWeight:'bold',letterSpacing:'0.08em',textTransform:'uppercase',color:'#b7882c',marginBottom:'4px'}}>Reveals</div>
-                      <div style={{fontFamily:'Georgia,serif',fontSize:'13px',color:'#4a5568',lineHeight:'1.55'}}>{m.reveals}</div>
-                    </div>
-                    <div style={{marginTop:'10px',paddingTop:'8px',borderTop:'1px solid #f3f4f6',fontFamily:'Georgia,serif',fontSize:'10.5px',color:'#9ca3af',letterSpacing:'0.02em'}}>Used in: {m.usedIn}</div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
+          <div className="fi-grid">
+            {MODELS.map((m,i) => (
+              <Link key={i} to={m.route} className="fi-model-card">
+                <div className="fi-model-num">{m.num}</div>
+                <div className="fi-model-layer" style={{fontSize:'10.5px',color:'#9ca3af',letterSpacing:'0.03em'}}>{m.layer}</div>
+                <div className="fi-model-name">{m.name}</div>
+                <div className="fi-model-desc">{m.desc}</div>
+                <div style={{marginTop:'10px',paddingTop:'10px',borderTop:'1px solid #e2e8f0'}}>
+                  <div style={{fontFamily:'Georgia,serif',fontSize:'10px',fontWeight:'bold',letterSpacing:'0.08em',textTransform:'uppercase',color:'#b7882c',marginBottom:'4px'}}>Reveals</div>
+                  <div style={{fontFamily:'Georgia,serif',fontSize:'13px',color:'#4a5568',lineHeight:'1.55'}}>{m.reveals}</div>
+                </div>
+                <div style={{marginTop:'10px',paddingTop:'8px',borderTop:'1px solid #f3f4f6',fontFamily:'Georgia,serif',fontSize:'10.5px',color:'#9ca3af',letterSpacing:'0.02em'}}>Used in: {m.usedIn}</div>
+              </Link>
+            ))}
+          </div>
         </div>
 
         <div className="fi-section-block">
           <div className="fi-section-label">Deployment</div>
-          <p className="fi-p">Runs on existing bank infrastructure using available data.</p>
-          <p className="fi-p">Does not require full integration to produce useful output. Precision increases as data quality improves.</p>
+          <p className="fi-p">Designed to operate using existing reporting structures and available portfolio data.</p>
+          <p className="fi-p">Does not require full integration to support directional operating interpretation. Analytical depth increases as data quality and servicing visibility improve. Certain analytical layers require deeper operational and cost attribution data to support full decomposition.</p>
         </div>
 
         <div className="fi-section-block">
           <div className="fi-section-label">About This Work</div>
-          <p className="fi-p">This is how payments economics are decomposed, not described.</p>
-          <p className="fi-p">The Diagnostic makes the economics visible. The Index measures them structurally. These models explain where margin is created and where it is lost. The output defines what to do next.</p>
+          <p className="fi-p">This is how payment franchises are understood beyond financial reporting alone.</p>
           <div className="fi-system-statement" style={{marginTop:'20px'}}>
-            The Diagnostic makes it visible. The Index measures it. These models explain it. The output defines what to do next.
+            The Diagnostic surfaces patterns. The Index evaluates franchise maturity. These models help interpret the underlying drivers. The output helps clarify where management attention may be required.
           </div>
           <div className="fi-links">
             <a href="https://carlosurena.com/consulting.html">Diagnostic &#8599;</a>
@@ -481,7 +475,7 @@ export default function FrameworkIndex() {
         </div>
 
         <footer className="fi-footer" style={{borderTop:'3px solid #b7882c',background:'#0f1f3d',padding:'0 24px',height:'48px',display:'flex',alignItems:'center',justifyContent:'space-between',marginTop:'40px'}}>
-          <span style={{fontFamily:'Georgia, serif',fontSize:'13px',color:'rgba(255,255,255,0.7)'}}>Making payments portfolio economics visible</span>
+          <span style={{fontFamily:'Georgia, serif',fontSize:'13px',color:'rgba(255,255,255,0.7)'}}>Built from real operating conditions inside payments franchises</span>
           <span style={{fontSize:'13px',color:'rgba(255,255,255,0.5)'}}>
             <a href="https://www.linkedin.com/in/carlosurena/" target="_blank" rel="noreferrer" style={{color:'#b7882c',textDecoration:'none'}}>LinkedIn</a>
             <span style={{margin:'0 6px'}}>·</span>
