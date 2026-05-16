@@ -346,7 +346,7 @@ const MODELS = [
     group: 'Cost & Processing Layer',
     layer: 'Layer 3 — Flow Intelligence',
     name: 'Payment Flow Analyzer',
-    route: '/models/03-corridor-analyzer',
+    route: '/models/03-payment-flow-economics',
     desc: 'This model applies to all payment flows. Cross-border is one instance within a broader flow-level operating structure. Evaluates how network, funding, compliance, servicing, and operational layers interact across payment flows and client structures.',
     reveals: 'which payment flows may warrant deeper review once servicing structure, operational complexity, and flow characteristics are evaluated together.',
     usedIn: 'Diagnostic outputs',
