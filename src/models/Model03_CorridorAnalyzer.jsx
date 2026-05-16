@@ -372,7 +372,7 @@ export default function PaymentFlowAnalyzer() {
           <div className="fade-up">
             {/* KPI strip */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, marginBottom: 24 }}>
-              <KpiCard label="Gross Revenue" value={fmt(portfolio.grossRevenue)} sub="Fees + FX margin" accent={T.gold} />
+              <KpiCard label="Gross Revenue" value={fmt(portfolio.grossRevenue)} sub="Fees + pricing spread" accent={T.gold} />
               <KpiCard label="Conversion & spread revenue" value={fmt(portfolio.conversionRevenue)} sub={fmtPct(portfolio.conversionRevenue/portfolio.grossRevenue*100) + " of gross revenue"} accent={T.teal} />
               <KpiCard label="Total Cost Base" value={fmt(portfolio.totalCost)} sub="Rail + liquidity + compliance + exceptions" accent={T.red} />
               <KpiCard label="Net Contribution" value={fmt(portfolio.net)} sub={fmtPct(portfolio.netMarginPct) + " net margin"} accent={T.green} />
@@ -545,7 +545,7 @@ export default function PaymentFlowAnalyzer() {
                 {[
                   { l:"Volume", v:selectedFlow.volume.toLocaleString() },
                   { l:"Avg Ticket", v:fmt(selectedFlow.avgTicket) },
-                  { l:"FX Spread", v:`${selectedFlow.fxSpreadBps} bps` },
+                  { l:"Pricing Spread", v:`${selectedFlow.fxSpreadBps} bps` },
                   { l:"Pricing Volatility", v:`σ ${selectedFlow.fxVolatility}%` },
                   { l:"Liquidity Turn Days", v:`${selectedFlow.liquidityTurnDays}d` },
                   { l:"Exception Rate", v:`${selectedFlow.exceptionRatePct}%` },
@@ -631,7 +631,7 @@ export default function PaymentFlowAnalyzer() {
                     label:"Pricing & Risk Profile",
                     color: T.teal,
                     icon: "⇌",
-                    body: `FX volatility of σ ${selectedFlow.fxVolatility}% is ${selectedFlow.fxVolatility>15?"elevated — margin at risk in adverse rate scenarios. Consider dynamic pricing floors to protect revenue":selectedFlow.fxVolatility>8?"moderate. Current spread of "+selectedFlow.fxSpreadBps+"bps is adequate but should be reviewed quarterly against rate movements":"low — the pegged or managed rate environment provides stable margin visibility. pricing spread of "+selectedFlow.fxSpreadBps+"bps can be maintained without dynamic adjustment"}. Regulatory risk is rated ${selectedFlow.regulatoryRisk}.`
+                    body: `pricing volatility of σ ${selectedFlow.fxVolatility}% is ${selectedFlow.fxVolatility>15?"elevated — margin at risk in adverse rate scenarios. Consider dynamic pricing floors to protect revenue":selectedFlow.fxVolatility>8?"moderate. Current spread of "+selectedFlow.fxSpreadBps+"bps is adequate but should be reviewed quarterly against rate movements":"low — the pegged or managed rate environment provides stable margin visibility. pricing spread of "+selectedFlow.fxSpreadBps+"bps can be maintained without dynamic adjustment"}. Regulatory risk is rated ${selectedFlow.regulatoryRisk}.`
                   },
                 ].map(n=>(
                   <div key={n.label} style={{ background:T.card, borderRadius:8, padding:18, borderTop:`3px solid ${n.color}` }}>
